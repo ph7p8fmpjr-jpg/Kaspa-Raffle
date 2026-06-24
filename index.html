@@ -251,51 +251,56 @@
             </div>
         </div>
     </div>
-
-    <script>
+<script>
     // ==================== CONFIG ====================
-    const ADMIN_PASSWORD = "Stonecoldraffle@###1"; // ← Change this to your password
+    const ADMIN_PASSWORD = "Stonecoldraffle@###1"; // ← Change this
     const mainRaffleAddress = "kaspa:qzfcyspged7wkzzmlkud7vsxc3uexlgyu9qxdcuaudsr7phuxmkrc3xwfnexv";
-    
-    // Live Backend URL (Render)
     const BACKEND_URL = "https://kaspa-raffle.onrender.com/api/jackpot";
 
     let currentJackpot = 0;
+    let recentEntries = [];
 
-    // Fetch real balance from backend
-    async function fetchRealJackpot() {
+    // Fetch real data from backend
+    async function fetchRealData() {
         try {
             const response = await fetch(BACKEND_URL);
             const data = await response.json();
-            
+
             currentJackpot = data.balance;
+            recentEntries = data.recentEntries || [];
+
             updateJackpotDisplay();
-            
-            console.log("Jackpot updated from backend:", currentJackpot);
+            renderRecentEntries();
+
+            console.log("Data updated from backend");
         } catch (error) {
-            console.error("Failed to fetch jackpot:", error);
+            console.error("Failed to fetch data from backend:", error);
         }
     }
 
     function updateJackpotDisplay() {
         const totalEl = document.getElementById('jackpot-total');
         const winnerEl = document.getElementById('winner-share');
-        
+
         if (totalEl) totalEl.innerText = currentJackpot.toLocaleString('en-US', {minimumFractionDigits: 2});
         if (winnerEl) winnerEl.innerText = (currentJackpot * 0.5).toFixed(2);
     }
 
-    // Live Entries (demo for now)
-    let recentEntries = [
-        { addr: "kaspa:qz...a7f2", amount: "124.50", time: "2m ago" },
-        { addr: "kaspa:qz...b9k3", amount: "187.00", time: "9m ago" },
-    ];
-
-    function renderLiveEntries() {
+    // Render real recent entries from blockchain
+    function renderRecentEntries() {
         const container = document.getElementById('live-entries-list');
         if (!container) return;
+
         container.innerHTML = '';
-        
+
+        if (recentEntries.length === 0) {
+            const div = document.createElement('div');
+            div.className = 'px-5 py-4 text-center text-zinc-400 text-sm';
+            div.innerText = 'No recent entries yet';
+            container.appendChild(div);
+            return;
+        }
+
         recentEntries.forEach(entry => {
             const div = document.createElement('div');
             div.className = 'flex items-center justify-between px-5 py-3.5 hover:bg-zinc-800 rounded-2xl mx-1';
@@ -308,29 +313,12 @@
             `;
             container.appendChild(div);
         });
-        
+
         const countEl = document.getElementById('entry-count');
-        if (countEl) countEl.innerText = `${recentEntries.length + 12} entries today`;
+        if (countEl) countEl.innerText = `${recentEntries.length} recent entries`;
     }
 
-    function simulateNewEntry() {
-        const randomAddr = "kaspa:qz..." + Math.random().toString(36).substring(2, 6);
-        const randomAmount = (Math.random() * 400 + 120).toFixed(2);
-        
-        recentEntries.unshift({ addr: randomAddr, amount: randomAmount, time: "just now" });
-        if (recentEntries.length > 8) recentEntries.pop();
-        
-        currentJackpot += parseFloat(randomAmount);
-        updateJackpotDisplay();
-        renderLiveEntries();
-    }
-
-    function startLiveSimulation() {
-        renderLiveEntries();
-        setInterval(simulateNewEntry, 28000);
-    }
-
-    // Admin functions
+    // Admin functions (unchanged)
     function showAdminLogin() {
         document.getElementById('admin-modal').classList.remove('hidden');
         document.getElementById('admin-modal').classList.add('flex');
@@ -376,23 +364,22 @@
     }
 
     function init() {
-        // Fetch real jackpot from live backend
-        fetchRealJackpot();
-        
-        // Keep fetching every 30 seconds
-        setInterval(fetchRealJackpot, 30000);
-        
-        startLiveSimulation();
-        
-        // Load saved funding info from localStorage
+        // Fetch real data on load
+        fetchRealData();
+
+        // Refresh every 30 seconds
+        setInterval(fetchRealData, 30000);
+
+        // Load saved funding info
         const saved = localStorage.getItem('fundingAddress');
         if (saved) document.getElementById('funding-address-display').innerText = saved;
-        
-        console.log('%c[Kaspa Raffle] Live jackpot connected to Render backend!', 'color:#14b8a6');
+
+        console.log('%c[Kaspa Raffle] Live mode enabled (real data)', 'color:#14b8a6');
     }
 
     window.onload = init;
 </script>
+    
     
 </body>
 </html>
