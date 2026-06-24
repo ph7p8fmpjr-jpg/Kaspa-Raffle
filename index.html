@@ -253,125 +253,147 @@
     </div>
 
     <script>
-        const ADMIN_PASSWORD = "Stonecoldraffle@###1"; // ← CHANGE THIS TO YOUR OWN PASSWORD
-        const mainRaffleAddress = "kaspa:qzfcyspged7wkzzmlkud7vsxc3uexlgyu9qxdcuaudsr7phuxmkrc3xwfnexv";
-        let currentJackpot = 10247.85;
+       <script>
+    // ==================== CONFIG ====================
+    const ADMIN_PASSWORD = "Stonecoldraffle@###1"; // ← Change this
+    const mainRaffleAddress = "kaspa:qzfcyspged7wkzzmlkud7vsxc3uexlgyu9qxdcuaudsr7phuxmkrc3xwfnexv";
+    
+    // Backend API URL (change this later when backend is deployed)
+    const BACKEND_URL = "http://localhost:3000/api/jackpot";
 
-        function updateJackpotDisplay() {
-            document.getElementById('jackpot-total').innerText = currentJackpot.toLocaleString('en-US', {minimumFractionDigits: 2});
-            document.getElementById('winner-share').innerText = (currentJackpot * 0.5).toFixed(2);
-        }
+    let currentJackpot = 0;
 
-        let recentEntries = [
-            { addr: "kaspa:qz...a7f2", amount: "124.50", time: "2m ago" },
-            { addr: "kaspa:qz...b9k3", amount: "187.00", time: "9m ago" },
-        ];
-
-        function renderLiveEntries() {
-            const container = document.getElementById('live-entries-list');
-            container.innerHTML = '';
-            recentEntries.forEach(entry => {
-                const div = document.createElement('div');
-                div.className = 'flex items-center justify-between px-5 py-3.5 hover:bg-zinc-800 rounded-2xl mx-1';
-                div.innerHTML = `
-                    <div class="flex items-center gap-x-4">
-                        <div class="font-mono text-sm text-zinc-400">${entry.addr}</div>
-                        <div class="text-emerald-400 font-semibold">+${entry.amount} KAS</div>
-                    </div>
-                    <div class="text-xs text-zinc-500">${entry.time}</div>
-                `;
-                container.appendChild(div);
-            });
-            document.getElementById('entry-count').innerText = `${recentEntries.length + 12} entries today`;
-        }
-
-        function simulateNewEntry() {
-            const randomAddr = "kaspa:qz..." + Math.random().toString(36).substring(2, 6);
-            const randomAmount = (Math.random() * 500 + 120).toFixed(2); // above 100
-            recentEntries.unshift({ addr: randomAddr, amount: randomAmount, time: "just now" });
-            if (recentEntries.length > 8) recentEntries.pop();
-            currentJackpot += parseFloat(randomAmount);
+    // Fetch real balance from backend
+    async function fetchRealJackpot() {
+        try {
+            const response = await fetch(BACKEND_URL);
+            const data = await response.json();
+            
+            currentJackpot = data.balance;
             updateJackpotDisplay();
-            renderLiveEntries();
+            
+            console.log("Jackpot updated from backend:", currentJackpot);
+        } catch (error) {
+            console.error("Failed to fetch jackpot from backend:", error);
         }
+    }
 
-        function startLiveSimulation() {
-            renderLiveEntries();
-            setInterval(simulateNewEntry, 28000);
-        }
+    function updateJackpotDisplay() {
+        const totalEl = document.getElementById('jackpot-total');
+        const winnerEl = document.getElementById('winner-share');
+        
+        if (totalEl) totalEl.innerText = currentJackpot.toLocaleString('en-US', {minimumFractionDigits: 2});
+        if (winnerEl) winnerEl.innerText = (currentJackpot * 0.5).toFixed(2);
+    }
 
-        // QR Code
-        function showQRModal() {
-            const modal = document.getElementById('qr-modal');
+    // Live Entries Simulation (keep for now)
+    let recentEntries = [
+        { addr: "kaspa:qz...a7f2", amount: "124.50", time: "2m ago" },
+        { addr: "kaspa:qz...b9k3", amount: "187.00", time: "9m ago" },
+    ];
+
+    function renderLiveEntries() {
+        const container = document.getElementById('live-entries-list');
+        if (!container) return;
+        container.innerHTML = '';
+        
+        recentEntries.forEach(entry => {
+            const div = document.createElement('div');
+            div.className = 'flex items-center justify-between px-5 py-3.5 hover:bg-zinc-800 rounded-2xl mx-1';
+            div.innerHTML = `
+                <div class="flex items-center gap-x-4">
+                    <div class="font-mono text-sm text-zinc-400">${entry.addr}</div>
+                    <div class="text-emerald-400 font-semibold">+${entry.amount} KAS</div>
+                </div>
+                <div class="text-xs text-zinc-500">${entry.time}</div>
+            `;
+            container.appendChild(div);
+        });
+        
+        const countEl = document.getElementById('entry-count');
+        if (countEl) countEl.innerText = `${recentEntries.length + 12} entries today`;
+    }
+
+    function simulateNewEntry() {
+        const randomAddr = "kaspa:qz..." + Math.random().toString(36).substring(2, 6);
+        const randomAmount = (Math.random() * 400 + 120).toFixed(2);
+        
+        recentEntries.unshift({ addr: randomAddr, amount: randomAmount, time: "just now" });
+        if (recentEntries.length > 8) recentEntries.pop();
+        
+        currentJackpot += parseFloat(randomAmount);
+        updateJackpotDisplay();
+        renderLiveEntries();
+    }
+
+    function startLiveSimulation() {
+        renderLiveEntries();
+        setInterval(simulateNewEntry, 28000);
+    }
+
+    // Admin functions (keep the same)
+    function showAdminLogin() {
+        document.getElementById('admin-modal').classList.remove('hidden');
+        document.getElementById('admin-modal').classList.add('flex');
+    }
+
+    function verifyAdminPassword() {
+        if (document.getElementById('admin-password').value === ADMIN_PASSWORD) {
+            hideAdminModal();
+            const modal = document.getElementById('funding-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            const qrContainer = document.getElementById('qrcode');
-            qrContainer.innerHTML = '';
-            new QRCode(qrContainer, {
-                text: mainRaffleAddress,
-                width: 220,
-                height: 220,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-                correctLevel: QRCode.CorrectLevel.H
-            });
+            document.getElementById('new-funding-address').value = document.getElementById('funding-address-display').innerText;
+            document.getElementById('new-funding-desc').value = document.getElementById('funding-description-display').innerText;
+        } else {
+            alert("Incorrect password");
         }
-        function hideQRModal() {
-            document.getElementById('qr-modal').classList.remove('flex');
-            document.getElementById('qr-modal').classList.add('hidden');
-            document.getElementById('qrcode').innerHTML = '';
-        }
+    }
 
-        // Admin functions
-        function showAdminLogin() {
-            document.getElementById('admin-modal').classList.remove('hidden');
-            document.getElementById('admin-modal').classList.add('flex');
-        }
-        function verifyAdminPassword() {
-            if (document.getElementById('admin-password').value === ADMIN_PASSWORD) {
-                hideAdminModal();
-                const modal = document.getElementById('funding-modal');
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                document.getElementById('new-funding-address').value = document.getElementById('funding-address-display').innerText;
-                document.getElementById('new-funding-desc').value = document.getElementById('funding-description-display').innerText;
-            } else {
-                alert("Incorrect password");
-            }
-        }
-        function hideAdminModal() {
-            document.getElementById('admin-modal').classList.add('hidden');
-            document.getElementById('admin-modal').classList.remove('flex');
-        }
-        function hideFundingModal() {
-            document.getElementById('funding-modal').classList.add('hidden');
-            document.getElementById('funding-modal').classList.remove('flex');
-        }
-        function saveFundingInfo() {
-            const addr = document.getElementById('new-funding-address').value.trim();
-            const desc = document.getElementById('new-funding-desc').value.trim();
-            if (addr) document.getElementById('funding-address-display').innerText = addr;
-            if (desc) document.getElementById('funding-description-display').innerText = desc;
-            hideFundingModal();
-        }
+    function hideAdminModal() {
+        document.getElementById('admin-modal').classList.add('hidden');
+        document.getElementById('admin-modal').classList.remove('flex');
+    }
 
-        function copyMainAddress() {
-            navigator.clipboard.writeText(mainRaffleAddress);
-        }
-        function copyFundingAddress() {
-            navigator.clipboard.writeText(document.getElementById('funding-address-display').innerText);
-        }
+    function hideFundingModal() {
+        document.getElementById('funding-modal').classList.add('hidden');
+        document.getElementById('funding-modal').classList.remove('flex');
+    }
 
-        function init() {
-            updateJackpotDisplay();
-            startLiveSimulation();
-            
-            const saved = localStorage.getItem('fundingAddress');
-            if (saved) document.getElementById('funding-address-display').innerText = saved;
-            
-            console.log('%c[Kaspa Raffle] Final version with 100 KAS minimum ready!', 'color:#14b8a6');
-        }
-        window.onload = init;
+    function saveFundingInfo() {
+        const addr = document.getElementById('new-funding-address').value.trim();
+        const desc = document.getElementById('new-funding-desc').value.trim();
+        if (addr) document.getElementById('funding-address-display').innerText = addr;
+        if (desc) document.getElementById('funding-description-display').innerText = desc;
+        hideFundingModal();
+    }
+
+    function copyMainAddress() {
+        navigator.clipboard.writeText(mainRaffleAddress);
+    }
+
+    function copyFundingAddress() {
+        navigator.clipboard.writeText(document.getElementById('funding-address-display').innerText);
+    }
+
+    function init() {
+        // Fetch real jackpot from backend on load
+        fetchRealJackpot();
+        
+        // Keep fetching every 30 seconds
+        setInterval(fetchRealJackpot, 30000);
+        
+        startLiveSimulation();
+        
+        // Load saved funding info
+        const saved = localStorage.getItem('fundingAddress');
+        if (saved) document.getElementById('funding-address-display').innerText = saved;
+        
+        console.log('%c[Kaspa Raffle] Live jackpot connected to backend!', 'color:#14b8a6');
+    }
+
+    window.onload = init;
+</script>
     </script>
 </body>
 </html>
