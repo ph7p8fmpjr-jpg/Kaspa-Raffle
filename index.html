@@ -253,13 +253,12 @@
     </div>
 
     <script>
-       <script>
     // ==================== CONFIG ====================
-    const ADMIN_PASSWORD = "Stonecoldraffle@###1"; // ← Change this
+    const ADMIN_PASSWORD = "Stonecoldraffle@###1"; // ← Change this to your password
     const mainRaffleAddress = "kaspa:qzfcyspged7wkzzmlkud7vsxc3uexlgyu9qxdcuaudsr7phuxmkrc3xwfnexv";
     
-    // Backend API URL (change this later when backend is deployed)
-    const BACKEND_URL = "http://localhost:3000/api/jackpot";
+    // Live Backend URL (Render)
+    const BACKEND_URL = "https://kaspa-raffle.onrender.com/api/jackpot";
 
     let currentJackpot = 0;
 
@@ -274,7 +273,7 @@
             
             console.log("Jackpot updated from backend:", currentJackpot);
         } catch (error) {
-            console.error("Failed to fetch jackpot from backend:", error);
+            console.error("Failed to fetch jackpot:", error);
         }
     }
 
@@ -286,7 +285,7 @@
         if (winnerEl) winnerEl.innerText = (currentJackpot * 0.5).toFixed(2);
     }
 
-    // Live Entries Simulation (keep for now)
+    // Live Entries (demo for now)
     let recentEntries = [
         { addr: "kaspa:qz...a7f2", amount: "124.50", time: "2m ago" },
         { addr: "kaspa:qz...b9k3", amount: "187.00", time: "9m ago" },
@@ -331,7 +330,7 @@
         setInterval(simulateNewEntry, 28000);
     }
 
-    // Admin functions (keep the same)
+    // Admin functions
     function showAdminLogin() {
         document.getElementById('admin-modal').classList.remove('hidden');
         document.getElementById('admin-modal').classList.add('flex');
@@ -377,7 +376,7 @@
     }
 
     function init() {
-        // Fetch real jackpot from backend on load
+        // Fetch real jackpot from live backend
         fetchRealJackpot();
         
         // Keep fetching every 30 seconds
@@ -385,15 +384,15 @@
         
         startLiveSimulation();
         
-        // Load saved funding info
+        // Load saved funding info from localStorage
         const saved = localStorage.getItem('fundingAddress');
         if (saved) document.getElementById('funding-address-display').innerText = saved;
         
-        console.log('%c[Kaspa Raffle] Live jackpot connected to backend!', 'color:#14b8a6');
+        console.log('%c[Kaspa Raffle] Live jackpot connected to Render backend!', 'color:#14b8a6');
     }
 
     window.onload = init;
 </script>
-    </script>
+    
 </body>
 </html>
