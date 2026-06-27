@@ -1,12 +1,21 @@
-  {
-  "name": "backend",
-  "version": "1.0.0",
-  "main": "monitor.js",
+{
+  "name": "kaspa-raffle-website",
+  "version": "2.0.0",
+  "description": "Kaspa Daily Raffle — frontend + automated backend",
+  "main": "backend/server.js",
   "scripts": {
-    "start": "node monitor.js"
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js"
   },
+  "keywords": ["kaspa", "raffle"],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.19.2"
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "kaspa": "^0.13.0",
+    "websocket": "^1.0.35"
   }
 }

@@ -61,11 +61,11 @@
             <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-8 text-center">
                 <div class="text-sm font-medium text-zinc-400 tracking-wider mb-1">CURRENT JACKPOT</div>
                 <div class="flex items-baseline justify-center gap-x-2 mb-2">
-                    <div id="jackpot-total" class="text-6xl font-bold tabular-nums">10,247.85</div>
+                    <div id="jackpot-total" class="text-6xl font-bold tabular-nums text-zinc-500">—</div>
                     <div class="text-3xl text-zinc-400">KAS</div>
                 </div>
                 <div class="text-emerald-400 text-xl font-semibold mb-1">
-                    Winner gets right now: <span id="winner-share">5,123.93</span> KAS <span class="text-base">(50%)</span>
+                    Winner gets right now: <span id="winner-share">—</span> KAS <span class="text-base">(50%)</span>
                 </div>
                 <div class="text-xs text-zinc-500">Live • Next draw at midnight UTC</div>
             </div>
@@ -139,7 +139,7 @@
                     </span>
                 </h2>
             </div>
-            <div class="text-emerald-400 font-semibold text-sm" id="entry-count">47 entries today</div>
+            <div class="text-emerald-400 font-semibold text-sm" id="entry-count">Loading entries...</div>
         </div>
         <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-2 max-h-[380px] overflow-y-auto" id="live-entries-list"></div>
     </div>
@@ -253,28 +253,44 @@
     </div>
 <script>
     // ==================== CONFIG ====================
-    const ADMIN_PASSWORD = "Stonecoldraffle@###1"; // ← Change this
+    const API_BASE = "https://kaspa-raffle.onrender.com";
     const mainRaffleAddress = "kaspa:qzfcyspged7wkzzmlkud7vsxc3uexlgyu9qxdcuaudsr7phuxmkrc3xwfnexv";
-    const BACKEND_URL = "https://kaspa-raffle.onrender.com/api/jackpot";
 
-    let currentJackpot = 0;
+    let currentJackpot = null;
     let recentEntries = [];
+    let raffleDate = null;
+    let adminToken = null;
 
-    // Fetch real data from backend
     async function fetchRealData() {
         try {
-            const response = await fetch(BACKEND_URL);
+            const response = await fetch(`${API_BASE}/api/jackpot`);
             const data = await response.json();
 
             currentJackpot = data.balance;
             recentEntries = data.recentEntries || [];
+            raffleDate = data.raffleDate;
 
             updateJackpotDisplay();
             renderRecentEntries();
-
-            console.log("Data updated from backend");
         } catch (error) {
             console.error("Failed to fetch data from backend:", error);
+            const totalEl = document.getElementById('jackpot-total');
+            if (totalEl && currentJackpot === null) totalEl.innerText = 'Offline';
+        }
+    }
+
+    async function fetchConfig() {
+        try {
+            const response = await fetch(`${API_BASE}/api/config`);
+            const data = await response.json();
+            if (data.fundingAddress) {
+                document.getElementById('funding-address-display').innerText = data.fundingAddress;
+            }
+            if (data.fundingDescription) {
+                document.getElementById('funding-description-display').innerText = data.fundingDescription;
+            }
+        } catch (error) {
+            console.error("Failed to fetch config:", error);
         }
     }
 
@@ -282,8 +298,13 @@
         const totalEl = document.getElementById('jackpot-total');
         const winnerEl = document.getElementById('winner-share');
 
-        if (totalEl) totalEl.innerText = currentJackpot.toLocaleString('en-US', {minimumFractionDigits: 2});
-        if (winnerEl) winnerEl.innerText = (currentJackpot * 0.5).toFixed(2);
+        if (currentJackpot === null || currentJackpot === undefined) return;
+
+        if (totalEl) {
+            totalEl.innerText = currentJackpot.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            totalEl.classList.remove('text-zinc-500');
+        }
+        if (winnerEl) winnerEl.innerText = (currentJackpot * 0.5).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     }
 
     // Render real recent entries from blockchain
@@ -315,26 +336,31 @@
         });
 
         const countEl = document.getElementById('entry-count');
-        if (countEl) countEl.innerText = `${recentEntries.length} recent entries`;
+        if (countEl) {
+            const label = raffleDate ? `entries on ${raffleDate}` : 'entries today';
+            countEl.innerText = `${recentEntries.length} ${label}`;
+        }
     }
 
-    // Admin functions (unchanged)
+    // Admin functions
     function showAdminLogin() {
         document.getElementById('admin-modal').classList.remove('hidden');
         document.getElementById('admin-modal').classList.add('flex');
     }
 
     function verifyAdminPassword() {
-        if (document.getElementById('admin-password').value === ADMIN_PASSWORD) {
-            hideAdminModal();
-            const modal = document.getElementById('funding-modal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            document.getElementById('new-funding-address').value = document.getElementById('funding-address-display').innerText;
-            document.getElementById('new-funding-desc').value = document.getElementById('funding-description-display').innerText;
-        } else {
-            alert("Incorrect password");
+        const password = document.getElementById('admin-password').value;
+        if (!password) {
+            alert("Enter admin password");
+            return;
         }
+        adminToken = password;
+        hideAdminModal();
+        const modal = document.getElementById('funding-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.getElementById('new-funding-address').value = document.getElementById('funding-address-display').innerText;
+        document.getElementById('new-funding-desc').value = document.getElementById('funding-description-display').innerText;
     }
 
     function hideAdminModal() {
@@ -347,12 +373,33 @@
         document.getElementById('funding-modal').classList.remove('flex');
     }
 
-    function saveFundingInfo() {
+    async function saveFundingInfo() {
         const addr = document.getElementById('new-funding-address').value.trim();
         const desc = document.getElementById('new-funding-desc').value.trim();
-        if (addr) document.getElementById('funding-address-display').innerText = addr;
-        if (desc) document.getElementById('funding-description-display').innerText = desc;
-        hideFundingModal();
+
+        try {
+            const response = await fetch(`${API_BASE}/api/admin/funding`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${adminToken}`,
+                },
+                body: JSON.stringify({ fundingAddress: addr, fundingDescription: desc }),
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                alert(err.error || 'Failed to save — check admin password');
+                return;
+            }
+
+            const data = await response.json();
+            document.getElementById('funding-address-display').innerText = data.config.fundingAddress;
+            document.getElementById('funding-description-display').innerText = data.config.fundingDescription;
+            hideFundingModal();
+        } catch (error) {
+            alert('Could not reach server. Try again.');
+        }
     }
 
     function copyMainAddress() {
@@ -364,17 +411,10 @@
     }
 
     function init() {
-        // Fetch real data on load
+        fetchConfig();
         fetchRealData();
-
-        // Refresh every 30 seconds
-        setInterval(fetchRealData, 30000);
-
-        // Load saved funding info
-        const saved = localStorage.getItem('fundingAddress');
-        if (saved) document.getElementById('funding-address-display').innerText = saved;
-
-        console.log('%c[Kaspa Raffle] Live mode enabled (real data)', 'color:#14b8a6');
+        setInterval(fetchRealData, 15000);
+        console.log('%c[Kaspa Raffle] Live mode — auto-refresh every 15s', 'color:#14b8a6');
     }
 
     window.onload = init;
