@@ -10,7 +10,7 @@ function payoutsEnabled() {
 async function loadKaspa() {
     if (kaspaModule) return kaspaModule;
     globalThis.WebSocket = require('websocket').w3cwebsocket;
-    kaspaModule = require('kaspa');
+    kaspaModule = require('kaspa-wasm');
     return kaspaModule;
 }
 
@@ -32,7 +32,14 @@ function getWalletKey(kaspa) {
     const { PrivateKey, Mnemonic, XPrv, XPrivateKey } = kaspa;
 
     if (process.env.WALLET_PRIVATE_KEY) {
-        return new PrivateKey(process.env.WALLET_PRIVATE_KEY);
+        const hex = process.env.WALLET_PRIVATE_KEY.trim();
+        if (hex.includes(' ')) {
+            throw new Error('WALLET_PRIVATE_KEY looks like a seed phrase - use WALLET_MNEMONIC instead');
+        }
+        if (hex.length < 64) {
+            throw new Error('WALLET_PRIVATE_KEY is too short - run export private-key in kaspa-wallet and paste the full hex string');
+        }
+        return new PrivateKey(hex);
     }
 
     if (process.env.WALLET_MNEMONIC) {

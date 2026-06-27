@@ -7,7 +7,10 @@
     "start": "node backend/server.js",
     "dev": "node --watch backend/server.js"
   },
-  "keywords": ["kaspa", "raffle"],
+  "keywords": [
+    "kaspa",
+    "raffle"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
@@ -15,7 +18,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.0",
-    "kaspa": "^0.13.0",
+    "kaspa-wasm": "^0.13.0",
     "websocket": "^1.0.35"
   }
 }

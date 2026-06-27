@@ -107,7 +107,7 @@ async function processDrawQueue() {
 
         await refreshSnapshot();
     } catch (error) {
-        console.error('[draw] Queue failed:', error.message);
+        console.error('[draw] Queue failed:', error?.message || String(error));
     } finally {
         drawQueueRunning = false;
     }
