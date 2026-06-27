@@ -4,7 +4,16 @@ const express = require('express');
 const cors = require('cors');
 const { getRaffleSnapshot } = require('./lib/kaspa-api');
 const { getConfig, updateFunding } = require('./lib/config');
-const { runDailyDraw, getLastWinner, getDrawState } = require('./lib/draw');
+const {
+    runDrawForDate,
+    catchUpMissedDraws,
+    getLastWinner,
+    getDrawState,
+    getPendingPayouts,
+    markPayoutStatus,
+    getYesterdayDateKey,
+} = require('./lib/draw');
+const { fetchTransactions } = require('./lib/kaspa-api');
 const { payoutsEnabled, runDrawAndPayout } = require('./lib/payouts');
 
 const app = express();
@@ -17,7 +26,10 @@ const RAFFLE_ADDRESS = process.env.RAFFLE_ADDRESS ||
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 const POLL_MS = Number(process.env.POLL_MS || 30000);
 const DRAW_ENABLED = process.env.DRAW_ENABLED !== 'false';
+const RAFFLE_LAUNCH_DATE = process.env.RAFFLE_LAUNCH_DATE || null;
 const path = require('path');
+
+let drawQueueRunning = false;
 
 let cachedSnapshot = {
     balance: 0,
@@ -36,26 +48,68 @@ async function refreshSnapshot() {
     }
 }
 
-async function executeMidnightDraw() {
-    console.log('[draw] Running midnight UTC draw...');
-    try {
-        const drawRecord = await runDailyDraw(RAFFLE_ADDRESS, cachedSnapshot.balance);
-        console.log('[draw] Result:', JSON.stringify(drawRecord, null, 2));
+async function payDrawRecord(drawRecord) {
+    if (!drawRecord.winner) {
+        markPayoutStatus(drawRecord.date, 'not_required', null);
+        return null;
+    }
 
-        if (drawRecord.winner && payoutsEnabled()) {
-            const config = getConfig();
-            const payout = await runDrawAndPayout(RAFFLE_ADDRESS, drawRecord, config.fundingAddress);
-            console.log('[payout] Result:', JSON.stringify(payout, null, 2));
-            drawRecord.payoutResult = payout;
-        } else if (drawRecord.winner) {
-            console.log('[payout] Skipped — set WALLET_MNEMONIC or WALLET_PRIVATE_KEY to enable auto-payout');
+    if (!payoutsEnabled()) {
+        console.log('[payout] Skipped - set WALLET_PRIVATE_KEY in .env');
+        return null;
+    }
+
+    try {
+        const config = getConfig();
+        const payout = await runDrawAndPayout(RAFFLE_ADDRESS, drawRecord, config.fundingAddress);
+        console.log(`[payout] ${drawRecord.date}:`, JSON.stringify(payout, null, 2));
+        markPayoutStatus(drawRecord.date, payout.skipped ? 'skipped' : 'completed', payout);
+        return payout;
+    } catch (error) {
+        console.error(`[payout] ${drawRecord.date} failed:`, error.message);
+        markPayoutStatus(drawRecord.date, 'pending', { error: error.message });
+        throw error;
+    }
+}
+
+async function executeDrawForYesterday() {
+    const dateKey = getYesterdayDateKey();
+    const transactions = await fetchTransactions(RAFFLE_ADDRESS);
+    const drawRecord = await runDrawForDate(RAFFLE_ADDRESS, dateKey, transactions);
+    console.log('[draw] Result:', JSON.stringify(drawRecord, null, 2));
+    if (!drawRecord.skipped) {
+        await payDrawRecord(drawRecord);
+    }
+    await refreshSnapshot();
+    return drawRecord;
+}
+
+async function processDrawQueue() {
+    if (drawQueueRunning || !DRAW_ENABLED) return;
+    drawQueueRunning = true;
+
+    try {
+        const catchUp = await catchUpMissedDraws(RAFFLE_ADDRESS, RAFFLE_LAUNCH_DATE);
+        if (catchUp.caughtUp > 0) {
+            console.log(`[draw] Processed ${catchUp.caughtUp} missed draw(s) after downtime`);
+            for (const drawRecord of catchUp.results) {
+                if (!drawRecord.skipped) {
+                    await payDrawRecord(drawRecord);
+                }
+            }
+        }
+
+        const pending = getPendingPayouts();
+        for (const drawRecord of pending) {
+            console.log(`[payout] Retrying pending payout for ${drawRecord.date}`);
+            await payDrawRecord(drawRecord);
         }
 
         await refreshSnapshot();
-        return drawRecord;
     } catch (error) {
-        console.error('[draw] Failed:', error.message);
-        throw error;
+        console.error('[draw] Queue failed:', error.message);
+    } finally {
+        drawQueueRunning = false;
     }
 }
 
@@ -69,8 +123,11 @@ function scheduleMidnightDraw() {
         const state = getDrawState();
         const todayKey = now.toISOString().slice(0, 10);
 
-        if (now.getUTCHours() === 0 && now.getUTCMinutes() < 2 && state.lastDrawDate !== todayKey) {
-            await executeMidnightDraw();
+        const yesterday = getYesterdayDateKey();
+        const completed = state.completedRaffleDates || [];
+
+        if (now.getUTCHours() === 0 && now.getUTCMinutes() < 5 && !completed.includes(yesterday)) {
+            await executeDrawForYesterday();
         }
     }, 60 * 1000);
 }
@@ -124,7 +181,8 @@ app.post('/api/admin/funding', requireAdmin, (req, res) => {
 
 app.post('/api/admin/draw', requireAdmin, async (req, res) => {
     try {
-        const result = await executeMidnightDraw();
+        await processDrawQueue();
+        const result = await executeDrawForYesterday();
         res.json({ ok: true, result });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -137,7 +195,8 @@ app.get('/api/cron/draw', async (req, res) => {
         return res.status(401).json({ error: 'Invalid cron secret' });
     }
     try {
-        const result = await executeMidnightDraw();
+        await processDrawQueue();
+        const result = await executeDrawForYesterday();
         res.json({ ok: true, result });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -161,9 +220,14 @@ refreshSnapshot();
 setInterval(refreshSnapshot, POLL_MS);
 scheduleMidnightDraw();
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log(`Kaspa Raffle backend running on port ${PORT}`);
     console.log(`Raffle address: ${RAFFLE_ADDRESS}`);
     console.log(`Draw: ${DRAW_ENABLED ? 'ENABLED' : 'DISABLED'}`);
     console.log(`Auto-payout: ${payoutsEnabled() ? 'ENABLED' : 'DISABLED (set WALLET_PRIVATE_KEY)'}`);
+
+    if (DRAW_ENABLED) {
+        setTimeout(() => processDrawQueue(), 15000);
+        setInterval(() => processDrawQueue(), 60 * 60 * 1000);
+    }
 });

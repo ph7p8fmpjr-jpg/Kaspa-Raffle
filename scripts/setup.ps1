@@ -1,4 +1,4 @@
-# Kaspa Raffle - one-time setup (run in PowerShell)
+# Kaspa Raffle - one-time setup (run in PowerShell as Administrator for boot startup)
 $AppDir = "C:\Users\smoot\OneDrive\Desktop\Kaspa Raffle Website\kaspa-raffle-website"
 Set-Location $AppDir
 
@@ -30,34 +30,41 @@ CRON_SECRET=$cronSecret
     Write-Host ".env already exists - skipping"
 }
 
-$taskKaspad = "Kaspa Raffle Node"
-$taskBackend = "Kaspa Raffle Backend"
-$kaspadScript = Join-Path $AppDir "scripts\start-kaspad.ps1"
-$backendScript = Join-Path $AppDir "scripts\start-backend.ps1"
+$taskName = "Kaspa Raffle Auto Start"
+$startAllScript = Join-Path $AppDir "scripts\start-all.ps1"
+$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$startAllScript`""
 
-$kaspadAction = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$kaspadScript`""
-$backendAction = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -File `"$backendScript`""
+$logonTrigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
+$settings = New-ScheduledTaskSettingsSet `
+    -AllowStartIfOnBatteries `
+    -DontStopIfGoingOnBatteries `
+    -StartWhenAvailable `
+    -RestartCount 3 `
+    -RestartInterval (New-TimeSpan -Minutes 2)
 
-$trigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
-$settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -StartWhenAvailable
+try {
+    Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $logonTrigger -Settings $settings -Description "Starts kaspad + raffle backend at login" -Force | Out-Null
+} catch {
+    Write-Host "Could not register task - try running install-boot-startup.ps1 as Administrator" -ForegroundColor Yellow
+}
 
-Register-ScheduledTask -TaskName $taskKaspad -Action $kaspadAction -Trigger $trigger -Settings $settings -Description "Kaspa node for raffle payouts" -Force | Out-Null
-Register-ScheduledTask -TaskName $taskBackend -Action $backendAction -Trigger $trigger -Settings $settings -Description "Kaspa Raffle API and auto draw" -Force | Out-Null
-
-$oldTask = Get-ScheduledTask -TaskName "Run Kaspa Node" -ErrorAction SilentlyContinue
-if ($oldTask) {
-    Unregister-ScheduledTask -TaskName "Run Kaspa Node" -Confirm:$false
-    Write-Host "Removed old broken Run Kaspa Node task"
+# Remove old separate tasks if they exist
+foreach ($old in @("Kaspa Raffle Node", "Kaspa Raffle Backend")) {
+    $t = Get-ScheduledTask -TaskName $old -ErrorAction SilentlyContinue
+    if ($t) {
+        Unregister-ScheduledTask -TaskName $old -Confirm:$false -ErrorAction SilentlyContinue
+    }
 }
 
 Write-Host ""
-Write-Host "Scheduled tasks registered:" -ForegroundColor Green
-Write-Host "  - $taskKaspad"
-Write-Host "  - $taskBackend"
+Write-Host "Scheduled task registered:" -ForegroundColor Green
+Write-Host "  - $taskName (runs at login; for boot too run install-boot-startup.ps1 as Admin)"
+Write-Host ""
+Write-Host "Note: You do NOT need kaspa-wallet GUI open." -ForegroundColor Cyan
+Write-Host "Your key in .env powers payouts automatically via kaspad."
 Write-Host ""
 Write-Host "NEXT STEPS:" -ForegroundColor Cyan
-Write-Host '  1. Edit .env - set ADMIN_PASSWORD and WALLET_PRIVATE_KEY'
-Write-Host '  2. Run: .\scripts\start-kaspad.ps1'
-Write-Host '  3. Wait for node sync, then: .\scripts\start-backend.ps1'
-Write-Host '  4. On Render set DRAW_ENABLED=false'
+Write-Host '  1. Ensure WALLET_PRIVATE_KEY is set in .env'
+Write-Host '  2. Run: .\scripts\start-all.ps1'
+Write-Host '  3. On Render set DRAW_ENABLED=false'
 Write-Host ""

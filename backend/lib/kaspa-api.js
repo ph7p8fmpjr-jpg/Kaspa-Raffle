@@ -12,16 +12,27 @@ function formatTime(ms) {
     return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'UTC' }) + ' UTC';
 }
 
-function getTodayUtcBounds() {
-    const now = new Date();
-    const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+function getDayBounds(dateKey) {
+    const start = new Date(`${dateKey}T00:00:00.000Z`);
     const end = new Date(start);
     end.setUTCDate(end.getUTCDate() + 1);
     return {
-        dateKey: start.toISOString().slice(0, 10),
+        dateKey,
         startMs: start.getTime(),
         endMs: end.getTime(),
     };
+}
+
+function getTodayUtcBounds() {
+    const now = new Date();
+    const dateKey = now.toISOString().slice(0, 10);
+    return getDayBounds(dateKey);
+}
+
+function getYesterdayDateKey() {
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() - 1);
+    return d.toISOString().slice(0, 10);
 }
 
 async function fetchBalance(raffleAddress) {
@@ -36,6 +47,65 @@ async function fetchTransactions(raffleAddress, limit = 500) {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Transaction fetch failed: ${res.status}`);
     return res.json();
+}
+
+function sortedAcceptedTransactions(transactions) {
+    return [...transactions]
+        .filter((tx) => tx.is_accepted)
+        .sort((a, b) => {
+            const ta = a.accepting_block_time || a.block_time;
+            const tb = b.accepting_block_time || b.block_time;
+            return ta - tb;
+        });
+}
+
+function balanceAtTime(transactions, raffleAddress, atMs) {
+    let balanceSompi = 0n;
+
+    for (const tx of sortedAcceptedTransactions(transactions)) {
+        const txTime = tx.accepting_block_time || tx.block_time;
+        if (txTime > atMs) break;
+
+        for (const out of tx.outputs || []) {
+            if (out.script_public_key_address === raffleAddress) {
+                balanceSompi += BigInt(out.amount);
+            }
+        }
+
+        for (const inp of tx.inputs || []) {
+            if (inp.previous_outpoint_address === raffleAddress) {
+                balanceSompi -= BigInt(inp.previous_outpoint_amount || 0);
+            }
+        }
+    }
+
+    return Number(balanceSompi) / SOMPI_PER_KAS;
+}
+
+function jackpotAtEndOfDay(transactions, raffleAddress, dateKey) {
+    const { endMs } = getDayBounds(dateKey);
+    return balanceAtTime(transactions, raffleAddress, endMs - 1);
+}
+
+function earliestEntryDateKey(transactions, raffleAddress) {
+    const minSompi = BigInt(MIN_ENTRY_KAS) * BigInt(SOMPI_PER_KAS);
+    let earliest = null;
+
+    for (const tx of sortedAcceptedTransactions(transactions)) {
+        let toRaffleSompi = 0n;
+        for (const out of tx.outputs || []) {
+            if (out.script_public_key_address === raffleAddress) {
+                toRaffleSompi += BigInt(out.amount);
+            }
+        }
+        if (toRaffleSompi < minSompi) continue;
+
+        const txTime = tx.accepting_block_time || tx.block_time;
+        const dateKey = new Date(txTime).toISOString().slice(0, 10);
+        if (!earliest || dateKey < earliest) earliest = dateKey;
+    }
+
+    return earliest;
 }
 
 function parseEntriesForDay(transactions, raffleAddress, dayBounds) {
@@ -96,9 +166,13 @@ module.exports = {
     MIN_ENTRY_KAS,
     SOMPI_PER_KAS,
     shortenAddress,
+    getDayBounds,
     getTodayUtcBounds,
+    getYesterdayDateKey,
     fetchBalance,
     fetchTransactions,
     parseEntriesForDay,
+    jackpotAtEndOfDay,
+    earliestEntryDateKey,
     getRaffleSnapshot,
 };
