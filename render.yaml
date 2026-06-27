@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: kaspa-raffle
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DRAW_ENABLED
+        value: "false"
+      - key: POLL_MS
+        value: "30000"
+      - key: NODE_VERSION
+        value: "20"

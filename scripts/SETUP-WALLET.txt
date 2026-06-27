@@ -1,0 +1,33 @@
+HOW TO EXPORT YOUR RAFFLE WALLET PRIVATE KEY
+==============================================
+
+The auto-payout system needs the private key for the wallet that controls:
+  kaspa:qzfcyspged7wkzzmlkud7vsxc3uexlgyu9qxdcuaudsr7phuxmkrc3xwfnexv
+
+Option A — Kaspa CLI Wallet (recommended)
+------------------------------------------
+1. Open PowerShell
+2. Run:
+   C:\Users\smoot\OneDrive\Desktop\Kaspa\rusty-kaspa-v2.0.0-win64\kaspa-wallet.exe
+
+3. Type: open raffle
+   (or whatever wallet name holds the raffle funds)
+
+4. Type: export private-key
+   Copy the hex string shown
+
+5. Paste into .env:
+   WALLET_PRIVATE_KEY=<paste hex here>
+
+6. NEVER commit .env to git — it is in .gitignore
+
+
+Option B — Mnemonic
+-------------------
+If you have the 24-word seed phrase instead:
+   WALLET_MNEMONIC=word1 word2 word3 ...
+(Remove WALLET_PRIVATE_KEY if using mnemonic)
+
+
+After saving .env, restart the backend:
+   .\scripts\start-backend.ps1

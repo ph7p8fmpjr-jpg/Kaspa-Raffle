@@ -16,6 +16,8 @@ const RAFFLE_ADDRESS = process.env.RAFFLE_ADDRESS ||
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 const POLL_MS = Number(process.env.POLL_MS || 30000);
+const DRAW_ENABLED = process.env.DRAW_ENABLED !== 'false';
+const path = require('path');
 
 let cachedSnapshot = {
     balance: 0,
@@ -58,6 +60,10 @@ async function executeMidnightDraw() {
 }
 
 function scheduleMidnightDraw() {
+    if (!DRAW_ENABLED) {
+        console.log('Midnight draw disabled on this instance (DRAW_ENABLED=false)');
+        return;
+    }
     setInterval(async () => {
         const now = new Date();
         const state = getDrawState();
@@ -139,8 +145,15 @@ app.get('/api/cron/draw', async (req, res) => {
 });
 
 app.get('/health', (req, res) => {
-    res.json({ ok: true, uptime: process.uptime() });
+    res.json({
+        ok: true,
+        uptime: process.uptime(),
+        drawEnabled: DRAW_ENABLED,
+        payoutsEnabled: payoutsEnabled(),
+    });
 });
+
+app.use(express.static(path.join(__dirname, '..')));
 
 const PORT = process.env.PORT || 3000;
 
@@ -151,5 +164,6 @@ scheduleMidnightDraw();
 app.listen(PORT, () => {
     console.log(`Kaspa Raffle backend running on port ${PORT}`);
     console.log(`Raffle address: ${RAFFLE_ADDRESS}`);
-    console.log(`Auto-payout: ${payoutsEnabled() ? 'ENABLED' : 'DISABLED (set WALLET_MNEMONIC)'}`);
+    console.log(`Draw: ${DRAW_ENABLED ? 'ENABLED' : 'DISABLED'}`);
+    console.log(`Auto-payout: ${payoutsEnabled() ? 'ENABLED' : 'DISABLED (set WALLET_PRIVATE_KEY)'}`);
 });
