@@ -15,7 +15,7 @@ if (-not (Test-Path $envPath)) {
     $envContent = @"
 PORT=3000
 ADMIN_PASSWORD=CHANGE_ME_NOW
-RAFFLE_ADDRESS=kaspa:qzfcyspged7wkzzmlkud7vsxc3uexlgyu9qxdcuaudsr7phuxmkrc3xwfnexv
+RAFFLE_ADDRESS=kaspa:qr3rxmae6r5h9kkt7q5my7rajy492da7cxpy0kkzr99tk3xcydc2uwa3a7u6r
 POLL_MS=15000
 DRAW_ENABLED=true
 KASPA_NETWORK=mainnet

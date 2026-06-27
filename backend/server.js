@@ -21,7 +21,7 @@ app.use(cors());
 app.use(express.json());
 
 const RAFFLE_ADDRESS = process.env.RAFFLE_ADDRESS ||
-    'kaspa:qzfcyspged7wkzzmlkud7vsxc3uexlgyu9qxdcuaudsr7phuxmkrc3xwfnexv';
+    'kaspa:qr3rxmae6r5h9kkt7q5my7rajy492da7cxpy0kkzr99tk3xcydc2uwa3a7u6r';
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 const POLL_MS = Number(process.env.POLL_MS || 30000);
