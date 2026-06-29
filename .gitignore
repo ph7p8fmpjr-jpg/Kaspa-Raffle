@@ -4,3 +4,5 @@ backend/data/
 logs/
 *.log
 .DS_Store
+kaspa-sdk-v2.0.1/
+kaspa-wasm32-sdk-v2.0.1.zip

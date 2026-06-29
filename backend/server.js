@@ -15,13 +15,21 @@ const {
 } = require('./lib/draw');
 const { fetchTransactions } = require('./lib/kaspa-api');
 const { payoutsEnabled, runDrawAndPayout } = require('./lib/payouts');
+const {
+    resolveRaffleOnchainAddress,
+    getRaffleDisplayAddress,
+} = require('./lib/kns-resolve');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const RAFFLE_ADDRESS = process.env.RAFFLE_ADDRESS ||
-    'kaspa:qr3rxmae6r5h9kkt7q5my7rajy492da7cxpy0kkzr99tk3xcydc2uwa3a7u6r';
+const RAFFLE_ADDRESS_CONFIGURED = process.env.RAFFLE_ADDRESS || 'winraffle.kas';
+const RAFFLE_DISPLAY_ADDRESS = getRaffleDisplayAddress(
+    RAFFLE_ADDRESS_CONFIGURED,
+    process.env.RAFFLE_DISPLAY_ADDRESS || 'winraffle.kas'
+);
+let RAFFLE_ONCHAIN_ADDRESS = null;
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 const POLL_MS = Number(process.env.POLL_MS || 30000);
@@ -41,7 +49,7 @@ let cachedSnapshot = {
 
 async function refreshSnapshot() {
     try {
-        cachedSnapshot = await getRaffleSnapshot(RAFFLE_ADDRESS);
+        cachedSnapshot = await getRaffleSnapshot(RAFFLE_ONCHAIN_ADDRESS);
         console.log(`[${new Date().toISOString()}] Balance: ${cachedSnapshot.balance} KAS | Entries today: ${cachedSnapshot.entryCount}`);
     } catch (error) {
         console.error('Snapshot refresh failed:', error.message);
@@ -61,21 +69,22 @@ async function payDrawRecord(drawRecord) {
 
     try {
         const config = getConfig();
-        const payout = await runDrawAndPayout(RAFFLE_ADDRESS, drawRecord, config.fundingAddress);
+        const payout = await runDrawAndPayout(RAFFLE_ONCHAIN_ADDRESS, drawRecord, config.fundingAddress);
         console.log(`[payout] ${drawRecord.date}:`, JSON.stringify(payout, null, 2));
         markPayoutStatus(drawRecord.date, payout.skipped ? 'skipped' : 'completed', payout);
         return payout;
     } catch (error) {
-        console.error(`[payout] ${drawRecord.date} failed:`, error.message);
-        markPayoutStatus(drawRecord.date, 'pending', { error: error.message });
-        throw error;
+        const message = error?.message || String(error);
+        console.error(`[payout] ${drawRecord.date} failed:`, message);
+        markPayoutStatus(drawRecord.date, 'pending', { error: message });
+        return { failed: true, error: message };
     }
 }
 
 async function executeDrawForYesterday() {
     const dateKey = getYesterdayDateKey();
-    const transactions = await fetchTransactions(RAFFLE_ADDRESS);
-    const drawRecord = await runDrawForDate(RAFFLE_ADDRESS, dateKey, transactions);
+    const transactions = await fetchTransactions(RAFFLE_ONCHAIN_ADDRESS);
+    const drawRecord = await runDrawForDate(RAFFLE_ONCHAIN_ADDRESS, dateKey, transactions);
     console.log('[draw] Result:', JSON.stringify(drawRecord, null, 2));
     if (!drawRecord.skipped) {
         await payDrawRecord(drawRecord);
@@ -89,7 +98,7 @@ async function processDrawQueue() {
     drawQueueRunning = true;
 
     try {
-        const catchUp = await catchUpMissedDraws(RAFFLE_ADDRESS, RAFFLE_LAUNCH_DATE);
+        const catchUp = await catchUpMissedDraws(RAFFLE_ONCHAIN_ADDRESS, RAFFLE_LAUNCH_DATE);
         if (catchUp.caughtUp > 0) {
             console.log(`[draw] Processed ${catchUp.caughtUp} missed draw(s) after downtime`);
             for (const drawRecord of catchUp.results) {
@@ -127,7 +136,11 @@ function scheduleMidnightDraw() {
         const completed = state.completedRaffleDates || [];
 
         if (now.getUTCHours() === 0 && now.getUTCMinutes() < 5 && !completed.includes(yesterday)) {
-            await executeDrawForYesterday();
+            try {
+                await executeDrawForYesterday();
+            } catch (error) {
+                console.error('[draw] Midnight draw failed:', error?.message || String(error));
+            }
         }
     }, 60 * 1000);
 }
@@ -159,7 +172,8 @@ app.get('/api/config', (req, res) => {
 app.get('/api/status', (req, res) => {
     const lastDraw = getLastWinner();
     res.json({
-        raffleAddress: RAFFLE_ADDRESS,
+        raffleAddress: RAFFLE_DISPLAY_ADDRESS,
+        raffleOnchainAddress: RAFFLE_ONCHAIN_ADDRESS,
         payoutsEnabled: payoutsEnabled(),
         lastDraw,
         snapshot: {
@@ -216,18 +230,31 @@ app.use(express.static(path.join(__dirname, '..')));
 
 const PORT = process.env.PORT || 3000;
 
-refreshSnapshot();
-setInterval(refreshSnapshot, POLL_MS);
-scheduleMidnightDraw();
+async function startServer() {
+    RAFFLE_ONCHAIN_ADDRESS = await resolveRaffleOnchainAddress(
+        RAFFLE_ADDRESS_CONFIGURED,
+        process.env.RAFFLE_ONCHAIN_FALLBACK
+    );
 
-app.listen(PORT, async () => {
-    console.log(`Kaspa Raffle backend running on port ${PORT}`);
-    console.log(`Raffle address: ${RAFFLE_ADDRESS}`);
-    console.log(`Draw: ${DRAW_ENABLED ? 'ENABLED' : 'DISABLED'}`);
-    console.log(`Auto-payout: ${payoutsEnabled() ? 'ENABLED' : 'DISABLED (set WALLET_PRIVATE_KEY)'}`);
+    await refreshSnapshot();
+    setInterval(refreshSnapshot, POLL_MS);
+    scheduleMidnightDraw();
 
-    if (DRAW_ENABLED) {
-        setTimeout(() => processDrawQueue(), 15000);
-        setInterval(() => processDrawQueue(), 60 * 60 * 1000);
-    }
+    app.listen(PORT, async () => {
+        console.log(`Kaspa Raffle backend running on port ${PORT}`);
+        console.log(`Raffle address: ${RAFFLE_DISPLAY_ADDRESS}`);
+        console.log(`On-chain wallet: ${RAFFLE_ONCHAIN_ADDRESS}`);
+        console.log(`Draw: ${DRAW_ENABLED ? 'ENABLED' : 'DISABLED'}`);
+        console.log(`Auto-payout: ${payoutsEnabled() ? 'ENABLED' : 'DISABLED (set WALLET_PRIVATE_KEY)'}`);
+
+        if (DRAW_ENABLED) {
+            setTimeout(() => processDrawQueue(), 15000);
+            setInterval(() => processDrawQueue(), 60 * 60 * 1000);
+        }
+    });
+}
+
+startServer().catch((error) => {
+    console.error('Failed to start server:', error.message);
+    process.exit(1);
 });

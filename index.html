@@ -83,8 +83,8 @@
                     </button>
                 </div>
                 
-                <div onclick="copyMainAddress()" class="kaspa-address bg-zinc-950 border border-zinc-700 hover:border-teal-500/50 p-4 rounded-2xl text-sm md:text-base font-mono text-teal-300 break-all cursor-pointer mb-4">
-                    kaspa:qr3rxmae6r5h9kkt7q5my7rajy492da7cxpy0kkzr99tk3xcydc2uwa3a7u6r
+                <div id="main-raffle-address-display" onclick="copyMainAddress()" class="kaspa-address bg-zinc-950 border border-zinc-700 hover:border-teal-500/50 p-4 rounded-2xl text-sm md:text-base font-mono text-teal-300 break-all cursor-pointer mb-4">
+                    winraffle.kas
                 </div>
                 
                 <div class="flex gap-3">
@@ -149,8 +149,9 @@
         <div class="max-w-2xl mx-auto text-center bg-zinc-900 border border-zinc-700 rounded-3xl p-8">
             <h3 class="text-xl font-semibold mb-2">Verify Everything On-Chain</h3>
             <p class="text-zinc-400 mb-6 text-sm">All transactions are public on the Kaspa blockchain.</p>
-            <a href="https://explorer.kaspa.org/addresses/kaspa:qr3rxmae6r5h9kkt7q5my7rajy492da7cxpy0kkzr99tk3xcydc2uwa3a7u6r" 
+            <a id="explorer-link" href="https://explorer.kaspa.org/addresses/kaspa:qr3rxmae6r5h9kkt7q5my7rajy492da7cxpy0kkzr99tk3xcydc2uwa3a7u6r" 
                target="_blank"
+               rel="noopener noreferrer"
                class="inline-flex items-center justify-center gap-x-3 bg-teal-600 hover:bg-teal-700 transition-all text-white font-semibold px-8 py-4 rounded-2xl text-lg w-full md:w-auto">
                 <i class="fa-solid fa-link"></i>
                 <span>View Raffle Address on Kaspa Explorer</span>
@@ -206,8 +207,8 @@
                 <div class="font-semibold text-xl">Scan to Send KAS (Min 100 KAS)</div>
                 <button onclick="hideQRModal()" class="text-2xl text-zinc-400 hover:text-white">×</button>
             </div>
-            <div id="qrcode" class="flex justify-center mb-6 p-4 bg-white rounded-2xl"></div>
-            <div class="kaspa-address text-sm text-teal-300 mb-4 break-all">kaspa:qr3rxmae6r5h9kkt7q5my7rajy492da7cxpy0kkzr99tk3xcydc2uwa3a7u6r</div>
+            <div id="qrcode" class="flex justify-center items-center mb-6 p-4 bg-white rounded-2xl min-h-[240px]"></div>
+            <div id="qr-address-display" class="kaspa-address text-sm text-teal-300 mb-4 break-all">winraffle.kas</div>
             <button onclick="copyMainAddress(); hideQRModal();" class="w-full bg-white hover:bg-zinc-100 text-zinc-950 font-semibold py-3.5 rounded-2xl flex justify-center items-center gap-x-2">
                 <i class="fa-solid fa-copy"></i> <span>Copy Address</span>
             </button>
@@ -251,10 +252,18 @@
             </div>
         </div>
     </div>
+
+    <div id="copy-toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] bg-emerald-500 text-white text-sm font-semibold px-5 py-3 rounded-2xl shadow-lg">
+        Address copied!
+    </div>
+
 <script>
     // ==================== CONFIG ====================
     const API_BASE = "https://kaspa-raffle.onrender.com";
-    const mainRaffleAddress = "kaspa:qr3rxmae6r5h9kkt7q5my7rajy492da7cxpy0kkzr99tk3xcydc2uwa3a7u6r";
+    const mainRaffleAddress = "winraffle.kas";
+    const defaultOnchainAddress = "kaspa:qr3rxmae6r5h9kkt7q5my7rajy492da7cxpy0kkzr99tk3xcydc2uwa3a7u6r";
+    let onchainRaffleAddress = defaultOnchainAddress;
+    let qrCodeInstance = null;
 
     let currentJackpot = null;
     let recentEntries = [];
@@ -281,16 +290,42 @@
 
     async function fetchConfig() {
         try {
-            const response = await fetch(`${API_BASE}/api/config`);
-            const data = await response.json();
+            const [configRes, statusRes] = await Promise.all([
+                fetch(`${API_BASE}/api/config`),
+                fetch(`${API_BASE}/api/status`),
+            ]);
+            const data = await configRes.json();
             if (data.fundingAddress) {
                 document.getElementById('funding-address-display').innerText = data.fundingAddress;
             }
             if (data.fundingDescription) {
                 document.getElementById('funding-description-display').innerText = data.fundingDescription;
             }
+
+            if (statusRes.ok) {
+                const status = await statusRes.json();
+                if (status.raffleAddress) {
+                    updateRaffleAddressDisplay(status.raffleAddress, status.raffleOnchainAddress);
+                }
+            }
         } catch (error) {
             console.error("Failed to fetch config:", error);
+        }
+    }
+
+    function updateRaffleAddressDisplay(displayAddress, onchainAddress) {
+        const display = displayAddress || mainRaffleAddress;
+        const onchain = onchainAddress || defaultOnchainAddress;
+        onchainRaffleAddress = onchain;
+
+        const mainEl = document.getElementById('main-raffle-address-display');
+        const qrEl = document.getElementById('qr-address-display');
+        const explorerEl = document.getElementById('explorer-link');
+
+        if (mainEl) mainEl.innerText = display;
+        if (qrEl) qrEl.innerText = display;
+        if (explorerEl) {
+            explorerEl.href = `https://explorer.kaspa.org/addresses/${encodeURIComponent(onchain)}`;
         }
     }
 
@@ -402,15 +437,108 @@
         }
     }
 
-    function copyMainAddress() {
-        navigator.clipboard.writeText(mainRaffleAddress);
+    function showCopyToast(message) {
+        const toast = document.getElementById('copy-toast');
+        if (!toast) return;
+        toast.innerText = message;
+        toast.classList.remove('hidden');
+        clearTimeout(showCopyToast._timer);
+        showCopyToast._timer = setTimeout(() => toast.classList.add('hidden'), 2000);
     }
 
-    function copyFundingAddress() {
-        navigator.clipboard.writeText(document.getElementById('funding-address-display').innerText);
+    async function copyText(text) {
+        if (!text) return false;
+        try {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(text);
+                return true;
+            }
+        } catch (_) {
+            // fall through to legacy copy
+        }
+
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.top = '-1000px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        const copied = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        return copied;
+    }
+
+    async function copyMainAddress() {
+        const text = getDisplayAddress();
+        const copied = await copyText(text);
+        showCopyToast(copied ? 'Address copied!' : 'Copy failed — select and copy manually');
+    }
+
+    async function copyFundingAddress() {
+        const text = document.getElementById('funding-address-display')?.innerText?.trim();
+        const copied = await copyText(text);
+        showCopyToast(copied ? 'Funding address copied!' : 'Copy failed — select and copy manually');
+    }
+
+    function getDisplayAddress() {
+        return document.getElementById('main-raffle-address-display')?.innerText?.trim() || mainRaffleAddress;
+    }
+
+    function getQrPaymentUri() {
+        const display = getDisplayAddress();
+        if (display.endsWith('.kas') && !display.startsWith('kaspa:')) {
+            return `kaspa:${display}`;
+        }
+        if (display.startsWith('kaspa:')) return display;
+        return onchainRaffleAddress || defaultOnchainAddress;
+    }
+
+    function renderQRCode() {
+        const container = document.getElementById('qrcode');
+        if (!container) return;
+
+        container.innerHTML = '';
+        if (typeof QRCode === 'undefined') {
+            container.innerHTML = '<p class="text-zinc-600 text-sm p-4">QR library failed to load. Refresh the page.</p>';
+            return;
+        }
+
+        qrCodeInstance = null;
+        const text = getQrPaymentUri();
+
+        try {
+            qrCodeInstance = new QRCode(container, {
+                text,
+                width: 220,
+                height: 220,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H,
+            });
+        } catch (error) {
+            console.error('QR render failed:', error);
+            container.innerHTML = '<p class="text-zinc-600 text-sm p-4">Could not generate QR code.</p>';
+        }
+    }
+
+    function showQRModal() {
+        const modal = document.getElementById('qr-modal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        requestAnimationFrame(() => renderQRCode());
+    }
+
+    function hideQRModal() {
+        const modal = document.getElementById('qr-modal');
+        if (!modal) return;
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
     }
 
     function init() {
+        updateRaffleAddressDisplay(mainRaffleAddress, defaultOnchainAddress);
         fetchConfig();
         fetchRealData();
         setInterval(fetchRealData, 15000);
