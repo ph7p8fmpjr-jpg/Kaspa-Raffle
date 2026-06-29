@@ -11,3 +11,9 @@ services:
         value: "30000"
       - key: NODE_VERSION
         value: "20"
+      - key: RAFFLE_ADDRESS
+        value: winraffle.kas
+      - key: RAFFLE_DISPLAY_ADDRESS
+        value: winraffle.kas
+      - key: RAFFLE_ONCHAIN_FALLBACK
+        value: kaspa:qr3rxmae6r5h9kkt7q5my7rajy492da7cxpy0kkzr99tk3xcydc2uwa3a7u6r
