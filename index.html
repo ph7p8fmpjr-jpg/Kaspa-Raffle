@@ -486,12 +486,7 @@
     }
 
     function getQrPaymentUri() {
-        const display = getDisplayAddress();
-        if (display.endsWith('.kas') && !display.startsWith('kaspa:')) {
-            return `kaspa:${display}`;
-        }
-        if (display.startsWith('kaspa:')) return display;
-        return onchainRaffleAddress || defaultOnchainAddress;
+        return getDisplayAddress();
     }
 
     function renderQRCode() {
