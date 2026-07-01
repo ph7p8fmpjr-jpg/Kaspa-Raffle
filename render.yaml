@@ -17,3 +17,6 @@ services:
         value: winraffle.kas
       - key: RAFFLE_ONCHAIN_FALLBACK
         value: kaspa:qr3rxmae6r5h9kkt7q5my7rajy492da7cxpy0kkzr99tk3xcydc2uwa3a7u6r
+      # Set this in the Render dashboard (Environment) — same value as local .env ADMIN_PASSWORD
+      - key: ADMIN_PASSWORD
+        sync: false

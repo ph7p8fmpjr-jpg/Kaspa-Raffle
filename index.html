@@ -423,7 +423,15 @@
             });
 
             if (!response.ok) {
-                const err = await response.json();
+                const err = await response.json().catch(() => ({}));
+                if (response.status === 503 && err.error?.includes('not configured')) {
+                    alert('Admin password is not set on the server. Add ADMIN_PASSWORD in your Render environment variables, then try again.');
+                    return;
+                }
+                if (response.status === 401) {
+                    alert('Wrong admin password. Use the ADMIN_PASSWORD from your server .env / Render settings.');
+                    return;
+                }
                 alert(err.error || 'Failed to save — check admin password');
                 return;
             }
