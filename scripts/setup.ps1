@@ -32,35 +32,18 @@ CRON_SECRET=$cronSecret
     Write-Host ".env already exists - skipping"
 }
 
-$taskName = "Kaspa Raffle Auto Start"
-$startAllScript = Join-Path $AppDir "scripts\start-all.ps1"
-$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"$startAllScript`""
-
-$logonTrigger = New-ScheduledTaskTrigger -AtLogOn -User $env:USERNAME
-$settings = New-ScheduledTaskSettingsSet `
-    -AllowStartIfOnBatteries `
-    -DontStopIfGoingOnBatteries `
-    -StartWhenAvailable `
-    -RestartCount 3 `
-    -RestartInterval (New-TimeSpan -Minutes 2)
-
 try {
-    Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $logonTrigger -Settings $settings -Description "Starts kaspad + raffle backend at login" -Force | Out-Null
+    & (Join-Path $AppDir "scripts\install-startup.ps1")
 } catch {
-    Write-Host "Could not register task - try running install-boot-startup.ps1 as Administrator" -ForegroundColor Yellow
-}
-
-# Remove old separate tasks if they exist
-foreach ($old in @("Kaspa Raffle Node", "Kaspa Raffle Backend")) {
-    $t = Get-ScheduledTask -TaskName $old -ErrorAction SilentlyContinue
-    if ($t) {
-        Unregister-ScheduledTask -TaskName $old -Confirm:$false -ErrorAction SilentlyContinue
-    }
+    Write-Host "Could not register startup tasks: $_" -ForegroundColor Yellow
+    Write-Host "Try: .\scripts\install-startup.ps1" -ForegroundColor Yellow
 }
 
 Write-Host ""
-Write-Host "Scheduled task registered:" -ForegroundColor Green
-Write-Host "  - $taskName (runs at login; for boot too run install-boot-startup.ps1 as Admin)"
+Write-Host "Scheduled tasks registered:" -ForegroundColor Green
+Write-Host "  - Kaspa Raffle Auto Start (at login)"
+Write-Host "  - Kaspa Raffle Keep Alive (every 5 min)"
+Write-Host "  - For boot-before-login too: run install-boot-startup.ps1 as Administrator"
 Write-Host ""
 Write-Host "Note: You do NOT need kaspa-wallet GUI open." -ForegroundColor Cyan
 Write-Host "Your key in .env powers payouts automatically via kaspad."
