@@ -3,38 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kaspa Daily Raffle • Min 100 KAS</title>
+    <title>Kaspa Raffle • The raffle that can't cheat</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body { font-family: 'Inter', system_ui, sans-serif; }
+        body { font-family: 'Inter', system-ui, sans-serif; }
         .heading { font-family: 'Space Grotesk', 'Inter', sans-serif; font-weight: 600; }
         .kaspa-gradient { background: linear-gradient(135deg, #14b8a6, #0f766e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .kaspa-address { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; word-break: break-all; }
+        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
         .split-badge { font-size: 0.75rem; padding: 2px 10px; border-radius: 9999px; font-weight: 700; }
         .live-dot { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
     </style>
 </head>
 <body class="bg-zinc-950 text-zinc-200">
+
     <!-- Navbar -->
     <nav class="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-lg sticky top-0 z-50">
         <div class="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between">
             <div class="flex items-center gap-x-3">
                 <div class="w-10 h-10 bg-teal-500 rounded-2xl flex items-center justify-center">
-                    <i class="fa-solid fa-dice text-white text-3xl"></i>
+                    <i class="fa-solid fa-dice text-white text-2xl"></i>
                 </div>
                 <div>
                     <span class="font-bold text-2xl tracking-tighter">Kaspa</span>
                     <span class="font-semibold text-teal-400">Raffle</span>
                 </div>
+                <span id="network-badge" class="split-badge bg-purple-500/20 text-purple-300 border border-purple-500/40">TESTNET</span>
             </div>
-            <div class="flex items-center gap-x-4 text-sm">
-                <a href="#how-it-works" class="px-4 py-2 font-medium hover:text-white transition-colors">How it Works</a>
-                <a href="#live-entries" class="px-4 py-2 font-medium hover:text-white transition-colors">Live Entries</a>
-                <button onclick="copyMainAddress()" class="flex items-center gap-x-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 px-5 py-2 rounded-2xl font-semibold">
-                    <i class="fa-solid fa-copy"></i> <span>Copy Address</span>
-                </button>
+            <div class="hidden md:flex items-center gap-x-2 text-sm">
+                <a href="#enter" class="px-4 py-2 font-medium hover:text-white transition-colors">Enter</a>
+                <a href="#trustless" class="px-4 py-2 font-medium hover:text-white transition-colors">Why It's Trustless</a>
+                <a href="#verify" class="px-4 py-2 font-medium hover:text-white transition-colors">Verify</a>
+                <a href="#draws" class="px-4 py-2 font-medium hover:text-white transition-colors">Draws</a>
             </div>
         </div>
     </nav>
@@ -44,513 +45,276 @@
         <div class="max-w-3xl mx-auto text-center mb-8">
             <div class="inline-flex items-center gap-x-2 bg-zinc-900 border border-zinc-800 rounded-full px-4 py-1.5 mb-6">
                 <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                <span class="text-sm font-medium text-emerald-400">Daily draws • Min 100 KAS per entry</span>
+                <span class="text-sm font-medium text-emerald-400">Enforced by on-chain covenant • Daily draws at midnight UTC</span>
             </div>
-            
-            <h1 class="text-6xl md:text-7xl font-bold tracking-tighter heading mb-4">
-                Win <span class="kaspa-gradient">Kaspa</span><br>
-                Every Single Day
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tighter heading mb-4">
+                The raffle that<br><span class="kaspa-gradient">can't cheat</span>
             </h1>
-            <p class="text-xl text-zinc-400 max-w-md mx-auto mb-8">
-                Send <span class="font-semibold text-white">100 KAS or more</span>. Every qualifying send = 1 entry.
+            <p class="text-xl text-zinc-400 max-w-xl mx-auto">
+                Payouts are enforced by Kaspa's blockchain itself. Not even the operator
+                can touch the pot, block a draw, or pick the winner.
             </p>
         </div>
 
-        <!-- CURRENT JACKPOT -->
-        <div class="max-w-2xl mx-auto mb-10">
+        <!-- Jackpot -->
+        <div class="max-w-2xl mx-auto mb-6">
             <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-8 text-center">
-                <div class="text-sm font-medium text-zinc-400 tracking-wider mb-1">CURRENT JACKPOT</div>
+                <div class="text-sm font-medium text-zinc-400 tracking-wider mb-1">TODAY'S POT</div>
                 <div class="flex items-baseline justify-center gap-x-2 mb-2">
                     <div id="jackpot-total" class="text-6xl font-bold tabular-nums text-zinc-500">—</div>
                     <div class="text-3xl text-zinc-400">KAS</div>
                 </div>
                 <div class="text-emerald-400 text-xl font-semibold mb-1">
-                    Winner gets right now: <span id="winner-share">—</span> KAS <span class="text-base">(50%)</span>
+                    Winner takes <span id="winner-share">—</span> KAS <span class="text-base">(50%)</span>
                 </div>
-                <div class="text-xs text-zinc-500">Live • Next draw at midnight UTC</div>
+                <div class="text-xs text-zinc-500">
+                    <span id="entry-count">—</span> entries • Closes in <span id="countdown" class="mono">—</span>
+                </div>
             </div>
         </div>
 
-        <!-- Address Boxes -->
-        <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-6">
-            
-            <!-- Raffle Address + QR -->
-            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-8">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-sm font-semibold tracking-wider text-teal-400">RAFFLE ADDRESS <span class="split-badge bg-emerald-500/10 text-emerald-400 ml-2">Min 100 KAS</span></span>
-                    <button onclick="showQRModal()" class="flex items-center gap-x-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-2xl text-sm font-medium">
-                        <i class="fa-solid fa-qrcode"></i> <span>Show QR</span>
-                    </button>
-                </div>
-                
-                <div id="main-raffle-address-display" onclick="copyMainAddress()" class="kaspa-address bg-zinc-950 border border-zinc-700 hover:border-teal-500/50 p-4 rounded-2xl text-sm md:text-base font-mono text-teal-300 break-all cursor-pointer mb-4">
-                    winraffle.kas
-                </div>
-                
-                <div class="flex gap-3">
-                    <button onclick="copyMainAddress()" class="flex-1 bg-white hover:bg-zinc-100 text-zinc-950 font-semibold py-3.5 rounded-2xl flex justify-center items-center gap-x-2">
-                        <i class="fa-solid fa-copy"></i> <span>Copy Address</span>
-                    </button>
-                    <button onclick="showQRModal()" class="flex-1 border border-zinc-600 hover:bg-zinc-800 font-semibold py-3.5 rounded-2xl flex justify-center items-center gap-x-2">
-                        <i class="fa-solid fa-qrcode"></i> <span>Show QR</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Funding Initiative -->
-            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-8">
-                <div class="flex items-center justify-between mb-4">
-                    <span class="text-sm font-semibold tracking-wider text-amber-400">CURRENT FUNDING INITIATIVE <span class="split-badge bg-amber-500/10 text-amber-400 ml-2">40%</span></span>
-                    <button onclick="showAdminLogin()" class="text-xs px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-2xl flex items-center gap-x-1.5">
-                        <i class="fa-solid fa-lock"></i> <span>Admin</span>
-                    </button>
-                </div>
-                <div onclick="copyFundingAddress()" class="kaspa-address bg-zinc-950 border border-zinc-700 hover:border-amber-500/50 p-4 rounded-2xl text-sm md:text-base font-mono text-amber-300 break-all cursor-pointer mb-3" id="funding-address-display">
-                    kaspa:fundingaddresshere1234567890abcdefghijklmnopqrstuvwxyz
-                </div>
-                <div class="bg-zinc-950 border border-zinc-700 rounded-2xl p-4 mb-4">
-                    <div class="text-xs text-zinc-400 mb-1">Currently supporting:</div>
-                    <div class="font-medium text-sm" id="funding-description-display">Kaspa Core Developers for ongoing improvements</div>
-                </div>
-                <button onclick="copyFundingAddress()" class="w-full border border-zinc-600 hover:bg-zinc-800 font-semibold py-3 rounded-2xl flex justify-center items-center gap-x-2 text-sm">
-                    <i class="fa-solid fa-copy"></i> <span>Copy Funding Address</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Transparency Bar -->
-        <div class="max-w-5xl mx-auto mt-6 bg-zinc-900 border border-zinc-700 rounded-3xl p-5">
+        <!-- Split bar -->
+        <div class="max-w-2xl mx-auto mb-10 bg-zinc-900 border border-zinc-700 rounded-3xl p-5">
             <div class="flex flex-wrap justify-center gap-x-8 gap-y-2 text-sm font-medium">
                 <div class="flex items-center gap-x-2"><span class="split-badge bg-emerald-500 text-white">50%</span> <span class="text-emerald-400 font-semibold">Winner</span></div>
-                <div class="flex items-center gap-x-2"><span class="split-badge bg-amber-500 text-white">40%</span> <span class="text-amber-400 font-semibold">Kaspa Funding Initiatives</span></div>
-                <div class="flex items-center gap-x-2"><span class="split-badge bg-zinc-600 text-white">10%</span> <span class="text-zinc-300 font-semibold">Operations &amp; Development</span></div>
+                <div class="flex items-center gap-x-2"><span class="split-badge bg-amber-500 text-white">40%</span> <span class="text-amber-400 font-semibold">Kaspa Dev Fund</span></div>
+                <div class="flex items-center gap-x-2"><span class="split-badge bg-zinc-600 text-white">10%</span> <span class="text-zinc-300 font-semibold">Operations</span></div>
             </div>
-            <div class="text-center text-[10px] text-zinc-500 mt-3">100% of every pot is distributed transparently every day</div>
-        </div>
-    </div>
-
-    <!-- LIVE ENTRIES -->
-    <div id="live-entries" class="max-w-screen-xl mx-auto px-6 py-12 border-t border-zinc-800">
-        <div class="flex justify-between items-end mb-6">
-            <div>
-                <h2 class="text-2xl font-bold flex items-center gap-x-3">Recent Entries 
-                    <span class="text-sm font-normal bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full flex items-center gap-x-1.5">
-                        <span class="w-2 h-2 bg-emerald-400 rounded-full live-dot"></span> LIVE
-                    </span>
-                </h2>
-            </div>
-            <div class="text-emerald-400 font-semibold text-sm" id="entry-count">Loading entries...</div>
-        </div>
-        <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-2 max-h-[380px] overflow-y-auto" id="live-entries-list"></div>
-    </div>
-
-    <!-- VERIFY ON CHAIN -->
-    <div class="max-w-screen-xl mx-auto px-6 py-12 border-t border-zinc-800">
-        <div class="max-w-2xl mx-auto text-center bg-zinc-900 border border-zinc-700 rounded-3xl p-8">
-            <h3 class="text-xl font-semibold mb-2">Verify Everything On-Chain</h3>
-            <p class="text-zinc-400 mb-6 text-sm">All transactions are public on the Kaspa blockchain.</p>
-            <a id="explorer-link" href="https://explorer.kaspa.org/addresses/kaspa:qr3rxmae6r5h9kkt7q5my7rajy492da7cxpy0kkzr99tk3xcydc2uwa3a7u6r" 
-               target="_blank"
-               rel="noopener noreferrer"
-               class="inline-flex items-center justify-center gap-x-3 bg-teal-600 hover:bg-teal-700 transition-all text-white font-semibold px-8 py-4 rounded-2xl text-lg w-full md:w-auto">
-                <i class="fa-solid fa-link"></i>
-                <span>View Raffle Address on Kaspa Explorer</span>
-            </a>
-        </div>
-    </div>
-
-    <!-- How it Works -->
-    <div id="how-it-works" class="max-w-screen-xl mx-auto px-6 py-12 border-t border-zinc-800">
-        <h2 class="text-center text-2xl font-bold mb-8">How It Works</h2>
-        <div class="grid md:grid-cols-4 gap-5 max-w-5xl mx-auto text-sm">
-            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6">
-                <div class="text-teal-400 mb-2"><i class="fa-solid fa-wallet text-xl"></i></div>
-                <div class="font-semibold mb-1">1. Send 100+ KAS</div>
-                <div class="text-zinc-400">Minimum 100 KAS per send. Every qualifying send = 1 entry.</div>
-            </div>
-            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6">
-                <div class="text-teal-400 mb-2"><i class="fa-solid fa-database text-xl"></i></div>
-                <div class="font-semibold mb-1">2. We Track</div>
-                <div class="text-zinc-400">All sends above 100 KAS are recorded on-chain.</div>
-            </div>
-            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6">
-                <div class="text-teal-400 mb-2"><i class="fa-solid fa-random text-xl"></i></div>
-                <div class="font-semibold mb-1">3. Daily Draw</div>
-                <div class="text-zinc-400">One random entry wins at midnight UTC.</div>
-            </div>
-            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6">
-                <div class="text-teal-400 mb-2"><i class="fa-solid fa-hand-holding-dollar text-xl"></i></div>
-                <div class="font-semibold mb-1">4. Payout</div>
-                <div class="text-zinc-400">50% to winner • 40% to funding • 10% to ops.</div>
+            <div class="text-center text-[11px] text-zinc-500 mt-3">
+                This split is not a promise — it's a consensus rule. A transaction paying anything else is invalid.
             </div>
         </div>
-    </div>
 
-    <!-- Rules -->
-    <div id="rules" class="max-w-screen-xl mx-auto px-6 py-12 border-t border-zinc-800">
-        <div class="max-w-2xl mx-auto">
-            <h2 class="text-center text-2xl font-bold mb-8">Official Rules</h2>
-            <div class="space-y-4 text-sm bg-zinc-900 border border-zinc-700 rounded-3xl p-8">
-                <div class="flex gap-4"><div class="font-mono text-teal-400 w-6 shrink-0">01</div><div><strong>Minimum 100 KAS per send</strong> to qualify as an entry.</div></div>
-                <div class="flex gap-4"><div class="font-mono text-teal-400 w-6 shrink-0">02</div><div><strong>Every qualifying send counts</strong> — send 3 times = 3 entries.</div></div>
-                <div class="flex gap-4"><div class="font-mono text-teal-400 w-6 shrink-0">03</div><div>Draw happens automatically every day at midnight UTC.</div></div>
-                <div class="flex gap-4"><div class="font-mono text-teal-400 w-6 shrink-0">04</div><div><strong>Payout split:</strong> 50% Winner • 40% Kaspa Funding Initiatives • 10% Operations &amp; Development.</div></div>
-                <div class="flex gap-4"><div class="font-mono text-teal-400 w-6 shrink-0">05</div><div>All activity is public and verifiable on the Kaspa blockchain.</div></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- QR Modal -->
-    <div id="qr-modal" onclick="hideQRModal()" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
-        <div onclick="event.stopImmediatePropagation()" class="bg-zinc-900 border border-zinc-700 rounded-3xl w-full max-w-md p-8 text-center">
-            <div class="flex justify-between items-center mb-6">
-                <div class="font-semibold text-xl">Scan to Send KAS (Min 100 KAS)</div>
-                <button onclick="hideQRModal()" class="text-2xl text-zinc-400 hover:text-white">×</button>
-            </div>
-            <div id="qrcode" class="flex justify-center items-center mb-6 p-4 bg-white rounded-2xl min-h-[240px]"></div>
-            <div id="qr-address-display" class="kaspa-address text-sm text-teal-300 mb-4 break-all">winraffle.kas</div>
-            <button onclick="copyMainAddress(); hideQRModal();" class="w-full bg-white hover:bg-zinc-100 text-zinc-950 font-semibold py-3.5 rounded-2xl flex justify-center items-center gap-x-2">
-                <i class="fa-solid fa-copy"></i> <span>Copy Address</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Admin Modals -->
-    <div id="admin-modal" onclick="hideAdminModal()" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
-        <div onclick="event.stopImmediatePropagation()" class="bg-zinc-900 border border-zinc-700 rounded-3xl w-full max-w-sm p-8">
-            <div class="text-center mb-6">
-                <i class="fa-solid fa-lock text-3xl text-amber-400 mb-3"></i>
-                <div class="font-semibold text-xl">Admin Access Required</div>
-            </div>
-            <input id="admin-password" type="password" placeholder="Enter admin password" class="w-full bg-zinc-950 border border-zinc-700 focus:border-amber-400 rounded-2xl px-4 py-3 mb-4 text-sm">
-            <div class="flex gap-3">
-                <button onclick="hideAdminModal()" class="flex-1 py-3 rounded-2xl border border-zinc-600 hover:bg-zinc-800 font-semibold">Cancel</button>
-                <button onclick="verifyAdminPassword()" class="flex-1 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-semibold">Unlock</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="funding-modal" onclick="hideFundingModal()" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
-        <div onclick="event.stopImmediatePropagation()" class="bg-zinc-900 border border-zinc-700 rounded-3xl w-full max-w-md p-8">
-            <div class="flex justify-between items-center mb-6">
-                <div class="font-semibold text-xl">Update Funding Initiative</div>
-                <button onclick="hideFundingModal()" class="text-2xl text-zinc-400 hover:text-white">×</button>
-            </div>
-            <div class="space-y-5">
-                <div>
-                    <label class="block text-sm font-medium mb-1.5">New Funding Address</label>
-                    <input id="new-funding-address" type="text" class="w-full bg-zinc-950 border border-zinc-700 rounded-2xl px-4 py-3 text-sm font-mono">
+        <!-- Entry flow -->
+        <div id="enter" class="max-w-2xl mx-auto">
+            <div class="bg-zinc-900 border border-teal-500/30 rounded-3xl p-8">
+                <h3 class="text-lg font-semibold mb-1">Enter today's raffle</h3>
+                <p class="text-sm text-zinc-400 mb-5">
+                    Paste your Kaspa address (where a win should be paid). You'll get a personal
+                    entry address whose covenant locks your payout key in.
+                </p>
+                <div class="flex flex-col md:flex-row gap-3 mb-4">
+                    <input id="payout-address" type="text" placeholder="kaspatest:your address..."
+                        class="mono flex-1 bg-zinc-950 border border-zinc-700 focus:border-teal-500 outline-none rounded-2xl px-4 py-3.5 text-sm" />
+                    <button onclick="getEntryAddress()" id="enter-btn"
+                        class="bg-white hover:bg-zinc-100 text-zinc-950 font-semibold px-8 py-3.5 rounded-2xl">
+                        Get Entry Address
+                    </button>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium mb-1.5">Short Description</label>
-                    <textarea id="new-funding-desc" rows="3" class="w-full bg-zinc-950 border border-zinc-700 rounded-2xl px-4 py-3 text-sm"></textarea>
+                <div id="entry-result" class="hidden">
+                    <div class="bg-zinc-950 border border-emerald-500/40 rounded-2xl p-5 mt-2">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-semibold tracking-wider text-emerald-400">YOUR COVENANT ENTRY ADDRESS — SEND 100+ KAS</span>
+                            <button onclick="copyEntryAddress()" class="text-xs px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-xl"><i class="fa-solid fa-copy mr-1"></i>Copy</button>
+                        </div>
+                        <div id="entry-address" onclick="copyEntryAddress()" class="mono text-teal-300 text-sm break-all cursor-pointer mb-4"></div>
+                        <div class="flex justify-center mb-3"><div id="entry-qr" class="bg-white p-3 rounded-xl"></div></div>
+                        <div class="text-[11px] text-zinc-500 leading-relaxed">
+                            Each send of 100 KAS or more before the close time is one entry — bigger sends carry
+                            proportionally better odds. If no draw happens, you can reclaim your coins after 24h.
+                            Your entry is protected by the covenant, not by us.
+                        </div>
+                    </div>
+                </div>
+                <div id="entry-error" class="hidden text-rose-400 text-sm mt-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Why trustless -->
+    <div id="trustless" class="max-w-screen-xl mx-auto px-6 py-12 border-t border-zinc-800">
+        <h2 class="text-center text-2xl font-bold mb-2">Why you don't have to trust us</h2>
+        <p class="text-center text-zinc-400 text-sm mb-8 max-w-xl mx-auto">
+            Kaspa's Toccata upgrade added covenants: spending rules enforced by every node on the network.
+            This raffle is built entirely out of them.
+        </p>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto text-sm">
+            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6">
+                <div class="text-teal-400 mb-2"><i class="fa-solid fa-lock text-xl"></i></div>
+                <div class="font-semibold mb-1">No keys, no theft</div>
+                <div class="text-zinc-400">There is no wallet holding the pot and no admin key. The covenant is the custodian — the 50/40/10 split is the only spend the network will accept.</div>
+            </div>
+            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6">
+                <div class="text-teal-400 mb-2"><i class="fa-solid fa-cube text-xl"></i></div>
+                <div class="font-semibold mb-1">Chain-picked winner</div>
+                <div class="text-zinc-400">The winner comes from the hash of a real Kaspa block, weighted by entry size. Biasing it would require burning real proof-of-work.</div>
+            </div>
+            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6">
+                <div class="text-teal-400 mb-2"><i class="fa-solid fa-bolt text-xl"></i></div>
+                <div class="font-semibold mb-1">Anyone can draw</div>
+                <div class="text-zinc-400">Settlement is permissionless. If our server vanished forever, any user could trigger the draw and the winner still gets paid.</div>
+            </div>
+            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6">
+                <div class="text-teal-400 mb-2"><i class="fa-solid fa-rotate-left text-xl"></i></div>
+                <div class="font-semibold mb-1">Reclaim guarantee</div>
+                <div class="text-zinc-400">If no draw happens within 24h of close, every entrant can take their own coins back. Funds can never be stranded — by design, not by promise.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verify -->
+    <div id="verify" class="max-w-screen-xl mx-auto px-6 py-12 border-t border-zinc-800">
+        <div class="max-w-3xl mx-auto bg-zinc-900 border border-zinc-700 rounded-3xl p-8">
+            <h3 class="text-xl font-semibold mb-2 text-center">Don't trust — verify</h3>
+            <p class="text-zinc-400 text-sm text-center mb-6">
+                Every entry address is derived from the public covenant contract. Check it yourself.
+            </p>
+            <div class="grid gap-3 text-sm">
+                <div class="bg-zinc-950 border border-zinc-700 rounded-2xl p-4">
+                    <div class="text-xs text-zinc-500 mb-1">TODAY'S COVENANT TEMPLATE (BLAKE2B OF COMPILED SCRIPT TEMPLATE)</div>
+                    <div id="template-hash" class="mono text-teal-300 break-all">loading…</div>
+                </div>
+                <div class="grid md:grid-cols-3 gap-3">
+                    <a href="https://github.com/ph7p8fmpjr-jpg/Kaspa-Raffle/blob/main/kaspa-raffle-website/covenant/raffle_entry.sil" target="_blank" rel="noopener noreferrer"
+                       class="flex items-center justify-center gap-x-2 border border-zinc-600 hover:bg-zinc-800 font-semibold py-3 rounded-2xl">
+                        <i class="fa-brands fa-github"></i> Contract Source
+                    </a>
+                    <a id="explorer-link" href="https://explorer-tn10.kaspa.org/" target="_blank" rel="noopener noreferrer"
+                       class="flex items-center justify-center gap-x-2 border border-zinc-600 hover:bg-zinc-800 font-semibold py-3 rounded-2xl">
+                        <i class="fa-solid fa-link"></i> Block Explorer
+                    </a>
+                    <button onclick="showVerifyHowto()"
+                       class="flex items-center justify-center gap-x-2 border border-zinc-600 hover:bg-zinc-800 font-semibold py-3 rounded-2xl">
+                        <i class="fa-solid fa-magnifying-glass"></i> How to Verify
+                    </button>
+                </div>
+                <div id="verify-howto" class="hidden bg-zinc-950 border border-zinc-700 rounded-2xl p-5 text-zinc-400 text-[13px] leading-relaxed">
+                    <ol class="list-decimal list-inside space-y-2">
+                        <li>Clone the repo and compile <span class="mono text-zinc-300">covenant/raffle_entry.sil</span> with SilverScript, using today's close time and the published dev/ops keys (shown at <span class="mono text-zinc-300">/api/covenant</span>).</li>
+                        <li>Splice your own payout pubkey into the template and hash it — you get your entry address. If it matches what this site gave you, the rules you read in the source are the rules locking your coins.</li>
+                        <li>After each draw, check the settlement transaction in the explorer: exactly 50% to the winner, 40% to the dev fund, 10% to operations. Always.</li>
+                    </ol>
+                    <div class="mt-3 text-zinc-500">The site is a convenience layer. The covenant doesn't need it, and neither do you.</div>
                 </div>
             </div>
-            <div class="flex gap-3 mt-8">
-                <button onclick="hideFundingModal()" class="flex-1 py-3.5 rounded-2xl border border-zinc-600 hover:bg-zinc-800 font-semibold">Cancel</button>
-                <button onclick="saveFundingInfo()" class="flex-1 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-semibold">Save Changes</button>
-            </div>
         </div>
     </div>
 
-    <div id="copy-toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] bg-emerald-500 text-white text-sm font-semibold px-5 py-3 rounded-2xl shadow-lg">
-        Address copied!
+    <!-- Recent draws -->
+    <div id="draws" class="max-w-screen-xl mx-auto px-6 py-12 border-t border-zinc-800">
+        <div class="flex justify-between items-end mb-6 max-w-3xl mx-auto">
+            <h2 class="text-2xl font-bold flex items-center gap-x-3">Recent Draws
+                <span class="text-sm font-normal bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full flex items-center gap-x-1.5">
+                    <span class="w-2 h-2 bg-emerald-400 rounded-full live-dot"></span> ON-CHAIN
+                </span>
+            </h2>
+        </div>
+        <div class="max-w-3xl mx-auto bg-zinc-900 border border-zinc-700 rounded-3xl p-2" id="draws-list">
+            <div class="text-center text-zinc-500 text-sm py-8">No draws yet — the first one settles at midnight UTC.</div>
+        </div>
     </div>
 
-<script>
-    // ==================== CONFIG ====================
-    const API_BASE = "https://kaspa-raffle.onrender.com";
-    const mainRaffleAddress = "winraffle.kas";
-    const defaultOnchainAddress = "kaspa:qr3rxmae6r5h9kkt7q5my7rajy492da7cxpy0kkzr99tk3xcydc2uwa3a7u6r";
-    let onchainRaffleAddress = defaultOnchainAddress;
-    let qrCodeInstance = null;
+    <!-- Footer -->
+    <footer class="border-t border-zinc-800 py-8 text-center text-xs text-zinc-600 px-6">
+        <div class="mb-2" id="footer-network">Running on Kaspa Testnet-10 with valueless test coins during the public trial.</div>
+        <div>Covenant-enforced payouts • No custodial wallet • <a class="underline hover:text-zinc-400" href="https://github.com/ph7p8fmpjr-jpg/Kaspa-Raffle" target="_blank" rel="noopener noreferrer">Source on GitHub</a></div>
+    </footer>
 
-    let currentJackpot = null;
-    let recentEntries = [];
-    let raffleDate = null;
-    let adminToken = null;
+    <script>
+        const EXPLORER = 'https://explorer-tn10.kaspa.org';
+        let lastEntryAddress = '';
 
-    async function fetchRealData() {
-        try {
-            const response = await fetch(`${API_BASE}/api/jackpot`);
-            const data = await response.json();
-
-            currentJackpot = data.balance;
-            recentEntries = data.recentEntries || [];
-            raffleDate = data.raffleDate;
-
-            updateJackpotDisplay();
-            renderRecentEntries();
-        } catch (error) {
-            console.error("Failed to fetch data from backend:", error);
-            const totalEl = document.getElementById('jackpot-total');
-            if (totalEl && currentJackpot === null) totalEl.innerText = 'Offline';
+        function fmtKas(sompi) {
+            return (Number(BigInt(sompi)) / 1e8).toLocaleString(undefined, { maximumFractionDigits: 2 });
         }
-    }
 
-    async function fetchConfig() {
-        try {
-            const [configRes, statusRes] = await Promise.all([
-                fetch(`${API_BASE}/api/config`),
-                fetch(`${API_BASE}/api/status`),
-            ]);
-            const data = await configRes.json();
-            if (data.fundingAddress) {
-                document.getElementById('funding-address-display').innerText = data.fundingAddress;
-            }
-            if (data.fundingDescription) {
-                document.getElementById('funding-description-display').innerText = data.fundingDescription;
-            }
-
-            if (statusRes.ok) {
-                const status = await statusRes.json();
-                if (status.raffleAddress) {
-                    updateRaffleAddressDisplay(status.raffleAddress, status.raffleOnchainAddress);
+        async function refreshStatus() {
+            try {
+                const r = await fetch('/api/status');
+                const s = await r.json();
+                document.getElementById('jackpot-total').textContent = fmtKas(s.jackpotSompi);
+                document.getElementById('jackpot-total').classList.remove('text-zinc-500');
+                document.getElementById('winner-share').textContent = fmtKas(BigInt(s.jackpotSompi) / 2n);
+                document.getElementById('entry-count').textContent = s.entries;
+                window.__closeTimeMs = s.closeTimeMs;
+                if (s.network && !s.network.startsWith('testnet')) {
+                    document.getElementById('network-badge').textContent = 'MAINNET';
+                    document.getElementById('footer-network').textContent = '';
                 }
-            }
-        } catch (error) {
-            console.error("Failed to fetch config:", error);
-        }
-    }
-
-    function updateRaffleAddressDisplay(displayAddress, onchainAddress) {
-        const display = displayAddress || mainRaffleAddress;
-        const onchain = onchainAddress || defaultOnchainAddress;
-        onchainRaffleAddress = onchain;
-
-        const mainEl = document.getElementById('main-raffle-address-display');
-        const qrEl = document.getElementById('qr-address-display');
-        const explorerEl = document.getElementById('explorer-link');
-
-        if (mainEl) mainEl.innerText = display;
-        if (qrEl) qrEl.innerText = display;
-        if (explorerEl) {
-            explorerEl.href = `https://explorer.kaspa.org/addresses/${encodeURIComponent(onchain)}`;
-        }
-    }
-
-    function updateJackpotDisplay() {
-        const totalEl = document.getElementById('jackpot-total');
-        const winnerEl = document.getElementById('winner-share');
-
-        if (currentJackpot === null || currentJackpot === undefined) return;
-
-        if (totalEl) {
-            totalEl.innerText = currentJackpot.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            totalEl.classList.remove('text-zinc-500');
-        }
-        if (winnerEl) winnerEl.innerText = (currentJackpot * 0.5).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-
-    // Render real recent entries from blockchain
-    function renderRecentEntries() {
-        const container = document.getElementById('live-entries-list');
-        if (!container) return;
-
-        container.innerHTML = '';
-
-        if (recentEntries.length === 0) {
-            const div = document.createElement('div');
-            div.className = 'px-5 py-4 text-center text-zinc-400 text-sm';
-            div.innerText = 'No recent entries yet';
-            container.appendChild(div);
-            return;
+                renderDraws(s.recentDraws || []);
+            } catch (e) { /* keep placeholders */ }
         }
 
-        recentEntries.forEach(entry => {
-            const div = document.createElement('div');
-            div.className = 'flex items-center justify-between px-5 py-3.5 hover:bg-zinc-800 rounded-2xl mx-1';
-            div.innerHTML = `
-                <div class="flex items-center gap-x-4">
-                    <div class="font-mono text-sm text-zinc-400">${entry.addr}</div>
-                    <div class="text-emerald-400 font-semibold">+${entry.amount} KAS</div>
-                </div>
-                <div class="text-xs text-zinc-500">${entry.time}</div>
-            `;
-            container.appendChild(div);
-        });
-
-        const countEl = document.getElementById('entry-count');
-        if (countEl) {
-            const label = raffleDate ? `entries on ${raffleDate}` : 'entries today';
-            countEl.innerText = `${recentEntries.length} ${label}`;
-        }
-    }
-
-    // Admin functions
-    function showAdminLogin() {
-        document.getElementById('admin-modal').classList.remove('hidden');
-        document.getElementById('admin-modal').classList.add('flex');
-    }
-
-    function verifyAdminPassword() {
-        const password = document.getElementById('admin-password').value;
-        if (!password) {
-            alert("Enter admin password");
-            return;
-        }
-        adminToken = password;
-        hideAdminModal();
-        const modal = document.getElementById('funding-modal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        document.getElementById('new-funding-address').value = document.getElementById('funding-address-display').innerText;
-        document.getElementById('new-funding-desc').value = document.getElementById('funding-description-display').innerText;
-    }
-
-    function hideAdminModal() {
-        document.getElementById('admin-modal').classList.add('hidden');
-        document.getElementById('admin-modal').classList.remove('flex');
-    }
-
-    function hideFundingModal() {
-        document.getElementById('funding-modal').classList.add('hidden');
-        document.getElementById('funding-modal').classList.remove('flex');
-    }
-
-    async function saveFundingInfo() {
-        const addr = document.getElementById('new-funding-address').value.trim();
-        const desc = document.getElementById('new-funding-desc').value.trim();
-
-        try {
-            const response = await fetch(`${API_BASE}/api/admin/funding`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${adminToken}`,
-                },
-                body: JSON.stringify({ fundingAddress: addr, fundingDescription: desc }),
-            });
-
-            if (!response.ok) {
-                const err = await response.json().catch(() => ({}));
-                if (response.status === 503 && err.error?.includes('not configured')) {
-                    alert('Admin password is not set on the server. Add ADMIN_PASSWORD in your Render environment variables, then try again.');
-                    return;
+        function renderDraws(draws) {
+            if (!draws.length) return;
+            const rows = draws.map(d => {
+                const s = d.settlement || {};
+                const date = new Date(d.closeTimeMs).toISOString().slice(0, 10);
+                if (s.empty) {
+                    return `<div class="flex justify-between items-center px-4 py-3 border-b border-zinc-800 last:border-0 text-sm">
+                        <span class="text-zinc-500">${date}</span><span class="text-zinc-500">no entries</span></div>`;
                 }
-                if (response.status === 401) {
-                    alert('Wrong admin password. Use the ADMIN_PASSWORD from your server .env / Render settings.');
-                    return;
-                }
-                alert(err.error || 'Failed to save — check admin password');
-                return;
+                return `<div class="flex flex-wrap justify-between items-center gap-2 px-4 py-3 border-b border-zinc-800 last:border-0 text-sm">
+                    <span class="text-zinc-400">${date}</span>
+                    <span class="mono text-teal-300">${(s.winnerAddress || '').slice(0, 22)}…</span>
+                    <span class="text-emerald-400 font-semibold">${fmtKas(BigInt(s.totalSompi || 0) / 2n)} KAS</span>
+                    <a href="${EXPLORER}/txs/${s.txid}" target="_blank" rel="noopener noreferrer" class="text-zinc-400 hover:text-white underline">tx ↗</a>
+                </div>`;
+            }).join('');
+            document.getElementById('draws-list').innerHTML = rows;
+        }
+
+        async function refreshCovenant() {
+            try {
+                const r = await fetch('/api/covenant');
+                const c = await r.json();
+                document.getElementById('template-hash').textContent =
+                    `script ${c.scriptLen} bytes • close ${new Date(c.closeTimeMs).toISOString()} • suffix ${c.suffixLen}B`;
+            } catch (e) {
+                document.getElementById('template-hash').textContent = 'unavailable';
             }
-
-            const data = await response.json();
-            document.getElementById('funding-address-display').innerText = data.config.fundingAddress;
-            document.getElementById('funding-description-display').innerText = data.config.fundingDescription;
-            hideFundingModal();
-        } catch (error) {
-            alert('Could not reach server. Try again.');
         }
-    }
 
-    function showCopyToast(message) {
-        const toast = document.getElementById('copy-toast');
-        if (!toast) return;
-        toast.innerText = message;
-        toast.classList.remove('hidden');
-        clearTimeout(showCopyToast._timer);
-        showCopyToast._timer = setTimeout(() => toast.classList.add('hidden'), 2000);
-    }
-
-    async function copyText(text) {
-        if (!text) return false;
-        try {
-            if (navigator.clipboard?.writeText) {
-                await navigator.clipboard.writeText(text);
-                return true;
+        async function getEntryAddress() {
+            const btn = document.getElementById('enter-btn');
+            const errEl = document.getElementById('entry-error');
+            errEl.classList.add('hidden');
+            btn.disabled = true; btn.textContent = 'Deriving…';
+            try {
+                const payoutAddress = document.getElementById('payout-address').value.trim();
+                const r = await fetch('/api/enter', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ payoutAddress }),
+                });
+                const data = await r.json();
+                if (!r.ok) throw new Error(data.error || 'failed');
+                lastEntryAddress = data.entryAddress;
+                document.getElementById('entry-address').textContent = data.entryAddress;
+                const qrEl = document.getElementById('entry-qr');
+                qrEl.innerHTML = '';
+                new QRCode(qrEl, { text: data.entryAddress, width: 140, height: 140 });
+                document.getElementById('entry-result').classList.remove('hidden');
+            } catch (e) {
+                errEl.textContent = String(e.message || e);
+                errEl.classList.remove('hidden');
+            } finally {
+                btn.disabled = false; btn.textContent = 'Get Entry Address';
             }
-        } catch (_) {
-            // fall through to legacy copy
         }
 
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        textarea.setAttribute('readonly', '');
-        textarea.style.position = 'fixed';
-        textarea.style.top = '-1000px';
-        document.body.appendChild(textarea);
-        textarea.select();
-        const copied = document.execCommand('copy');
-        document.body.removeChild(textarea);
-        return copied;
-    }
-
-    async function copyMainAddress() {
-        const text = getDisplayAddress();
-        const copied = await copyText(text);
-        showCopyToast(copied ? 'Address copied!' : 'Copy failed — select and copy manually');
-    }
-
-    async function copyFundingAddress() {
-        const text = document.getElementById('funding-address-display')?.innerText?.trim();
-        const copied = await copyText(text);
-        showCopyToast(copied ? 'Funding address copied!' : 'Copy failed — select and copy manually');
-    }
-
-    function getDisplayAddress() {
-        return document.getElementById('main-raffle-address-display')?.innerText?.trim() || mainRaffleAddress;
-    }
-
-    function getQrPaymentUri() {
-        return getDisplayAddress();
-    }
-
-    function renderQRCode() {
-        const container = document.getElementById('qrcode');
-        if (!container) return;
-
-        container.innerHTML = '';
-        if (typeof QRCode === 'undefined') {
-            container.innerHTML = '<p class="text-zinc-600 text-sm p-4">QR library failed to load. Refresh the page.</p>';
-            return;
+        function copyEntryAddress() {
+            if (lastEntryAddress) navigator.clipboard.writeText(lastEntryAddress);
         }
 
-        qrCodeInstance = null;
-        const text = getQrPaymentUri();
-
-        try {
-            qrCodeInstance = new QRCode(container, {
-                text,
-                width: 220,
-                height: 220,
-                colorDark: '#000000',
-                colorLight: '#ffffff',
-                correctLevel: QRCode.CorrectLevel.H,
-            });
-        } catch (error) {
-            console.error('QR render failed:', error);
-            container.innerHTML = '<p class="text-zinc-600 text-sm p-4">Could not generate QR code.</p>';
+        function showVerifyHowto() {
+            document.getElementById('verify-howto').classList.toggle('hidden');
         }
-    }
 
-    function showQRModal() {
-        const modal = document.getElementById('qr-modal');
-        if (!modal) return;
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
-        requestAnimationFrame(() => renderQRCode());
-    }
+        function tickCountdown() {
+            const el = document.getElementById('countdown');
+            const close = window.__closeTimeMs;
+            if (!close) return;
+            let ms = close - Date.now();
+            if (ms < 0) ms = 0;
+            const h = Math.floor(ms / 3.6e6), m = Math.floor(ms % 3.6e6 / 6e4), sec = Math.floor(ms % 6e4 / 1e3);
+            el.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
+        }
 
-    function hideQRModal() {
-        const modal = document.getElementById('qr-modal');
-        if (!modal) return;
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
-    }
-
-    function init() {
-        updateRaffleAddressDisplay(mainRaffleAddress, defaultOnchainAddress);
-        fetchConfig();
-        fetchRealData();
-        setInterval(fetchRealData, 15000);
-        console.log('%c[Kaspa Raffle] Live mode — auto-refresh every 15s', 'color:#14b8a6');
-    }
-
-    window.onload = init;
-</script>
-    
-    
+        refreshStatus();
+        refreshCovenant();
+        setInterval(refreshStatus, 30_000);
+        setInterval(tickCountdown, 1000);
+    </script>
 </body>
 </html>

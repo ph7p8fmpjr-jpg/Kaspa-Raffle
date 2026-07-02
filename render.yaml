@@ -10,7 +10,7 @@ services:
     plan: free
     envVars:
       - key: KASPA_NETWORK
-        value: testnet-12
+        value: testnet-10
       - key: ADDRESS_PREFIX
         value: kaspatest
       - key: DEV_PUBKEY

@@ -13,9 +13,9 @@ function req(name) {
 module.exports = {
     port: Number(process.env.PORT || 3000),
 
-    // Network: 'testnet-12' during the trial phase. Mainnet only after the
+    // Network: 'testnet-10' during the trial phase. Mainnet only after the
     // exit criteria are met (see project docs).
-    network: process.env.KASPA_NETWORK || 'testnet-12',
+    network: process.env.KASPA_NETWORK || 'testnet-10',
     // wRPC endpoint of a kaspad node. Public resolver is used when empty.
     rpcUrl: process.env.KASPA_RPC_URL || '',
     addressPrefix: process.env.ADDRESS_PREFIX || 'kaspatest',
