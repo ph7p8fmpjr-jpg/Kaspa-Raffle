@@ -23,3 +23,7 @@ backend-legacy/data/
 # old git metadata
 .git-old/
 .git-upstream/
+
+# legacy secrets — never commit
+*.legacy-backup
+.env.*
