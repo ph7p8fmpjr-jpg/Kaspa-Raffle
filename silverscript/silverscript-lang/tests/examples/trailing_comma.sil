@@ -1,0 +1,26 @@
+pragma silverscript ^0.1.0;
+
+contract Contract(
+    pubkey ownerPk,
+    pubkey oraclePk,
+) {
+    entrypoint function spend(
+        sig ownerSig,
+        datasig oracleMsgSig,
+        sig oracleTxSig,
+    ) {
+        byte[] oracleMessage = byte[]('Spend') + byte[](12, 10,);
+        require(checkSigFromStack(
+            oracleMsgSig,
+            sha256(oracleMessage),
+            oraclePk,
+        ));
+        require(checkMultiSig([
+            ownerSig,
+            oracleTxSig,
+        ], [
+            ownerPk,
+            oraclePk,
+        ]));
+    }
+}

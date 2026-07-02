@@ -1,0 +1,34 @@
+[workspace]
+members = [
+    "silverscript-lang",
+    "debugger/session",
+    "debugger/cli",
+    "raffle-cli",
+]
+exclude = ["tree-sitter"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+authors = ["Kaspa developers"]
+repository = ""
+rust-version = "1.85.0"
+
+[workspace.dependencies]
+kaspa-consensus-core = { git = "https://github.com/kaspanet/rusty-kaspa", tag = "v2.0.1" }
+kaspa-addresses = { git = "https://github.com/kaspanet/rusty-kaspa", tag = "v2.0.1" }
+kaspa-hashes = { git = "https://github.com/kaspanet/rusty-kaspa", tag = "v2.0.1" }
+kaspa-txscript = { git = "https://github.com/kaspanet/rusty-kaspa", tag = "v2.0.1" }
+kaspa-txscript-zk-sdk = { git = "https://github.com/kaspanet/rusty-kaspa", tag = "v2.0.1" }
+kaspa-txscript-errors = { git = "https://github.com/kaspanet/rusty-kaspa", tag = "v2.0.1" }
+blake2b_simd = "1.0.2"
+indexmap = "2.7.0"
+rand = "0.8.5"
+secp256k1 = { version = "0.29.0", features = [
+    "global-context",
+    "rand-std",
+    "serde",
+] }
+thiserror = "1.0.61"

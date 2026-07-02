@@ -1,0 +1,126 @@
+pragma silverscript ^0.1.0;
+
+/*
+ * KaspaRaffle — trustless daily raffle entry covenant (v1, Testnet-12)
+ *
+ * Each entry is its own instance of this contract: the entrant's payout key is
+ * baked into the P2SH address, so one raffle day = one shared template with a
+ * per-entrant 33-byte prefix (0x20 push + x-only pubkey). The draw transaction
+ * spends all entry UTXOs of the day and every input independently verifies:
+ *
+ *   1. entries are closed (tx.time >= closeTime)
+ *   2. every sibling input is a same-day entry of this exact template,
+ *      matching the entrant list supplied as witness data
+ *   3. the winner is chosen by chain-block entropy (OpChainblockSeqCommit
+ *      proves the supplied hash is a real recent chain block), weighted by
+ *      entry value
+ *   4. the payout is exactly: winner >= 50% - fee cap, dev fund == 40%,
+ *      ops == 10%
+ *
+ * No operator key exists. Anyone can trigger the draw after close. If nobody
+ * draws within reclaimDelay, each entrant can take their own entry back, so
+ * funds can never be stranded.
+ *
+ * Known v1 limitations (documented, to fix in v2 state-accumulator design):
+ *   - a draw batch is capped at MAX_ENTRIES inputs; a malicious settler could
+ *     settle a subset (excluded entries keep full reclaim rights)
+ *   - the settler picks which recent chain block supplies entropy (bounded
+ *     menu; mitigated by permissionless first-draw-wins)
+ *
+ * Template anchoring: the compiler inlines constructor args at their usage
+ * sites, so entries of the same day share one script template that differs
+ * only in the 32 entrant-key bytes. `entrant` is deliberately used in
+ * exactly ONE place (reclaim's checkSig, near the end of the script), so the
+ * template is prefix + entrant + suffix with a small fixed-length suffix.
+ * draw() takes prefix/suffix as witness args and requires
+ * suffix.length == SUFFIX_LEN, which pins the splice position — a settler
+ * cannot shift the boundary to make the sibling checks read garbage as an
+ * entrant key. The sibling check at this input's own index then anchors the
+ * whole template: only the true template reproduces this entry's P2SH
+ * commitment with the claimed entrant key spliced in.
+ */
+contract RaffleEntry(
+    pubkey devFund,      // 40% — Kaspa dev fund payout key
+    pubkey ops,          // 10% — operator payout key
+    int closeTime,       // unix time when this day's entries close
+    int reclaimDelay,    // seconds after closeTime until reclaim unlocks
+    pubkey entrant       // this entry's payout key — KEEP LAST (see note above)
+) {
+    // Each P2SH input repeats the full redeem script, so tx mass — not script
+    // ceilings — bounds the batch size. 16 inputs × ~2.5KB stays well inside
+    // Kaspa's 100k-gram transaction budget.
+    int constant MAX_ENTRIES = 16;
+    int constant MIN_ENTRY = 10_000_000_000;  // 100 KAS in sompi
+    int constant MAX_FEE = 10_000_000;        // draw tx fee cap: 0.1 KAS
+    // Byte length of the compiled script after the inlined entrant key.
+    // MUST match the compiled layout — deploy tooling and tests verify this
+    // by diffing two compiled entries. Pins the template splice position.
+    int constant SUFFIX_LEN = 10;
+
+    // Anyone can settle the raffle once entries are closed.
+    entrypoint function draw(pubkey[] entrants, byte[32] blockHash, byte[] prefix, byte[] suffix) {
+        require(tx.time >= closeTime);
+
+        int n = tx.inputs.length;
+        require(entrants.length == n);
+        require(n >= 1);
+
+        // Pin the splice position so the boundary cannot be shifted. The
+        // sibling check below at this input's own index anchors the template
+        // itself: prefix + entrants[me] + suffix must hash to MY P2SH
+        // commitment, and with the boundary pinned that forces entrants[me]
+        // to be my true inlined entrant key.
+        require(suffix.length == SUFFIX_LEN);
+
+        int total = 0;
+        for (j, 0, n, MAX_ENTRIES) {
+            byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;
+            byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));
+            require(tx.inputs[j].scriptPubKey == byte[](siblingLock));
+            require(tx.inputs[j].value >= MIN_ENTRY);
+            total = total + tx.inputs[j].value;
+        }
+
+        // Entropy: proves blockHash is a real recent chain block and derives
+        // its sequencing commitment. 6 bytes + 0x00 pad keeps the int positive.
+        byte[32] commit = OpChainblockSeqCommit(blockHash);
+        byte[32] rand = blake2b(byte[](commit));
+        int r = int(rand.slice(0, 6) + 0x00) % total;
+
+        // Value-weighted winner selection: walk cumulative weights.
+        int acc = 0;
+        int winnerIdx = -1;
+        for (j, 0, n, MAX_ENTRIES) {
+            acc = acc + tx.inputs[j].value;
+            if (winnerIdx == -1 && r < acc) {
+                winnerIdx = j;
+            }
+        }
+        require(winnerIdx >= 0);
+
+        // Enforce the exact 50/40/10 split. The fee comes out of the winner's
+        // share and is capped, so a settler cannot burn the pot as fees.
+        int devAmt = total * 40 / 100;
+        int opsAmt = total * 10 / 100;
+
+        require(tx.outputs.length == 3);
+
+        byte[34] winnerLock = new ScriptPubKeyP2PK(entrants[winnerIdx]);
+        require(tx.outputs[0].scriptPubKey == byte[](winnerLock));
+        require(tx.outputs[0].value >= total - devAmt - opsAmt - MAX_FEE);
+
+        byte[34] devLock = new ScriptPubKeyP2PK(devFund);
+        require(tx.outputs[1].scriptPubKey == byte[](devLock));
+        require(tx.outputs[1].value == devAmt);
+
+        byte[34] opsLock = new ScriptPubKeyP2PK(ops);
+        require(tx.outputs[2].scriptPubKey == byte[](opsLock));
+        require(tx.outputs[2].value == opsAmt);
+    }
+
+    // Safety valve: if no draw happens, the entrant reclaims their own entry.
+    entrypoint function reclaim(sig s) {
+        require(tx.time >= closeTime + reclaimDelay);
+        require(checkSig(s, entrant));
+    }
+}

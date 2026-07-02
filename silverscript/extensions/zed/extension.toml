@@ -1,0 +1,19 @@
+id = "silverscript"
+name = "SilverScript"
+version = "0.1.1"
+schema_version = 1
+description = "SilverScript language support."
+
+languages = ["languages/silverscript"]
+
+[grammars.silverscript]
+# useful for development
+# repository = "file:///D:/Dev/kaspa/silverscript"
+
+repository = "https://github.com/kaspanet/silverscript"
+# revision should be the commit hash containing the tree sitter grammar version you want to target
+rev = "b51ee1e196002621444bd42d23d23e7a64d909ab"
+path = "tree-sitter"
+
+[language_servers.silverscript-lsp]
+command = "silverscript-lsp"

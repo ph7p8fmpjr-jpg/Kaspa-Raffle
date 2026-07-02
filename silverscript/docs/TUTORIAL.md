@@ -1,0 +1,1357 @@
+# SilverScript Tutorial
+
+## Table of Contents
+
+1. [Introduction](#introduction)
+2. [Compiling Contracts](#compiling-contracts)
+   - [Using the CLI (silverc)](#using-the-cli-silverc)
+   - [Programmatic Compilation](#programmatic-compilation)
+3. [Language Basics](#language-basics)
+   - [Contract Structure](#contract-structure)
+   - [Pragma Directives](#pragma-directives)
+   - [Data Types](#data-types)
+   - [Variables](#variables)
+   - [Comments](#comments)
+4. [Functions](#functions)
+   - [Function Definition](#function-definition)
+   - [Entrypoint Functions](#entrypoint-functions)
+   - [Function Parameters and Return Types](#function-parameters-and-return-types)
+5. [Operators](#operators)
+   - [Arithmetic Operators](#arithmetic-operators)
+   - [Comparison Operators](#comparison-operators)
+   - [Logical Operators](#logical-operators)
+   - [Bitwise Operators](#bitwise-operators)
+   - [Ternary Operator](#ternary-operator)
+6. [Control Flow](#control-flow)
+   - [If Statements](#if-statements)
+   - [Require Statements](#require-statements)
+   - [For Loops](#for-loops)
+7. [Working with Data](#working-with-data)
+   - [Literals](#literals)
+   - [Number Units](#number-units)
+   - [Date Literals](#date-literals)
+   - [Arrays](#arrays)
+   - [String Operations](#string-operations)
+   - [Bytes Operations](#bytes-operations)
+8. [Type Casting](#type-casting)
+9. [Built-in Functions](#built-in-functions)
+   - [Cryptographic Functions](#cryptographic-functions)
+   - [Type Conversion Functions](#type-conversion-functions)
+10. [Transaction Introspection](#transaction-introspection)
+    - [Transaction Fields](#transaction-fields)
+    - [Input Introspection](#input-introspection)
+    - [Output Introspection](#output-introspection)
+11. [Covenants](#covenants)
+    - [Creating ScriptPubKey](#creating-scriptpubkey)
+    - [State Transition Builtins](#state-transition-builtins)
+    - [Covenant Examples](#covenant-examples)
+12. [Advanced Features](#advanced-features)
+    - [Constants](#constants)
+    - [Tuple Unpacking](#tuple-unpacking)
+    - [Split and Slice Operations](#split-and-slice-operations)
+13. [Complete Examples](#complete-examples)
+    - [Pay-to-Public-Key (P2PK)](#pay-to-public-key-p2pk)
+    - [Transfer with Timeout](#transfer-with-timeout)
+    - [Recurring Payment (Mecenas)](#recurring-payment-mecenas)
+
+---
+
+## Introduction
+
+SilverScript is a CashScript-inspired smart contract language that compiles to Kaspa script. It enables you to write Kaspa smart contracts with a high-level, Solidity-like syntax. SilverScript contracts can enforce complex spending conditions, create covenants, and enable advanced cryptocurrency applications on the Kaspa network.
+
+---
+
+## Compiling Contracts
+
+### Using the CLI (silverc)
+
+The `silverc` command-line tool compiles `.sil` source files into JSON artifacts containing the compiled bytecode and ABI.
+
+**Basic Usage:**
+
+```bash
+silverc contract.sil
+```
+
+This reads `contract.sil` and outputs `contract.json` by default.
+
+**Specify Output File:**
+
+```bash
+silverc contract.sil -o output.json
+```
+
+**With Constructor Arguments:**
+
+If your contract has constructor parameters, you can provide their values via a JSON file:
+
+```bash
+silverc contract.sil --constructor-args args.json
+```
+
+The `args.json` file should contain an array of constructor argument expressions. For example:
+
+```json
+[
+  {"kind": "byte[]", "data": [1, 2, 3, 4]},
+  {"kind": "int", "data": 12345}
+]
+```
+
+The compiled JSON output includes:
+- `contract_name`: The name of the contract
+- `compiler_version`: The SilverScript compiler version that produced the artifact
+- `script`: The compiled bytecode (as an array of bytes)
+- `ast`: The abstract syntax tree of the parsed contract
+- `abi`: An array of entrypoint functions with their parameter types
+
+### Programmatic Compilation
+
+You can also compile contracts programmatically using the SilverScript Rust library:
+
+```rust
+use silverscript_lang::compiler::{compile_contract, CompileOptions};
+use silverscript_lang::ast::Expr;
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let source = r#"
+        pragma silverscript ^0.1.0;
+        
+        contract MyContract(int x) {
+            entrypoint function spend(int y) {
+                require(y > x);
+            }
+        }
+    "#;
+    
+    // Constructor arguments (x = 100)
+    let constructor_args = vec![Expr::Int(100)];
+    
+    // Compile with default options
+    let options = CompileOptions::default();
+    let compiled = compile_contract(source, &constructor_args, options)?;
+    
+    println!("Contract name: {}", compiled.contract_name);
+    println!("Compiler version: {}", compiled.compiler_version);
+    println!("Script length: {} bytes", compiled.script.len());
+    println!("ABI: {:?}", compiled.abi);
+    
+    Ok(())
+}
+```
+
+**Building Signature Scripts Programmatically:**
+
+After compiling a contract, you can build signature scripts for its entrypoint functions:
+
+```rust
+use silverscript_lang::ast::Expr;
+
+let source = r#"
+    pragma silverscript ^0.1.0;
+    
+    contract TransferWithTimeout(pubkey sender, pubkey recipient, int timeout) {
+        entrypoint function transfer(sig recipientSig) {
+            require(checkSig(recipientSig, recipient));
+        }
+        
+        entrypoint function reclaim(sig senderSig) {
+            require(checkSig(senderSig, sender));
+            require(tx.time >= timeout);
+        }
+    }
+"#;
+
+let sender_pk = vec![3u8; 32];
+let recipient_pk = vec![4u8; 32];
+let timeout = 1640000000i64;
+let compiled = compile_contract(
+    source,
+    &[sender_pk.into(), recipient_pk.into(), timeout.into()],
+    CompileOptions::default()
+)?;
+
+// Build sigscript for multiple entrypoints
+let sig = vec![5u8; 65];
+
+// For 'transfer' function (selector = 0)
+let transfer_sigscript = compiled.build_sig_script(
+    "transfer",
+    vec![sig.clone().into()]
+)?;
+// transfer_sigscript contains: <signature> <0> (selector 0)
+
+// For 'reclaim' function (selector = 1)
+let reclaim_sigscript = compiled.build_sig_script(
+    "reclaim",
+    vec![sig.into()]
+)?;
+// reclaim_sigscript contains: <signature> <1> (selector 1)
+```
+
+The `build_sig_script` method automatically:
+- Validates argument count and types
+- Encodes arguments properly for the Kaspa script stack
+- Appends the function selector for contracts with multiple entrypoints
+- Omits the selector for contracts with a single entrypoint
+
+---
+
+## Language Basics
+
+### Contract Structure
+
+Every SilverScript program defines a single contract. A contract has a name, optional constructor parameters, and one or more functions:
+
+```javascript
+pragma silverscript ^0.1.0;
+
+contract MyContract(int param1, byte[32] param2) {
+    // Contract constants (optional)
+    int constant MAX_VALUE = 1000;
+    
+    // Functions
+    entrypoint function spend(sig s, pubkey pk) {
+        require(checkSig(s, pk));
+    }
+}
+```
+
+### Pragma Directives
+
+Every contract should start with a pragma directive specifying the SilverScript version requirement:
+
+```javascript
+pragma silverscript ^0.1.2;
+```
+
+Pragma values use standard semver requirements. See [semver.org](https://semver.org/) for more details.
+
+### Data Types
+
+SilverScript supports the following data types:
+
+| Type | Description | Example |
+|------|-------------|---------|
+| `int` | 64-bit signed integer | `42`, `-100`, `1000` |
+| `bool` | Boolean value | `true`, `false` |
+| `string` | UTF-8 string | `"hello"`, `'world'` |
+| `byte` | Single byte | `byte` |
+| `pubkey` | Public key (32 bytes) | `pubkey` |
+| `sig` | Signature (65 bytes) | `sig` |
+| `datasig` | Data signature (64 bytes) | `datasig` |
+
+**Array Types:**
+
+You can create arrays by appending `[]` or `[N]` to any type:
+
+```javascript
+int[] numbers;
+int[4] fixedNumbers;
+byte[] data;
+byte[32] hash;
+byte[32][] hashes;
+pubkey[] publicKeys;
+```
+
+- `type[]` = array type where the size may be inferred from initialization.
+- `type[N]` = fixed-size array type with compile-time size `N`.
+
+When a `type[]` variable is initialized with a literal, SilverScript infers a fixed size from context:
+
+```javascript
+byte[] data = 0x1234abcd;  // inferred as byte[4]
+int[] nums = [1, 2, 3];    // inferred as int[3]
+```
+
+### Variables
+
+Variables must be declared with their type before use:
+
+```javascript
+entrypoint function example() {
+    // Variable declaration
+    int myNumber = 42;
+    bool flag = true;
+    string message = "Hello World";
+
+    // Array initialization
+    byte[] data = 0x1234abcd;
+    int[] nums = [1, 2, 3];
+    int[4] fixed = [10, 20, 30, 40];
+    
+    // Declaration without initialization
+    int uninitializedValue;
+    
+    // Variable reassignment
+    myNumber = 100;
+}
+```
+
+### Comments
+
+SilverScript supports both single-line and multi-line comments:
+
+```javascript
+// This is a single-line comment
+
+/*
+ * This is a multi-line comment
+ * It can span multiple lines
+ */
+
+int x = 10; // Comments can appear at the end of lines
+```
+
+---
+
+## Functions
+
+### Function Definition
+
+Functions are defined with the `function` keyword:
+
+```javascript
+function helper(int x, int y) {
+    // function body
+}
+```
+
+### Entrypoint Functions
+
+Entrypoint functions are callable from outside the contract. Mark them with the `entrypoint` keyword:
+
+```javascript
+entrypoint function spend(sig s, pubkey pk) {
+    require(checkSig(s, pk));
+}
+```
+
+A contract must have at least one entrypoint function. Contracts with multiple entrypoints use function selectors automatically.
+
+### Function Parameters and Return Types
+
+Functions can have multiple parameters. A function with one plain return value writes the
+type directly after `:`:
+
+```javascript
+function add(int a, int b): int {
+    return a + b;
+}
+
+// Using the return value
+entrypoint function example() {
+    int result = add(5, 10);
+    require(result == 15);
+}
+```
+
+Tuple return types are written in parentheses. A tuple with more than one value
+can be destructured into typed bindings:
+
+```javascript
+function getPair(): (int, int) {
+    return (10, 20);
+}
+
+entrypoint function example() {
+    (int left, int right) = getPair();
+    require(left + right == 30);
+}
+```
+
+A parenthesized single return type is a one-element tuple, not the same as a
+plain scalar return:
+
+```javascript
+function getWrapped(): (int) {
+    return (7);
+}
+
+entrypoint function example() {
+    int value = getWrapped().0;
+    require(value == 7);
+}
+```
+
+---
+
+## Operators
+
+### Arithmetic Operators
+
+```javascript
+int a = 10;
+int b = 3;
+
+int sum = a + b;        // 13
+int difference = a - b;  // 7
+int product = a * b;     // 30
+int quotient = a / b;    // 3
+int remainder = a % b;   // 1
+int negative = -a;       // -10
+```
+
+### Comparison Operators
+
+```javascript
+bool eq = (a == b);   // false (equality)
+bool ne = (a != b);   // true (inequality)
+bool lt = (a < b);    // false (less than)
+bool le = (a <= b);   // false (less than or equal)
+bool gt = (a > b);    // true (greater than)
+bool ge = (a >= b);   // true (greater than or equal)
+```
+
+### Logical Operators
+
+```javascript
+bool t = true;
+bool f = false;
+
+bool and = t && f;  // false (logical AND)
+bool or = t || f;   // true (logical OR)
+bool not = !t;      // false (logical NOT)
+```
+
+### Bitwise Operators
+
+**Note:** Bitwise operators require covenant features to be enabled.
+
+```javascript
+int x = 0x0F;  // 00001111
+int y = 0xF0;  // 11110000
+
+int bitAnd = x & y;  // 0x00 (bitwise AND)
+int bitOr = x | y;   // 0xFF (bitwise OR)
+int bitXor = x ^ y;  // 0xFF (bitwise XOR)
+```
+
+### Ternary Operator
+
+Use the ternary operator to choose between two expressions:
+
+```javascript
+bool condition = true;
+int thenValue = 100;
+int elseValue = 50;
+int value = condition ? thenValue : elseValue;
+```
+
+The condition must evaluate to `bool`, and both result branches must have the same type. The ternary expression's result must also match the declared type where it is assigned or returned:
+
+```javascript
+entrypoint function example(int amount, bool useBonus) {
+    int payout = useBonus ? amount + 100 : amount;
+    require(payout >= amount);
+}
+```
+
+---
+
+## Control Flow
+
+### If Statements
+
+Basic if-else structure:
+
+```javascript
+entrypoint function example(int x) {
+    if (x > 10) {
+        require(true);
+    } else if (x < 0) {
+        require(false);
+    } else {
+        require(x == 5);
+    }
+}
+```
+
+Single-statement branches don't require braces:
+
+```javascript
+if (x > 0)
+    require(true);
+else
+    require(false);
+```
+
+### Require Statements
+
+The `require` statement enforces conditions. If the condition is false, the contract execution fails:
+
+```javascript
+require(x > 0);  // Passes if x > 0, fails otherwise
+
+// With error message
+require(x > 0, "x must be positive");
+```
+
+Time-based require statements:
+
+```javascript
+// Require transaction time
+require(tx.time >= 1640000000);
+
+// Require contract age
+require(this.age >= 86400);  // 1 day in seconds
+```
+
+### For Loops
+
+For loops iterate over a runtime range of integers, but the unroll bound must be known at compile time:
+
+```javascript
+contract ForLoop() {
+    int constant MAX_ITERATIONS = 4;
+    int constant MIN_OUT = 1000;
+
+    entrypoint function check(int start, int end) {
+        for(i, start, end, MAX_ITERATIONS) {
+            require(tx.outputs[i].value >= MIN_OUT + i);
+        }
+    }
+}
+```
+
+The loop variable `i` takes values from `start` to `end - 1` (exclusive end). The range length must not exceed the compile-time unroll bound, so `end - start <= MAX_ITERATIONS` must hold. If the compiler can prove that a constant range exceeds the bound, compilation fails. For runtime bounds, the generated script currently checks the same condition before entering the loop and fails if the provided range is too large.
+
+If `start >= end`, the loop performs no iterations. Otherwise, the compiler emits exactly `MAX_ITERATIONS` guarded iterations, and each guarded iteration runs only while the current loop variable is still below `end`.
+
+This fails during compilation because the constant range has 4 values, but the unroll bound is only 3:
+
+```javascript
+contract CompileTimeLoopFailure() {
+    entrypoint function check() {
+        for(i, 0, 4, 3) {
+            require(i >= 0);
+        }
+    }
+}
+```
+
+This compiles because the range bounds are provided at runtime, but calling `check(2, 6)` fails during execution because `6 - 2` is greater than the unroll bound of 3:
+
+```javascript
+contract RuntimeLoopFailure() {
+    entrypoint function check(int start, int end) {
+        for(i, start, end, 3) {
+            require(i >= start);
+        }
+    }
+}
+```
+
+**Warning:** The runtime assertion is a current compiler behavior and may be removed in a later version. Do not rely on its existence as a stable validation mechanism; validate runtime loop bounds explicitly when the contract depends on that validation.
+
+---
+
+## Working with Data
+
+### Literals
+
+**Integer Literals:**
+
+```javascript
+int decimal = 42;
+int negative = -100;
+int withUnderscore = 1_000_000;  // Underscores for readability
+int exponential = 1e6;  // 1,000,000
+```
+
+**Boolean Literals:**
+
+```javascript
+bool t = true;
+bool f = false;
+```
+
+**String Literals:**
+
+```javascript
+string s1 = "Hello World";
+string s2 = 'Single quotes work too';
+string escaped = "Line 1\nLine 2\tTabbed";
+string quote = "He said \"Hello\"";
+string apostrophe = 'It\'s working';
+```
+
+**Hex Literals:**
+
+```javascript
+byte[] data = 0x1234abcd;
+byte[] empty = 0x;
+byte[] pubkeyBytes = 0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef;
+```
+
+Hex literals are always parsed as byte sequences. That means `0x00` is not a scalar `byte`; use an explicit cast when you want one:
+
+```javascript
+byte bad = 0x00;        // compiler error: use byte(0x00) to cast a one-byte hex literal to byte
+byte good = byte(0x00); // compiles
+```
+
+### Number Units
+
+SilverScript supports convenient number units for values and time:
+
+**Value Units:**
+
+```javascript
+int amount1 = 1000 litras;
+int amount2 = 10 grains;
+int amount3 = 1 kas;
+```
+
+**Time Units:**
+
+```javascript
+int time1 = 30 seconds;
+int time2 = 5 minutes;  // 300 seconds
+int time3 = 2 hours;    // 7200 seconds
+int time4 = 7 days;     // 604800 seconds
+int time5 = 4 weeks;    // 2419200 seconds
+```
+
+Example usage:
+
+```javascript
+entrypoint function withdraw() {
+    require(this.age >= 30 days);
+    require(tx.outputs[0].value >= 10000 litras);
+}
+```
+
+### Date Literals
+
+Convert ISO 8601 date strings to Unix timestamps:
+
+```javascript
+int timestamp = date("2021-02-17T01:30:00");
+require(tx.time >= timestamp);
+```
+
+Format: `YYYY-MM-DDThh:mm:ss`
+
+### Arrays
+
+SilverScript supports both direct array initialization and dynamic building with `.append()`:
+
+```javascript
+// Direct initialization (size inferred from literals)
+int[] nums = [1, 2, 3];           // inferred as int[3]
+byte[] data = 0x1234abcd;         // inferred as byte[4]
+
+// Explicit fixed-size initialization
+int[4] fixedNums = [1, 2, 3, 4];
+byte[4] tag = 0x01020304;
+
+// Dynamic building with append
+int[] numbers;
+numbers = numbers.append(1, 2, 3, 4, 5);
+
+// Build byte[32] array dynamically
+byte[32][] hashes;
+hashes = hashes.append(0x1111111111111111111111111111111111111111111111111111111111111111);
+hashes = hashes.append(0x2222222222222222222222222222222222222222222222222222222222222222);
+
+// Access array elements
+int first = numbers[0];
+int second = numbers[1];
+
+// Array length
+int count = numbers.length;
+
+// For fixed-size arrays (including inferred ones), length is compile-time
+require(nums.length == 3);
+require(data.length == 4);
+```
+
+**Array Concatenation:**
+
+You can concatenate arrays with `+` when element types are compatible.
+
+This works for array types whose element size is known at compile time, including:
+- `byte[]` (element type `byte`)
+- `int[]` (element type `int`)
+- `bool[]` (element type `bool`)
+- `pubkey[]` (element type `pubkey`)
+- `byte[N][]` (element type `byte[N]`)
+
+Examples:
+
+```javascript
+// int[] + int[]
+int[] a = [1, 2];
+int[] b = [3, 4];
+int[4] c = a + b;
+
+require(c.length == 4);
+require(c[0] == 1);
+require(c[1] == 2);
+require(c[2] == 3);
+require(c[3] == 4);
+
+// byte[] + byte[]
+byte[] p = 0x0102;
+byte[] q = 0x0304;
+byte[4] r = p + q;
+require(r == 0x01020304);
+
+// bool[] + bool[]
+bool[] f1 = [true, false];
+bool[] f2 = [true, false];
+bool[4] f = f1 + f2;
+require(f[0]);
+require(!f[1]);
+require(f[2]);
+require(!f[3]);
+
+// pubkey[] + pubkey[]
+pubkey k1 = 0x0202020202020202020202020202020202020202020202020202020202020202;
+pubkey k2 = 0x0303030303030303030303030303030303030303030303030303030303030303;
+pubkey[] ks1 = [k1];
+pubkey[] ks2 = [k2];
+pubkey[2] ks = ks1 + ks2;
+require(ks[0] == k1);
+require(ks[1] == k2);
+
+// byte[N][] + byte[N][]
+byte[2][] x = [0x0102, 0x0304];
+byte[2][] y = [0x0506];
+byte[2][3] z = x + y;
+require(z.length == 3);
+require(z[2] == 0x0506);
+```
+
+### String Operations
+
+**Concatenation:**
+
+```javascript
+string hello = "Hello";
+string world = "World";
+string message = hello + " " + world;  // "Hello World"
+
+// Length
+int len = message.length;  // 11
+```
+
+### Bytes Operations
+
+**Concatenation:**
+
+```javascript
+byte[] a = 0x1234;
+byte[] b = 0x5678;
+byte[] combined = a + b;  // 0x12345678
+```
+
+**Split:**
+
+`split(int)` divides a byte array at a specific index and returns a two-value
+tuple `(byte[], byte[])`. Use `.0` for the left part and `.1` for the right part:
+
+```javascript
+byte[] data = 0x1234567890abcdef;
+byte[] left = data.split(4).0;   // 0x12345678
+byte[] right = data.split(4).1;  // 0x90abcdef
+```
+
+You can also destructure both parts at once:
+
+```javascript
+byte[] data = 0x1234567890abcdef;
+(byte[4] left, byte[4] right) = data.split(4);
+```
+
+**Slice:**
+
+Extract a range of bytes:
+
+```javascript
+byte[] data = 0x123456789abcdef;
+byte[] middle = data.slice(2, 5);  // byte[] from index 2 to 5 (exclusive)
+```
+
+**Length:**
+
+```javascript
+byte[] data = 0x1234;
+int size = data.length;  // 2
+```
+
+---
+
+## Type Casting
+
+SilverScript supports explicit type casting:
+
+```javascript
+// Cast to bytes
+byte[] fromInt = byte[](42);
+byte[] fromString = byte[]("hello");
+
+// Cast to specific byte size
+byte[32] hash = byte[32](data);
+byte[65] signatureBytes = byte[65](sigBytes);
+
+// Cast a one-byte hex literal to scalar byte
+byte b = byte(0x00);
+
+// Cast to pubkey or sig
+pubkey pk = pubkey(keyBytes);
+sig signature = sig(signatureBytes);
+
+// Cast to int
+int number = int(someData);
+```
+
+**Example:**
+
+```javascript
+entrypoint function example(pubkey pk, byte[65] sigBytes) {
+    sig s = sig(sigBytes);
+    require(checkSig(s, pk));
+}
+```
+
+---
+
+## Built-in Functions
+
+### Cryptographic Functions
+
+**`blake2b(byte[] data): byte[32]`**
+
+Compute the BLAKE2b hash of the input:
+
+```javascript
+byte[32] hash = blake2b(data);
+byte[32] pkh = blake2b(pk);
+```
+
+**`sha256(byte[] data): byte[32]`**
+
+Compute the SHA-256 hash:
+
+```javascript
+byte[32] hash = sha256(data);
+```
+
+**`checkSig(sig signature, pubkey publicKey): bool`**
+
+Verify a signature against a public key:
+
+```javascript
+require(checkSig(s, pk));
+```
+
+**`checkSigFromStack(datasig signature, byte[32] digest, pubkey publicKey): bool`**
+
+Verify a 64-byte Schnorr signature against a 32-byte digest supplied by the
+contract. Hash the message explicitly with the hash function required by your
+protocol:
+
+```javascript
+require(checkSigFromStack(oracleSig, sha256(oracleMessage), oraclePk));
+```
+
+**`checkSigFromStackECDSA(datasig signature, byte[32] digest, byte[33] publicKey): bool`**
+
+Verify a compact 64-byte ECDSA signature against a 32-byte digest and compressed
+33-byte ECDSA public key:
+
+```javascript
+require(checkSigFromStackECDSA(oracleSig, sha256(oracleMessage), oraclePk));
+```
+
+### Type Conversion Functions
+
+**`byte[](value): bytes`**
+
+Convert to bytes:
+
+```javascript
+byte[] b1 = byte[](42);
+byte[] b2 = byte[]("hello");
+```
+
+**`byte[](int value, int size): bytes`**
+
+Convert integer to byte[] with specific size:
+
+```javascript
+byte[8] b = byte[](1234, 8);
+```
+
+**`int(bool value): int`**
+
+Convert boolean to integer (true = 1, false = 0):
+
+```javascript
+int x = int(false);  // 0
+```
+
+**`length(byte[] value): int`**
+
+Get the length of a byte array:
+
+```javascript
+int size = length(data);
+```
+
+---
+
+## Transaction Introspection
+
+Transaction introspection allows contracts to examine the transaction that is spending them.
+
+### Transaction Fields
+
+**Nullary Operations** (no parameters):
+
+```javascript
+// Current active input index
+int inputIdx = this.activeInputIndex;
+
+// Active bytecode (current contract's scriptPubKey)
+byte[] script = this.activeScriptPubKey;
+
+// Number of inputs
+int inputCount = tx.inputs.length;
+
+// Number of outputs
+int outputCount = tx.outputs.length;
+
+// Transaction version
+int version = tx.version;
+
+// Transaction locktime
+int locktime = tx.locktime;
+```
+
+**Time-based Fields:**
+
+```javascript
+// Age of the UTXO being spent (in seconds)
+require(this.age >= 0);
+
+// Transaction locktime
+require(tx.time >= 0);
+```
+
+### Input Introspection
+
+Access properties of transaction inputs:
+
+```javascript
+// Access input at index i
+int inputValue = tx.inputs[i].value;
+byte[] inputScript = tx.inputs[i].scriptPubKey;
+```
+
+**Example:**
+
+```javascript
+entrypoint function spend() {
+    int currentValue = tx.inputs[this.activeInputIndex].value;
+    require(currentValue >= 1000);
+}
+```
+
+### Output Introspection
+
+Access properties of transaction outputs:
+
+```javascript
+// Access output at index i
+int outputValue = tx.outputs[i].value;
+byte[] outputScriptPubKey = tx.outputs[i].scriptPubKey;
+```
+
+**Example:**
+
+```javascript
+entrypoint function transfer() {
+    // Ensure first output has at least 10000 litras
+    require(tx.outputs[0].value >= 10000);
+}
+```
+
+---
+
+## Covenants
+
+Covenants are contracts that enforce conditions on how funds can be spent. They use transaction introspection to validate outputs.
+
+### Creating ScriptPubKey
+
+**`new ScriptPubKeyP2PK(pubkey pk): byte[34]`**
+
+Create a Pay-to-Public-Key scriptPubKey:
+
+```javascript
+byte[34] outputScriptPubKey = new ScriptPubKeyP2PK(recipientPubkey);
+require(tx.outputs[0].scriptPubKey == outputScriptPubKey);
+```
+
+**`new ScriptPubKeyP2SH(byte[32] scriptHash): byte[35]`**
+
+Create a Pay-to-Script-Hash scriptPubKey:
+
+```javascript
+byte[32] redeemScriptHash = blake2b(redeemScript);
+byte[35] outputScriptPubKey = new ScriptPubKeyP2SH(redeemScriptHash);
+require(tx.outputs[0].scriptPubKey == outputScriptPubKey);
+```
+
+**`new ScriptPubKeyP2SHFromRedeemScript(byte[] redeemScript): byte[35]`**
+
+Create a P2SH scriptPubKey directly from a redeem script:
+
+```javascript
+byte[35] outputScriptPubKey = new ScriptPubKeyP2SHFromRedeemScript(redeemScript);
+```
+
+### State Transition Builtins
+
+SilverScript provides four builtins for state routing and cross-template state inspection.
+
+- **Validate Output State**: validate continuation into the same contract template. `newState` must provide every state field exactly once in the local `State` layout.
+
+```js
+validateOutputState(int outputIndex, object newState)
+```
+
+- **Validate Output State With Template**: validate continuation into a foreign contract template. `newState` is encoded using the struct layout implied by the value you pass, then inserted between `templatePrefix` and `templateSuffix`.
+
+```js
+validateOutputStateWithTemplate(
+    int outputIndex,
+    object newState,
+    byte[] templatePrefix,
+    byte[] templateSuffix,
+    byte[32] expectedTemplateHash
+)
+```
+
+- **Read Input State**: read another input as this contract's own `State`.
+
+```js
+readInputState(int inputIndex)
+```
+
+- **Read Input State With Template**: read another input using a foreign struct layout. It checks the foreign template hash and the foreign input's P2SH commitment before decoding.
+
+```js
+readInputStateWithTemplate(
+    int inputIndex,
+    int templatePrefixLen,
+    int templateSuffixLen,
+    byte[32] expectedTemplateHash
+)
+```
+
+Use it with a direct struct binding or destructuring assignment:
+
+```js
+OtherState other = readInputStateWithTemplate(inputIndex, templatePrefixLen, templateSuffixLen, expectedTemplateHash);
+```
+
+Same-template example:
+
+```js
+pragma silverscript ^0.1.0;
+
+contract Counter(int initCount, byte[2] initTag) {
+    int count = initCount;
+    byte[2] tag = initTag;
+
+    entrypoint function step() {
+        validateOutputState(0, { count: count + 1, tag: tag });
+    }
+}
+```
+
+Input-side note:
+
+- `readInputState(...)` and `readInputStateWithTemplate(...)` are input-state decoders. They read bytes from another input's sigscript and decode them as state.
+- `readInputState(...)` is appropriate when the surrounding covenant domain guarantees a single allowed contract/layout for the foreign input.
+- `readInputStateWithTemplate(...)` is appropriate when multiple templates may share a covenant domain; it additionally validates the foreign input's template hash and checks that the claimed redeem-script bytes match the foreign input's P2SH `scriptPubKey`.
+- Without those surrounding guarantees, plain `readInputState(...)` would also need extra correlation checks between the foreign input and the inspected part of its sigscript.
+
+### Covenant Examples
+
+**Simple Covenant (Send to Specific Address):**
+
+```javascript
+pragma silverscript ^0.1.0;
+
+contract SimpleCovenant(pubkey recipient) {
+    entrypoint function spend() {
+        // First output must go to the recipient
+        byte[34] recipientScriptPubKey = new ScriptPubKeyP2PK(recipient);
+        require(tx.outputs[0].scriptPubKey == recipientScriptPubKey);
+    }
+}
+```
+
+**Recurring Payment Covenant:**
+
+```javascript
+pragma silverscript ^0.1.0;
+
+contract RecurringPayment(pubkey recipient, int paymentAmount, int period) {
+    entrypoint function withdraw() {
+        // Must wait for the period to elapse
+        require(this.age >= period);
+        
+        // First output must pay the recipient
+        byte[34] recipientScriptPubKey = new ScriptPubKeyP2PK(recipient);
+        require(tx.outputs[0].scriptPubKey == recipientScriptPubKey);
+        require(tx.outputs[0].value >= paymentAmount);
+        
+        // Calculate change
+        int inputValue = tx.inputs[this.activeInputIndex].value;
+        int minerFee = 1000;
+        int changeValue = inputValue - paymentAmount - minerFee;
+        
+        // If sufficient funds remain, send change back to contract
+        if (changeValue >= paymentAmount + minerFee) {
+            byte[] changeScriptPubKey = tx.inputs[this.activeInputIndex].scriptPubKey;
+            require(tx.outputs[1].scriptPubKey == changeScriptPubKey);
+            require(tx.outputs[1].value == changeValue);
+        }
+    }
+}
+```
+
+---
+
+## Advanced Features
+
+### Constants
+
+Define contract-level constants:
+
+```javascript
+contract MyContract() {
+    int constant MAX_VALUE = 1000;
+    int constant MIN_VALUE = 100;
+    string constant MESSAGE = "hello";
+    
+    entrypoint function check(int x) {
+        require(x >= MIN_VALUE);
+        require(x <= MAX_VALUE);
+    }
+}
+```
+
+Constants can also be declared inside functions:
+
+```javascript
+entrypoint function example() {
+    string constant greeting = "Hello";
+    require(sha256(greeting) != 0x);
+}
+```
+
+### Tuple Unpacking
+
+Unpack multiple values from tuple-returning functions or tuple-returning
+built-ins such as `split(int)`:
+
+```javascript
+function getPair(): (int, int) {
+    return (10, 20);
+}
+
+entrypoint function example(byte[32] data) {
+    (byte[16] left, byte[16] right) = data.split(16);
+    (int x, int y) = getPair();
+}
+```
+
+Tuple fields can also be accessed directly with numeric field access:
+
+```javascript
+function getPair(): (int, int) {
+    return (10, 20);
+}
+
+entrypoint function example() {
+    int first = getPair().0;
+    int second = getPair().1;
+    require(first + second == 30);
+}
+```
+
+A one-element tuple uses the same field access:
+
+```javascript
+function getOnly(): (int) {
+    return (5);
+}
+
+entrypoint function example() {
+    require(getOnly().0 == 5);
+}
+```
+
+### Split and Slice Operations
+
+**Split:**
+
+Divide `byte[]` into two parts at a given index. The built-in has the shape
+`split(int): (byte[], byte[])`, so the result is accessed like other tuple
+returns:
+
+```javascript
+byte[] data = 0x1122334455667788;
+
+// Split at byte 4
+byte[] left = data.split(4).0;   // 0x11223344
+byte[] right = data.split(4).1;  // 0x55667788
+
+// Destructure both parts with types
+(byte[4] a, byte[4] b) = data.split(4);
+```
+
+**Slice:**
+
+Extract a substring of bytes:
+
+```javascript
+byte[] data = 0x1122334455667788;
+
+// Get byte[] from index 2 to 5 (exclusive)
+byte[] middle = data.slice(2, 5);  // 0x334455
+
+// Variable indices
+int start = 1;
+int end = 4;
+byte[] extracted = data.slice(start, end);
+```
+
+---
+
+## Complete Examples
+
+### Pay-to-Public-Key (P2PK)
+
+```javascript
+pragma silverscript ^0.1.0;
+
+contract P2PK(pubkey pk) {
+    entrypoint function spend(sig s) {      
+        // Verify the signature
+        require(checkSig(s, pk));
+    }
+}
+```
+
+**Constructor arguments:**
+- `pk`: The recipient's public key
+
+**Spend arguments:**
+- `s`: A signature from the private key corresponding to `pk`
+
+### Transfer with Timeout
+
+```javascript
+pragma silverscript ^0.1.0;
+
+contract TransferWithTimeout(
+    pubkey sender,
+    pubkey recipient,
+    int timeout
+) {
+    // Recipient can spend at any time
+    entrypoint function transfer(sig recipientSig) {
+        require(checkSig(recipientSig, recipient));
+    }
+
+    // Sender can reclaim after timeout
+    entrypoint function reclaim(sig senderSig) {
+        require(checkSig(senderSig, sender));
+        require(tx.time >= timeout);
+    }
+}
+```
+
+**Constructor arguments:**
+- `sender`: Public key of the sender (who can reclaim)
+- `recipient`: Public key of the recipient (who can spend)
+- `timeout`: Unix timestamp after which sender can reclaim
+
+**Spend paths:**
+1. **Transfer:** Recipient signs to claim funds
+2. **Reclaim:** Sender signs after timeout to reclaim funds
+
+### Recurring Payment (Mecenas)
+
+A contract that releases periodic payments to a beneficiary:
+
+```javascript
+pragma silverscript ^0.1.0;
+
+contract Mecenas(pubkey recipient, byte[32] funder, int pledge, int period) {
+    // Periodic payment to recipient
+    entrypoint function receive() {
+        // Must wait for the period to elapse
+        require(this.age >= period);
+
+        // Check that the first output sends to the recipient
+        byte[34] recipientScriptPubKey = new ScriptPubKeyP2PK(recipient);
+        require(tx.outputs[0].scriptPubKey == recipientScriptPubKey);
+
+        // Calculate the value that's left
+        int minerFee = 1000;
+        int currentValue = tx.inputs[this.activeInputIndex].value;
+        int changeValue = currentValue - pledge - minerFee;
+
+        // If there is not enough left for another pledge after this one,
+        // send the remainder to the recipient. Otherwise send the
+        // pledge to the recipient and the change back to the contract
+        if (changeValue <= pledge + minerFee) {
+            require(tx.outputs[0].value == currentValue - minerFee);
+        } else {
+            require(tx.outputs[0].value == pledge);
+            byte[] changeScriptPubKey = tx.inputs[this.activeInputIndex].scriptPubKey;
+            require(tx.outputs[1].scriptPubKey == changeScriptPubKey);
+            require(tx.outputs[1].value == changeValue);
+        }
+    }
+
+    // Funder can reclaim at any time
+    entrypoint function reclaim(pubkey pk, sig s) {
+        require(blake2b(pk) == funder);
+        require(checkSig(s, pk));
+    }
+}
+```
+
+**Constructor arguments:**
+- `recipient`: Public key of the beneficiary
+- `funder`: Hash of the funder's public key (for reclaim)
+- `pledge`: Amount to pay per period
+- `period`: Time in seconds between payments
+
+**Spend paths:**
+1. **Receive:** Anyone can trigger a payment after the period elapses
+2. **Reclaim:** Funder can reclaim all funds at any time
+
+---
+
+## Best Practices
+
+1. **Always use pragma directives** to specify the language version
+2. **Use descriptive variable and function names** for better readability
+3. **Add comments** to explain complex logic
+4. **Validate all inputs** with `require` statements
+5. **Be mindful of miner fees** when calculating output values in covenants
+6. **Test extensively** before deploying to mainnet
+7. **Use constants** for magic numbers and repeated values
+8. **Keep contracts simple** - complexity increases the risk of bugs

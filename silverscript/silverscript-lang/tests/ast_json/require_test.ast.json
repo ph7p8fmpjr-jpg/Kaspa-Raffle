@@ -1,0 +1,38 @@
+{
+  "name": "Test",
+  "params": [],
+  "constants": [],
+  "functions": [
+    {
+      "name": "main",
+      "entrypoint": true,
+      "params": [
+        { "type_ref": { "base": "int" }, "name": "a" },
+        { "type_ref": { "base": "int" }, "name": "b" }
+      ],
+      "body": [
+        {
+          "kind": "require",
+          "data": {
+            "expr": {
+              "kind": "binary",
+              "data": {
+                "op": "eq",
+                "left": {
+                  "kind": "binary",
+                  "data": {
+                    "op": "add",
+                    "left": { "kind": "identifier", "data": "a" },
+                    "right": { "kind": "identifier", "data": "b" }
+                  }
+                },
+                "right": { "kind": "int", "data": 7 }
+              }
+            },
+            "message": null
+          }
+        }
+      ]
+    }
+  ]
+}

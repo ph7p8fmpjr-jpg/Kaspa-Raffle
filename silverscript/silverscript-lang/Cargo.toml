@@ -1,0 +1,34 @@
+[package]
+name = "silverscript-lang"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[lib]
+name = "silverscript_lang"
+path = "src/lib.rs"
+
+[dependencies]
+kaspa-consensus-core.workspace = true
+kaspa-txscript.workspace = true
+kaspa-txscript-errors.workspace = true
+blake2b_simd.workspace = true
+indexmap.workspace = true
+chrono = { version = "0.4", default-features = false, features = ["std"] }
+pest = "2.7"
+pest_derive = "2.7"
+rand.workspace = true
+secp256k1.workspace = true
+thiserror.workspace = true
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+clap = { version = "4.5.60", features = ["derive"] }
+faster-hex = "0.10"
+semver = "1.0"
+
+[dev-dependencies]
+kaspa-addresses.workspace = true
+sha2 = "0.10"

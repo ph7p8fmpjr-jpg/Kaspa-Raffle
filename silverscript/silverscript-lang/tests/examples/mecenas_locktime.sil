@@ -1,0 +1,39 @@
+pragma silverscript ^0.1.0;
+
+contract Mecenas(
+    pubkey recipient,
+    byte[32] funder,
+    int pledgePerBlock,
+    byte[8] initialBlock,
+) {
+    entrypoint function receive() {
+        byte[34] recipientScriptPubKey = new ScriptPubKeyP2PK(recipient);
+        require(tx.outputs[0].scriptPubKey == byte[](recipientScriptPubKey));
+
+        int initial = int(initialBlock);
+        require(tx.time >= initial);
+
+        int passedBlocks = tx.locktime - initial;
+        int pledge = passedBlocks * pledgePerBlock;
+
+        int minerFee = 1000;
+        int currentValue = tx.inputs[this.activeInputIndex].value;
+        int changeValue = currentValue - pledge - minerFee;
+
+        if (changeValue <= pledgePerBlock + minerFee) {
+            require(tx.outputs[0].value == currentValue - minerFee);
+        } else {
+            require(tx.outputs[0].value == pledge);
+            require(tx.outputs[1].value == changeValue);
+
+            byte[] bcValue = 8 + byte[8](tx.locktime) + this.activeScriptPubKey.split(9).1;
+            byte[35] lockValue = new ScriptPubKeyP2SH(blake2b(bcValue));
+            require(tx.outputs[1].scriptPubKey == byte[](lockValue));
+        }
+    }
+
+    entrypoint function reclaim(pubkey pk, sig s) {
+        require(blake2b(pk) == funder);
+        require(checkSig(s, pk));
+    }
+}

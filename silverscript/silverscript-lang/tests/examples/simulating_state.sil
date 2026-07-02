@@ -1,0 +1,54 @@
+pragma silverscript ^0.1.0;
+
+contract SimulatingState(
+    pubkey recipient,
+    byte[32] funder,
+    int pledgePerBlock,
+    byte[8] initialBlock,
+) {
+    entrypoint function receive() {
+        // Check that the first output sends to the recipient
+            byte[34] recipientScriptPubKey = new ScriptPubKeyP2PK(recipient);
+        require(tx.outputs[0].scriptPubKey == byte[](recipientScriptPubKey));
+
+        // Check that time has passed and that time locks are enabled
+        int initial = int(initialBlock);
+        require(tx.time >= initial);
+
+        // Calculate the amount that has accrued since last claim
+        int passedBlocks = tx.locktime - initial;
+        int pledge = passedBlocks * pledgePerBlock;
+
+        // Calculate the leftover amount
+        int minerFee = 1000;
+        int currentValue = tx.inputs[this.activeInputIndex].value;
+        int changeValue = currentValue - pledge - minerFee;
+
+        // If there is not enough left for *another* pledge after this one,
+        // we send the remainder to the recipient. Otherwise we send the
+        // remainder to the recipient and the change back to the contract
+        if (changeValue <= pledge + minerFee) {
+            require(tx.outputs[0].value == currentValue - minerFee);
+        } else {
+            // Check that the outputs send the correct amounts
+            require(tx.outputs[0].value == pledge);
+            require(tx.outputs[1].value == changeValue);
+
+            // Cut out old initialBlock (OP_PUSHBYTES_8 <initialBlock>)
+            // Insert new initialBlock (OP_PUSHBYTES_8 <tx.locktime>)
+            // Note that constructor parameters are added in reverse order,
+            // so initialBlock is the first statement in the contract bytecode.
+            byte[] newContract = 0x08 + byte[8](tx.locktime) + this.activeScriptPubKey.split(9).1;
+
+            // Create the locking bytecode for the new contract and check that
+            // the change output sends to that contract
+                byte[35] newContractLock = new ScriptPubKeyP2SH(blake2b(newContract));
+            require(tx.outputs[1].scriptPubKey == byte[](newContractLock));
+        }
+    }
+
+    entrypoint function reclaim(pubkey pk, sig s) {
+        require(blake2b(pk) == funder);
+        require(checkSig(s, pk));
+    }
+}

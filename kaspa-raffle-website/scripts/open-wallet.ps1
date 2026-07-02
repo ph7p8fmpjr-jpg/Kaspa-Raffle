@@ -1,0 +1,5 @@
+Start-Process "C:\Users\smoot\OneDrive\Desktop\Kaspa\rusty-kaspa-v2.0.0-win64\kaspa-wallet.exe"
+Write-Host "In the wallet, type: open raffle"
+Write-Host "Then type: export private-key"
+Write-Host "Paste the result into .env as WALLET_PRIVATE_KEY="
+Write-Host "See scripts\SETUP-WALLET.txt for full instructions"

@@ -1,0 +1,6 @@
+target
+.cargo/*
+.vscode/*
+.codex/*
+*.bak
+docs/kcc20-book/book

@@ -1,0 +1,23 @@
+# Render deploy — repo root must contain silverscript/ and kaspa-raffle-website/.
+# Free tier + external cron ping (cron-job.org hits /api/cron/draw at 00:02 UTC,
+# which both wakes the instance and triggers settlement).
+services:
+  - type: web
+    name: kaspa-raffle-trustless
+    runtime: docker
+    dockerfilePath: ./kaspa-raffle-website/Dockerfile
+    dockerContext: .
+    plan: free
+    envVars:
+      - key: KASPA_NETWORK
+        value: testnet-12
+      - key: ADDRESS_PREFIX
+        value: kaspatest
+      - key: DEV_PUBKEY
+        sync: false
+      - key: OPS_PUBKEY
+        sync: false
+      - key: CRON_SECRET
+        sync: false
+      - key: KASPA_RPC_URL
+        sync: false

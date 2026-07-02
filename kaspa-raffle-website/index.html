@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaspa Daily Raffle • Min 100 KAS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body { font-family: 'Inter', system_ui, sans-serif; }
+        .heading { font-family: 'Space Grotesk', 'Inter', sans-serif; font-weight: 600; }
+        .kaspa-gradient { background: linear-gradient(135deg, #14b8a6, #0f766e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .kaspa-address { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; word-break: break-all; }
+        .split-badge { font-size: 0.75rem; padding: 2px 10px; border-radius: 9999px; font-weight: 700; }
+        .live-dot { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    </style>
+</head>
+<body class="bg-zinc-950 text-zinc-200">
+    <!-- Navbar -->
+    <nav class="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-lg sticky top-0 z-50">
+        <div class="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-x-3">
+                <div class="w-10 h-10 bg-teal-500 rounded-2xl flex items-center justify-center">
+                    <i class="fa-solid fa-dice text-white text-3xl"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-2xl tracking-tighter">Kaspa</span>
+                    <span class="font-semibold text-teal-400">Raffle</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-x-4 text-sm">
+                <a href="#how-it-works" class="px-4 py-2 font-medium hover:text-white transition-colors">How it Works</a>
+                <a href="#live-entries" class="px-4 py-2 font-medium hover:text-white transition-colors">Live Entries</a>
+                <button onclick="copyMainAddress()" class="flex items-center gap-x-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 px-5 py-2 rounded-2xl font-semibold">
+                    <i class="fa-solid fa-copy"></i> <span>Copy Address</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="max-w-screen-xl mx-auto px-6 pt-12 pb-8">
+        <div class="max-w-3xl mx-auto text-center mb-8">
+            <div class="inline-flex items-center gap-x-2 bg-zinc-900 border border-zinc-800 rounded-full px-4 py-1.5 mb-6">
+                <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+                <span class="text-sm font-medium text-emerald-400">Daily draws • Min 100 KAS per entry</span>
+            </div>
+            
+            <h1 class="text-6xl md:text-7xl font-bold tracking-tighter heading mb-4">
+                Win <span class="kaspa-gradient">Kaspa</span><br>
+                Every Single Day
+            </h1>
+            <p class="text-xl text-zinc-400 max-w-md mx-auto mb-8">
+                Send <span class="font-semibold text-white">100 KAS or more</span>. Every qualifying send = 1 entry.
+            </p>
+        </div>
+
+        <!-- CURRENT JACKPOT -->
+        <div class="max-w-2xl mx-auto mb-10">
+            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-8 text-center">
+                <div class="text-sm font-medium text-zinc-400 tracking-wider mb-1">CURRENT JACKPOT</div>
+                <div class="flex items-baseline justify-center gap-x-2 mb-2">
+                    <div id="jackpot-total" class="text-6xl font-bold tabular-nums text-zinc-500">—</div>
+                    <div class="text-3xl text-zinc-400">KAS</div>
+                </div>
+                <div class="text-emerald-400 text-xl font-semibold mb-1">
+                    Winner gets right now: <span id="winner-share">—</span> KAS <span class="text-base">(50%)</span>
+                </div>
+                <div class="text-xs text-zinc-500">Live • Next draw at midnight UTC</div>
+            </div>
+        </div>
+
+        <!-- Address Boxes -->
+        <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-6">
+            
+            <!-- Raffle Address + QR -->
+            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-8">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm font-semibold tracking-wider text-teal-400">RAFFLE ADDRESS <span class="split-badge bg-emerald-500/10 text-emerald-400 ml-2">Min 100 KAS</span></span>
+                    <button onclick="showQRModal()" class="flex items-center gap-x-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-2xl text-sm font-medium">
+                        <i class="fa-solid fa-qrcode"></i> <span>Show QR</span>
+                    </button>
+                </div>
+                
+                <div id="main-raffle-address-display" onclick="copyMainAddress()" class="kaspa-address bg-zinc-950 border border-zinc-700 hover:border-teal-500/50 p-4 rounded-2xl text-sm md:text-base font-mono text-teal-300 break-all cursor-pointer mb-4">
+                    winraffle.kas
+                </div>
+                
+                <div class="flex gap-3">
+                    <button onclick="copyMainAddress()" class="flex-1 bg-white hover:bg-zinc-100 text-zinc-950 font-semibold py-3.5 rounded-2xl flex justify-center items-center gap-x-2">
+                        <i class="fa-solid fa-copy"></i> <span>Copy Address</span>
+                    </button>
+                    <button onclick="showQRModal()" class="flex-1 border border-zinc-600 hover:bg-zinc-800 font-semibold py-3.5 rounded-2xl flex justify-center items-center gap-x-2">
+                        <i class="fa-solid fa-qrcode"></i> <span>Show QR</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Funding Initiative -->
+            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-8">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm font-semibold tracking-wider text-amber-400">CURRENT FUNDING INITIATIVE <span class="split-badge bg-amber-500/10 text-amber-400 ml-2">40%</span></span>
+                    <button onclick="showAdminLogin()" class="text-xs px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 rounded-2xl flex items-center gap-x-1.5">
+                        <i class="fa-solid fa-lock"></i> <span>Admin</span>
+                    </button>
+                </div>
+                <div onclick="copyFundingAddress()" class="kaspa-address bg-zinc-950 border border-zinc-700 hover:border-amber-500/50 p-4 rounded-2xl text-sm md:text-base font-mono text-amber-300 break-all cursor-pointer mb-3" id="funding-address-display">
+                    kaspa:fundingaddresshere1234567890abcdefghijklmnopqrstuvwxyz
+                </div>
+                <div class="bg-zinc-950 border border-zinc-700 rounded-2xl p-4 mb-4">
+                    <div class="text-xs text-zinc-400 mb-1">Currently supporting:</div>
+                    <div class="font-medium text-sm" id="funding-description-display">Kaspa Core Developers for ongoing improvements</div>
+                </div>
+                <button onclick="copyFundingAddress()" class="w-full border border-zinc-600 hover:bg-zinc-800 font-semibold py-3 rounded-2xl flex justify-center items-center gap-x-2 text-sm">
+                    <i class="fa-solid fa-copy"></i> <span>Copy Funding Address</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Transparency Bar -->
+        <div class="max-w-5xl mx-auto mt-6 bg-zinc-900 border border-zinc-700 rounded-3xl p-5">
+            <div class="flex flex-wrap justify-center gap-x-8 gap-y-2 text-sm font-medium">
+                <div class="flex items-center gap-x-2"><span class="split-badge bg-emerald-500 text-white">50%</span> <span class="text-emerald-400 font-semibold">Winner</span></div>
+                <div class="flex items-center gap-x-2"><span class="split-badge bg-amber-500 text-white">40%</span> <span class="text-amber-400 font-semibold">Kaspa Funding Initiatives</span></div>
+                <div class="flex items-center gap-x-2"><span class="split-badge bg-zinc-600 text-white">10%</span> <span class="text-zinc-300 font-semibold">Operations &amp; Development</span></div>
+            </div>
+            <div class="text-center text-[10px] text-zinc-500 mt-3">100% of every pot is distributed transparently every day</div>
+        </div>
+    </div>
+
+    <!-- LIVE ENTRIES -->
+    <div id="live-entries" class="max-w-screen-xl mx-auto px-6 py-12 border-t border-zinc-800">
+        <div class="flex justify-between items-end mb-6">
+            <div>
+                <h2 class="text-2xl font-bold flex items-center gap-x-3">Recent Entries 
+                    <span class="text-sm font-normal bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full flex items-center gap-x-1.5">
+                        <span class="w-2 h-2 bg-emerald-400 rounded-full live-dot"></span> LIVE
+                    </span>
+                </h2>
+            </div>
+            <div class="text-emerald-400 font-semibold text-sm" id="entry-count">Loading entries...</div>
+        </div>
+        <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-2 max-h-[380px] overflow-y-auto" id="live-entries-list"></div>
+    </div>
+
+    <!-- VERIFY ON CHAIN -->
+    <div class="max-w-screen-xl mx-auto px-6 py-12 border-t border-zinc-800">
+        <div class="max-w-2xl mx-auto text-center bg-zinc-900 border border-zinc-700 rounded-3xl p-8">
+            <h3 class="text-xl font-semibold mb-2">Verify Everything On-Chain</h3>
+            <p class="text-zinc-400 mb-6 text-sm">All transactions are public on the Kaspa blockchain.</p>
+            <a id="explorer-link" href="https://explorer.kaspa.org/addresses/kaspa:qr3rxmae6r5h9kkt7q5my7rajy492da7cxpy0kkzr99tk3xcydc2uwa3a7u6r" 
+               target="_blank"
+               rel="noopener noreferrer"
+               class="inline-flex items-center justify-center gap-x-3 bg-teal-600 hover:bg-teal-700 transition-all text-white font-semibold px-8 py-4 rounded-2xl text-lg w-full md:w-auto">
+                <i class="fa-solid fa-link"></i>
+                <span>View Raffle Address on Kaspa Explorer</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- How it Works -->
+    <div id="how-it-works" class="max-w-screen-xl mx-auto px-6 py-12 border-t border-zinc-800">
+        <h2 class="text-center text-2xl font-bold mb-8">How It Works</h2>
+        <div class="grid md:grid-cols-4 gap-5 max-w-5xl mx-auto text-sm">
+            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6">
+                <div class="text-teal-400 mb-2"><i class="fa-solid fa-wallet text-xl"></i></div>
+                <div class="font-semibold mb-1">1. Send 100+ KAS</div>
+                <div class="text-zinc-400">Minimum 100 KAS per send. Every qualifying send = 1 entry.</div>
+            </div>
+            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6">
+                <div class="text-teal-400 mb-2"><i class="fa-solid fa-database text-xl"></i></div>
+                <div class="font-semibold mb-1">2. We Track</div>
+                <div class="text-zinc-400">All sends above 100 KAS are recorded on-chain.</div>
+            </div>
+            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6">
+                <div class="text-teal-400 mb-2"><i class="fa-solid fa-random text-xl"></i></div>
+                <div class="font-semibold mb-1">3. Daily Draw</div>
+                <div class="text-zinc-400">One random entry wins at midnight UTC.</div>
+            </div>
+            <div class="bg-zinc-900 border border-zinc-700 rounded-3xl p-6">
+                <div class="text-teal-400 mb-2"><i class="fa-solid fa-hand-holding-dollar text-xl"></i></div>
+                <div class="font-semibold mb-1">4. Payout</div>
+                <div class="text-zinc-400">50% to winner • 40% to funding • 10% to ops.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rules -->
+    <div id="rules" class="max-w-screen-xl mx-auto px-6 py-12 border-t border-zinc-800">
+        <div class="max-w-2xl mx-auto">
+            <h2 class="text-center text-2xl font-bold mb-8">Official Rules</h2>
+            <div class="space-y-4 text-sm bg-zinc-900 border border-zinc-700 rounded-3xl p-8">
+                <div class="flex gap-4"><div class="font-mono text-teal-400 w-6 shrink-0">01</div><div><strong>Minimum 100 KAS per send</strong> to qualify as an entry.</div></div>
+                <div class="flex gap-4"><div class="font-mono text-teal-400 w-6 shrink-0">02</div><div><strong>Every qualifying send counts</strong> — send 3 times = 3 entries.</div></div>
+                <div class="flex gap-4"><div class="font-mono text-teal-400 w-6 shrink-0">03</div><div>Draw happens automatically every day at midnight UTC.</div></div>
+                <div class="flex gap-4"><div class="font-mono text-teal-400 w-6 shrink-0">04</div><div><strong>Payout split:</strong> 50% Winner • 40% Kaspa Funding Initiatives • 10% Operations &amp; Development.</div></div>
+                <div class="flex gap-4"><div class="font-mono text-teal-400 w-6 shrink-0">05</div><div>All activity is public and verifiable on the Kaspa blockchain.</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR Modal -->
+    <div id="qr-modal" onclick="hideQRModal()" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
+        <div onclick="event.stopImmediatePropagation()" class="bg-zinc-900 border border-zinc-700 rounded-3xl w-full max-w-md p-8 text-center">
+            <div class="flex justify-between items-center mb-6">
+                <div class="font-semibold text-xl">Scan to Send KAS (Min 100 KAS)</div>
+                <button onclick="hideQRModal()" class="text-2xl text-zinc-400 hover:text-white">×</button>
+            </div>
+            <div id="qrcode" class="flex justify-center items-center mb-6 p-4 bg-white rounded-2xl min-h-[240px]"></div>
+            <div id="qr-address-display" class="kaspa-address text-sm text-teal-300 mb-4 break-all">winraffle.kas</div>
+            <button onclick="copyMainAddress(); hideQRModal();" class="w-full bg-white hover:bg-zinc-100 text-zinc-950 font-semibold py-3.5 rounded-2xl flex justify-center items-center gap-x-2">
+                <i class="fa-solid fa-copy"></i> <span>Copy Address</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Admin Modals -->
+    <div id="admin-modal" onclick="hideAdminModal()" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
+        <div onclick="event.stopImmediatePropagation()" class="bg-zinc-900 border border-zinc-700 rounded-3xl w-full max-w-sm p-8">
+            <div class="text-center mb-6">
+                <i class="fa-solid fa-lock text-3xl text-amber-400 mb-3"></i>
+                <div class="font-semibold text-xl">Admin Access Required</div>
+            </div>
+            <input id="admin-password" type="password" placeholder="Enter admin password" class="w-full bg-zinc-950 border border-zinc-700 focus:border-amber-400 rounded-2xl px-4 py-3 mb-4 text-sm">
+            <div class="flex gap-3">
+                <button onclick="hideAdminModal()" class="flex-1 py-3 rounded-2xl border border-zinc-600 hover:bg-zinc-800 font-semibold">Cancel</button>
+                <button onclick="verifyAdminPassword()" class="flex-1 py-3 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-semibold">Unlock</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="funding-modal" onclick="hideFundingModal()" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center z-[100] p-4">
+        <div onclick="event.stopImmediatePropagation()" class="bg-zinc-900 border border-zinc-700 rounded-3xl w-full max-w-md p-8">
+            <div class="flex justify-between items-center mb-6">
+                <div class="font-semibold text-xl">Update Funding Initiative</div>
+                <button onclick="hideFundingModal()" class="text-2xl text-zinc-400 hover:text-white">×</button>
+            </div>
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium mb-1.5">New Funding Address</label>
+                    <input id="new-funding-address" type="text" class="w-full bg-zinc-950 border border-zinc-700 rounded-2xl px-4 py-3 text-sm font-mono">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1.5">Short Description</label>
+                    <textarea id="new-funding-desc" rows="3" class="w-full bg-zinc-950 border border-zinc-700 rounded-2xl px-4 py-3 text-sm"></textarea>
+                </div>
+            </div>
+            <div class="flex gap-3 mt-8">
+                <button onclick="hideFundingModal()" class="flex-1 py-3.5 rounded-2xl border border-zinc-600 hover:bg-zinc-800 font-semibold">Cancel</button>
+                <button onclick="saveFundingInfo()" class="flex-1 py-3.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white font-semibold">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="copy-toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] bg-emerald-500 text-white text-sm font-semibold px-5 py-3 rounded-2xl shadow-lg">
+        Address copied!
+    </div>
+
+<script>
+    // ==================== CONFIG ====================
+    const API_BASE = "https://kaspa-raffle.onrender.com";
+    const mainRaffleAddress = "winraffle.kas";
+    const defaultOnchainAddress = "kaspa:qr3rxmae6r5h9kkt7q5my7rajy492da7cxpy0kkzr99tk3xcydc2uwa3a7u6r";
+    let onchainRaffleAddress = defaultOnchainAddress;
+    let qrCodeInstance = null;
+
+    let currentJackpot = null;
+    let recentEntries = [];
+    let raffleDate = null;
+    let adminToken = null;
+
+    async function fetchRealData() {
+        try {
+            const response = await fetch(`${API_BASE}/api/jackpot`);
+            const data = await response.json();
+
+            currentJackpot = data.balance;
+            recentEntries = data.recentEntries || [];
+            raffleDate = data.raffleDate;
+
+            updateJackpotDisplay();
+            renderRecentEntries();
+        } catch (error) {
+            console.error("Failed to fetch data from backend:", error);
+            const totalEl = document.getElementById('jackpot-total');
+            if (totalEl && currentJackpot === null) totalEl.innerText = 'Offline';
+        }
+    }
+
+    async function fetchConfig() {
+        try {
+            const [configRes, statusRes] = await Promise.all([
+                fetch(`${API_BASE}/api/config`),
+                fetch(`${API_BASE}/api/status`),
+            ]);
+            const data = await configRes.json();
+            if (data.fundingAddress) {
+                document.getElementById('funding-address-display').innerText = data.fundingAddress;
+            }
+            if (data.fundingDescription) {
+                document.getElementById('funding-description-display').innerText = data.fundingDescription;
+            }
+
+            if (statusRes.ok) {
+                const status = await statusRes.json();
+                if (status.raffleAddress) {
+                    updateRaffleAddressDisplay(status.raffleAddress, status.raffleOnchainAddress);
+                }
+            }
+        } catch (error) {
+            console.error("Failed to fetch config:", error);
+        }
+    }
+
+    function updateRaffleAddressDisplay(displayAddress, onchainAddress) {
+        const display = displayAddress || mainRaffleAddress;
+        const onchain = onchainAddress || defaultOnchainAddress;
+        onchainRaffleAddress = onchain;
+
+        const mainEl = document.getElementById('main-raffle-address-display');
+        const qrEl = document.getElementById('qr-address-display');
+        const explorerEl = document.getElementById('explorer-link');
+
+        if (mainEl) mainEl.innerText = display;
+        if (qrEl) qrEl.innerText = display;
+        if (explorerEl) {
+            explorerEl.href = `https://explorer.kaspa.org/addresses/${encodeURIComponent(onchain)}`;
+        }
+    }
+
+    function updateJackpotDisplay() {
+        const totalEl = document.getElementById('jackpot-total');
+        const winnerEl = document.getElementById('winner-share');
+
+        if (currentJackpot === null || currentJackpot === undefined) return;
+
+        if (totalEl) {
+            totalEl.innerText = currentJackpot.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            totalEl.classList.remove('text-zinc-500');
+        }
+        if (winnerEl) winnerEl.innerText = (currentJackpot * 0.5).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Render real recent entries from blockchain
+    function renderRecentEntries() {
+        const container = document.getElementById('live-entries-list');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        if (recentEntries.length === 0) {
+            const div = document.createElement('div');
+            div.className = 'px-5 py-4 text-center text-zinc-400 text-sm';
+            div.innerText = 'No recent entries yet';
+            container.appendChild(div);
+            return;
+        }
+
+        recentEntries.forEach(entry => {
+            const div = document.createElement('div');
+            div.className = 'flex items-center justify-between px-5 py-3.5 hover:bg-zinc-800 rounded-2xl mx-1';
+            div.innerHTML = `
+                <div class="flex items-center gap-x-4">
+                    <div class="font-mono text-sm text-zinc-400">${entry.addr}</div>
+                    <div class="text-emerald-400 font-semibold">+${entry.amount} KAS</div>
+                </div>
+                <div class="text-xs text-zinc-500">${entry.time}</div>
+            `;
+            container.appendChild(div);
+        });
+
+        const countEl = document.getElementById('entry-count');
+        if (countEl) {
+            const label = raffleDate ? `entries on ${raffleDate}` : 'entries today';
+            countEl.innerText = `${recentEntries.length} ${label}`;
+        }
+    }
+
+    // Admin functions
+    function showAdminLogin() {
+        document.getElementById('admin-modal').classList.remove('hidden');
+        document.getElementById('admin-modal').classList.add('flex');
+    }
+
+    function verifyAdminPassword() {
+        const password = document.getElementById('admin-password').value;
+        if (!password) {
+            alert("Enter admin password");
+            return;
+        }
+        adminToken = password;
+        hideAdminModal();
+        const modal = document.getElementById('funding-modal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.getElementById('new-funding-address').value = document.getElementById('funding-address-display').innerText;
+        document.getElementById('new-funding-desc').value = document.getElementById('funding-description-display').innerText;
+    }
+
+    function hideAdminModal() {
+        document.getElementById('admin-modal').classList.add('hidden');
+        document.getElementById('admin-modal').classList.remove('flex');
+    }
+
+    function hideFundingModal() {
+        document.getElementById('funding-modal').classList.add('hidden');
+        document.getElementById('funding-modal').classList.remove('flex');
+    }
+
+    async function saveFundingInfo() {
+        const addr = document.getElementById('new-funding-address').value.trim();
+        const desc = document.getElementById('new-funding-desc').value.trim();
+
+        try {
+            const response = await fetch(`${API_BASE}/api/admin/funding`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${adminToken}`,
+                },
+                body: JSON.stringify({ fundingAddress: addr, fundingDescription: desc }),
+            });
+
+            if (!response.ok) {
+                const err = await response.json().catch(() => ({}));
+                if (response.status === 503 && err.error?.includes('not configured')) {
+                    alert('Admin password is not set on the server. Add ADMIN_PASSWORD in your Render environment variables, then try again.');
+                    return;
+                }
+                if (response.status === 401) {
+                    alert('Wrong admin password. Use the ADMIN_PASSWORD from your server .env / Render settings.');
+                    return;
+                }
+                alert(err.error || 'Failed to save — check admin password');
+                return;
+            }
+
+            const data = await response.json();
+            document.getElementById('funding-address-display').innerText = data.config.fundingAddress;
+            document.getElementById('funding-description-display').innerText = data.config.fundingDescription;
+            hideFundingModal();
+        } catch (error) {
+            alert('Could not reach server. Try again.');
+        }
+    }
+
+    function showCopyToast(message) {
+        const toast = document.getElementById('copy-toast');
+        if (!toast) return;
+        toast.innerText = message;
+        toast.classList.remove('hidden');
+        clearTimeout(showCopyToast._timer);
+        showCopyToast._timer = setTimeout(() => toast.classList.add('hidden'), 2000);
+    }
+
+    async function copyText(text) {
+        if (!text) return false;
+        try {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(text);
+                return true;
+            }
+        } catch (_) {
+            // fall through to legacy copy
+        }
+
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.top = '-1000px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        const copied = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        return copied;
+    }
+
+    async function copyMainAddress() {
+        const text = getDisplayAddress();
+        const copied = await copyText(text);
+        showCopyToast(copied ? 'Address copied!' : 'Copy failed — select and copy manually');
+    }
+
+    async function copyFundingAddress() {
+        const text = document.getElementById('funding-address-display')?.innerText?.trim();
+        const copied = await copyText(text);
+        showCopyToast(copied ? 'Funding address copied!' : 'Copy failed — select and copy manually');
+    }
+
+    function getDisplayAddress() {
+        return document.getElementById('main-raffle-address-display')?.innerText?.trim() || mainRaffleAddress;
+    }
+
+    function getQrPaymentUri() {
+        return getDisplayAddress();
+    }
+
+    function renderQRCode() {
+        const container = document.getElementById('qrcode');
+        if (!container) return;
+
+        container.innerHTML = '';
+        if (typeof QRCode === 'undefined') {
+            container.innerHTML = '<p class="text-zinc-600 text-sm p-4">QR library failed to load. Refresh the page.</p>';
+            return;
+        }
+
+        qrCodeInstance = null;
+        const text = getQrPaymentUri();
+
+        try {
+            qrCodeInstance = new QRCode(container, {
+                text,
+                width: 220,
+                height: 220,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H,
+            });
+        } catch (error) {
+            console.error('QR render failed:', error);
+            container.innerHTML = '<p class="text-zinc-600 text-sm p-4">Could not generate QR code.</p>';
+        }
+    }
+
+    function showQRModal() {
+        const modal = document.getElementById('qr-modal');
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        requestAnimationFrame(() => renderQRCode());
+    }
+
+    function hideQRModal() {
+        const modal = document.getElementById('qr-modal');
+        if (!modal) return;
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function init() {
+        updateRaffleAddressDisplay(mainRaffleAddress, defaultOnchainAddress);
+        fetchConfig();
+        fetchRealData();
+        setInterval(fetchRealData, 15000);
+        console.log('%c[Kaspa Raffle] Live mode — auto-refresh every 15s', 'color:#14b8a6');
+    }
+
+    window.onload = init;
+</script>
+    
+    
+</body>
+</html>

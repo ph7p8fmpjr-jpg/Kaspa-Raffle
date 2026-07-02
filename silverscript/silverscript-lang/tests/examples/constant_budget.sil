@@ -1,0 +1,16 @@
+contract ConstantBudget() {
+    int constant MIN_OUT = 1200;
+    int constant FEE = 800;
+    int constant MIN_CHANGE = 1000;
+    int constant BONUS = 200;
+
+    entrypoint function spend() {
+        int total = tx.outputs[0].value + tx.outputs[1].value;
+        require(total + FEE <= tx.inputs[0].value);
+        if (tx.outputs[1].value >= MIN_CHANGE) {
+            require(tx.outputs[0].value >= MIN_OUT + BONUS);
+        } else {
+            require(tx.outputs[0].value >= MIN_OUT);
+        }
+    }
+}

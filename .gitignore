@@ -1,0 +1,25 @@
+# secrets — never commit
+.env
+*.env
+!.env.example
+
+# build output / deps
+silverscript/target/
+silverscript/.git-upstream/
+node_modules/
+data/
+
+# installers & archives (huge, not source)
+*.exe
+*.msi
+*.zip
+
+# SDK docs (4.5k generated HTML files)
+kaspa-raffle-website/kaspa-sdk-v2.0.1/kaspa-wasm32-sdk/docs/
+
+# local state
+backend-legacy/data/
+
+# old git metadata
+.git-old/
+.git-upstream/

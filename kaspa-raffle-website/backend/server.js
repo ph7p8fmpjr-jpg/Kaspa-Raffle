@@ -1,0 +1,110 @@
+// Kaspa Raffle draw service — HTTP API + midnight-UTC draw scheduler.
+// Holds no keys. Every payout rule is enforced on-chain by the covenant.
+// (The previous custodial backend is preserved in backend-legacy/.)
+const express = require('express');
+const cors = require('cors');
+const config = require('./config');
+const cli = require('./cli');
+const rpc = require('./rpc');
+const registry = require('./registry');
+const draw = require('./draw');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.use(express.static(require('path').join(__dirname, '..')));
+
+// Register an entry: caller provides their payout address, gets back the
+// covenant entry address for today's raffle.
+app.post('/api/enter', async (req, res) => {
+    try {
+        const { payoutAddress } = req.body || {};
+        if (!payoutAddress) return res.status(400).json({ error: 'payoutAddress required' });
+        const pubkey = rpc.addressToXOnlyPubkeyHex(payoutAddress);
+        const closeTimeMs = registry.closeTimeForNow();
+        const info = await cli.entryAddress(closeTimeMs, pubkey);
+        const entrant = registry.addEntrant(closeTimeMs, {
+            pubkey,
+            address: info.address,
+            payoutAddress,
+            registeredAt: Date.now(),
+        });
+        res.json({
+            entryAddress: entrant.address,
+            closeTimeMs,
+            minEntryKas: Number(config.minEntrySompi / 100_000_000n),
+            note: 'Send 100 KAS or more to this address before the close time. Each qualifying UTXO is one entry.',
+        });
+    } catch (err) {
+        res.status(500).json({ error: String(err.message || err) });
+    }
+});
+
+// Live status for the frontend.
+app.get('/api/status', async (req, res) => {
+    try {
+        const closeTimeMs = registry.closeTimeForNow();
+        const day = registry.loadDay(closeTimeMs);
+        let jackpot = 0n;
+        let entries = 0;
+        if (day.entrants.length > 0) {
+            try {
+                const utxos = await rpc.getEntryUtxos(day.entrants.map((e) => e.address));
+                for (const u of utxos) {
+                    if (BigInt(u.amount) >= config.minEntrySompi) {
+                        jackpot += BigInt(u.amount);
+                        entries += 1;
+                    }
+                }
+            } catch {
+                // node unreachable — show registry data only
+            }
+        }
+        res.json({
+            network: config.network,
+            closeTimeMs,
+            registered: day.entrants.length,
+            entries,
+            jackpotSompi: jackpot.toString(),
+            split: { winner: 50, devFund: 40, ops: 10 },
+            recentDraws: registry.recentSettlements(10),
+        });
+    } catch (err) {
+        res.status(500).json({ error: String(err.message || err) });
+    }
+});
+
+// Covenant transparency: per-day template so anyone can verify addresses.
+app.get('/api/covenant', async (req, res) => {
+    try {
+        const closeTimeMs = Number(req.query.close || registry.closeTimeForNow());
+        const template = await cli.template(closeTimeMs);
+        res.json({ closeTimeMs, devPubkey: config.devPubkey, opsPubkey: config.opsPubkey, ...template });
+    } catch (err) {
+        res.status(500).json({ error: String(err.message || err) });
+    }
+});
+
+// External cron trigger (also wakes free-tier hosting at draw time).
+app.get('/api/cron/draw', async (req, res) => {
+    if (!config.cronSecret || req.query.secret !== config.cronSecret) {
+        return res.status(403).json({ error: 'forbidden' });
+    }
+    try {
+        const results = await draw.settleAllDue();
+        res.json({ settled: results.length, results });
+    } catch (err) {
+        res.status(500).json({ error: String(err.message || err) });
+    }
+});
+
+app.get('/healthz', (req, res) => res.json({ ok: true }));
+
+// Internal scheduler: check every minute; settleAllDue is idempotent.
+setInterval(() => {
+    draw.settleAllDue().catch((err) => console.error('scheduled draw error:', err));
+}, 60_000);
+
+app.listen(config.port, () => {
+    console.log(`raffle draw service on :${config.port} (${config.network})`);
+});
