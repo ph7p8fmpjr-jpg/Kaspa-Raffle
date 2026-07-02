@@ -46,10 +46,13 @@ contract RaffleEntry(
     int reclaimDelay,    // seconds after closeTime until reclaim unlocks
     pubkey entrant       // this entry's payout key — KEEP LAST (see note above)
 ) {
-    // Each P2SH input repeats the full redeem script, so tx mass — not script
-    // ceilings — bounds the batch size. 16 inputs × ~2.5KB stays well inside
-    // Kaspa's 100k-gram transaction budget.
-    int constant MAX_ENTRIES = 16;
+    // Compute mass bounds the batch, hard: Toccata charges ~100 grams per
+    // script unit and caps transactions at 500k grams. Every unrolled
+    // iteration blake2b-hashes a full sibling redeem script, so this constant
+    // drives both script size and execution cost. v1 stays small; real
+    // capacity comes with the v2 leader/delegate design where the heavy
+    // verification runs once per draw instead of once per input.
+    int constant MAX_ENTRIES = 4;
     int constant MIN_ENTRY = 10_000_000_000;  // 100 KAS in sompi
     int constant MAX_FEE = 10_000_000;        // draw tx fee cap: 0.1 KAS
     // Byte length of the compiled script after the inlined entrant key.

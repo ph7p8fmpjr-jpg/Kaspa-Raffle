@@ -12,9 +12,21 @@ async function connect() {
     } else {
         options.resolver = new kaspa.Resolver();
     }
-    client = new kaspa.RpcClient(options);
-    await client.connect();
-    return client;
+    // Retry with a hard timeout: the resolver picks random public nodes and a
+    // dead one must not hang the draw loop forever.
+    let lastErr;
+    for (let attempt = 0; attempt < 3; attempt++) {
+        client = new kaspa.RpcClient(options);
+        try {
+            await client.connect({ timeoutDuration: 20_000 });
+            return client;
+        } catch (err) {
+            lastErr = err;
+            try { await client.disconnect(); } catch {}
+            client = null;
+        }
+    }
+    throw new Error(`could not connect to a ${config.network} node after 3 attempts: ${lastErr}`);
 }
 
 async function getEntryUtxos(addresses) {

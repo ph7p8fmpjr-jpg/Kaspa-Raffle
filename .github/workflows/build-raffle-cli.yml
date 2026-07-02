@@ -1,0 +1,50 @@
+name: Build raffle-cli (Linux)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "silverscript/**"
+      - "kaspa-raffle-website/covenant/*.sil"
+      - ".github/workflows/build-raffle-cli.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust 1.85
+        run: rustup toolchain install 1.85 --profile minimal && rustup default 1.85
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            silverscript/target
+          key: raffle-cli-${{ runner.os }}-${{ hashFiles('silverscript/Cargo.lock') }}
+
+      - name: Build
+        working-directory: silverscript
+        run: cargo build --release -p raffle-cli
+
+      - name: Smoke test
+        run: |
+          ./silverscript/target/release/raffle-cli template \
+            --dev dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd \
+            --ops eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee \
+            --close 1751500800000 | head -c 200
+
+      - name: Publish binary to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create bin-latest --title "raffle-cli linux build" \
+            --notes "Automated build from ${{ github.sha }}" 2>/dev/null || true
+          gh release upload bin-latest silverscript/target/release/raffle-cli --clobber

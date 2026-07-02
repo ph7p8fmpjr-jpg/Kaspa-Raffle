@@ -45,7 +45,7 @@ async function collectEligibleEntries(day) {
     return orderEntries(eligible).slice(0, config.maxEntriesPerDraw);
 }
 
-function buildDrawTx(entries, winnerIdx, sigscripts, day) {
+function buildDrawTx(entries, winnerIdx, sigscripts, day, computeBudget) {
     const total = entries.reduce((s, e) => s + e.amount, 0n);
     const devAmt = (total * 40n) / 100n;
     const opsAmt = (total * 10n) / 100n;
@@ -58,6 +58,7 @@ function buildDrawTx(entries, winnerIdx, sigscripts, day) {
             signatureScript: sigscripts[i],
             sequence: 0n,
             sigOpCount: 0,
+            computeBudget,
         })),
         outputs: [
             { value: winnerAmt, scriptPublicKey: { version: 0, script: p2pkScriptHex(entries[winnerIdx].pubkey) } },
@@ -94,11 +95,26 @@ async function settleDay(day, log = console) {
     // rejected submissions cost nothing.
     const candidateOrder = [...entries.keys()];
 
+    // Toccata inputs commit to a compute budget upfront. Start from an
+    // estimate scaled by batch size; if the node reports actual usage via
+    // "used=N", adopt it and retry.
+    let computeBudget = 14_000 + 2_500 * entries.length;
+
     let lastErr = null;
     for (const winnerIdx of candidateOrder) {
-        const tx = buildDrawTx(entries, winnerIdx, sigscripts.sigscripts, day);
+        let tx = buildDrawTx(entries, winnerIdx, sigscripts.sigscripts, day, computeBudget);
         try {
-            const result = await rpc.submitTransaction(tx);
+            let result;
+            try {
+                result = await rpc.submitTransaction(tx);
+            } catch (err) {
+                const used = /used=(\d+)/.exec(String(err));
+                if (!used) throw err;
+                computeBudget = Number(used[1]) + 500;
+                log.info(`compute budget adjusted to ${computeBudget}`);
+                tx = buildDrawTx(entries, winnerIdx, sigscripts.sigscripts, day, computeBudget);
+                result = await rpc.submitTransaction(tx);
+            }
             const settlement = {
                 txid: result.transactionId ?? result,
                 winnerPubkey: entries[winnerIdx].pubkey,
