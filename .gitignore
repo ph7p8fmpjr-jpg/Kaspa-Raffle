@@ -27,3 +27,7 @@ backend-legacy/data/
 # legacy secrets — never commit
 *.legacy-backup
 .env.*
+
+# testnet drill wallet state (contains a key, even if testnet)
+scripts/.drill-state.json
+**/.drill-state.json
