@@ -95,10 +95,15 @@ async function settleDay(day, log = console) {
     // rejected submissions cost nothing.
     const candidateOrder = [...entries.keys()];
 
-    // Toccata inputs commit to a compute budget upfront. Start from an
-    // estimate scaled by batch size; if the node reports actual usage via
-    // "used=N", adopt it and retry.
-    let computeBudget = 14_000 + 2_500 * entries.length;
+    // Toccata inputs commit a compute budget in "budget units", where
+    // 1 unit = SCRIPT_UNITS_PER_COMPUTE_BUDGET_UNIT (10,000) script units and
+    // costs GRAMS_PER_COMPUTE_BUDGET_UNIT (100) grams of mass. The draw script
+    // runs ~1-2 units; we start with a small budget and, if the node reports
+    // actual script-unit usage via "used=N", convert N to budget units and
+    // retry. Tx mass cap is 500,000 grams → keep budget well under 5,000 units.
+    const SCRIPT_UNITS_PER_BUDGET_UNIT = 10_000;
+    const budgetUnitsFor = (scriptUnits) => Math.ceil(scriptUnits / SCRIPT_UNITS_PER_BUDGET_UNIT) + 1;
+    let computeBudget = budgetUnitsFor(9_000 + 3_000 * entries.length);
 
     let lastErr = null;
     for (const winnerIdx of candidateOrder) {
@@ -108,10 +113,19 @@ async function settleDay(day, log = console) {
             try {
                 result = await rpc.submitTransaction(tx);
             } catch (err) {
-                const used = /used=(\d+)/.exec(String(err));
+                const msg = String(err);
+                // "not finalized": the DAG's past-median-time hasn't yet crossed
+                // the close time (it lags wall-clock by a few minutes). This is
+                // the mechanism that makes the covenant's time gate trustworthy,
+                // so we don't weaken it — we surface it as retryable and let the
+                // 60s scheduler try again shortly.
+                if (/not finalized/i.test(msg)) {
+                    throw new Error('not finalized yet (median time < close); will retry');
+                }
+                const used = /used=(\d+)/.exec(msg);
                 if (!used) throw err;
-                computeBudget = Number(used[1]) + 500;
-                log.info(`compute budget adjusted to ${computeBudget}`);
+                computeBudget = budgetUnitsFor(Number(used[1]));
+                log.info(`compute budget adjusted to ${computeBudget} units (script used ${used[1]})`);
                 tx = buildDrawTx(entries, winnerIdx, sigscripts.sigscripts, day, computeBudget);
                 result = await rpc.submitTransaction(tx);
             }

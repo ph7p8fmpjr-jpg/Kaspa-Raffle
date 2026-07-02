@@ -32,9 +32,10 @@ module.exports = {
     // Fee for the draw tx, taken from the winner share. Covenant cap: 0.1 KAS.
     drawFeeSompi: BigInt(process.env.DRAW_FEE_SOMPI || 1_000_000),
 
-    // Grace period after midnight close before the draw fires, letting
-    // boundary entries confirm.
-    drawDelayMs: Number(process.env.DRAW_DELAY_MS || 120_000),
+    // Grace period after midnight close before the draw fires. Must exceed the
+    // DAG's past-median-time lag (~1-3 min) so the finalization check passes;
+    // the scheduler also retries "not finalized" every 60s as a backstop.
+    drawDelayMs: Number(process.env.DRAW_DELAY_MS || 240_000),
 
     // Path to the raffle-cli binary (built from silverscript workspace).
     raffleCli: process.env.RAFFLE_CLI || path.join(__dirname, '..', 'bin', 'raffle-cli'),
