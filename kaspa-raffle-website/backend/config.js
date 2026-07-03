@@ -4,14 +4,28 @@ require('dotenv').config();
 
 const path = require('path');
 
+// Collect config problems instead of throwing at require time: a cloud deploy
+// with a missing env var should still boot and REPORT the problem on /healthz,
+// not crash-loop invisibly.
+const configErrors = [];
 function req(name) {
     const v = process.env[name];
-    if (!v) throw new Error(`missing required env var ${name}`);
+    if (!v) {
+        configErrors.push(`missing required env var ${name}`);
+        return '';
+    }
+    return v;
+}
+const hex32 = /^[0-9a-fA-F]{64}$/;
+function reqPubkey(name) {
+    const v = req(name);
+    if (v && !hex32.test(v)) configErrors.push(`${name} must be 64 hex chars (32-byte x-only pubkey)`);
     return v;
 }
 
 module.exports = {
     port: Number(process.env.PORT || 3000),
+    configErrors,
 
     // Network: 'testnet-10' during the trial phase. Mainnet only after the
     // exit criteria are met (see project docs).
@@ -21,8 +35,8 @@ module.exports = {
     addressPrefix: process.env.ADDRESS_PREFIX || 'kaspatest',
 
     // 32-byte x-only pubkeys, hex. Baked into every entry covenant.
-    devPubkey: req('DEV_PUBKEY'),
-    opsPubkey: req('OPS_PUBKEY'),
+    devPubkey: reqPubkey('DEV_PUBKEY'),
+    opsPubkey: reqPubkey('OPS_PUBKEY'),
 
     // Covenant constants — MUST mirror raffle_entry.sil.
     minEntrySompi: 10_000_000_000n, // 100 KAS

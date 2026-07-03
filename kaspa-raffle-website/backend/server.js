@@ -98,7 +98,25 @@ app.get('/api/cron/draw', async (req, res) => {
     }
 });
 
-app.get('/healthz', (req, res) => res.json({ ok: true }));
+app.get('/healthz', async (req, res) => {
+    const fs = require('fs');
+    const health = {
+        ok: config.configErrors.length === 0,
+        network: config.network,
+        configErrors: config.configErrors,
+        cliPath: config.raffleCli,
+        cliPresent: fs.existsSync(config.raffleCli),
+    };
+    // Prove the CLI actually runs (catches missing-exec-bit / wrong-arch).
+    try {
+        await cli.template(registry.closeTimeForNow());
+        health.cliRuns = true;
+    } catch (e) {
+        health.cliRuns = false;
+        health.cliError = String(e.message || e).slice(0, 200);
+    }
+    res.json(health);
+});
 
 // Internal scheduler: check every minute; settleAllDue is idempotent.
 setInterval(() => {
