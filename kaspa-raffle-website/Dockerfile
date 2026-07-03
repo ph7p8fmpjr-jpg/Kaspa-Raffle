@@ -5,7 +5,8 @@ FROM node:22-slim
 RUN apt-get update && apt-get install -y curl ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY kaspa-raffle-website/package.json ./
-COPY kaspa-raffle-website/kaspa-sdk-v2.0.1/ kaspa-sdk-v2.0.1/
+# Only the nodejs WASM package is needed at runtime (the `kaspa` file: dep).
+COPY kaspa-raffle-website/kaspa-sdk-v2.0.1/kaspa-wasm32-sdk/nodejs/kaspa/ kaspa-sdk-v2.0.1/kaspa-wasm32-sdk/nodejs/kaspa/
 RUN npm install --omit=dev
 COPY kaspa-raffle-website/backend/ backend/
 COPY kaspa-raffle-website/covenant/ covenant/

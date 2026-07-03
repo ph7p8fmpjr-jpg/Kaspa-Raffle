@@ -20,7 +20,17 @@ app.post('/api/enter', async (req, res) => {
     try {
         const { payoutAddress } = req.body || {};
         if (!payoutAddress) return res.status(400).json({ error: 'payoutAddress required' });
-        const pubkey = rpc.addressToXOnlyPubkeyHex(payoutAddress);
+        let pubkey;
+        try {
+            pubkey = rpc.addressToXOnlyPubkeyHex(payoutAddress);
+        } catch (e) {
+            const wrongNet = /^kaspa:/i.test(payoutAddress) && config.addressPrefix === 'kaspatest';
+            return res.status(400).json({
+                error: wrongNet
+                    ? 'That looks like a mainnet (kaspa:) address, but this is the testnet preview — paste a kaspatest: address.'
+                    : 'Invalid Kaspa address. Paste a standard kaspatest: pay-to-pubkey address.',
+            });
+        }
         const closeTimeMs = registry.closeTimeForNow();
         const info = await cli.entryAddress(closeTimeMs, pubkey);
         const entrant = registry.addEntrant(closeTimeMs, {
