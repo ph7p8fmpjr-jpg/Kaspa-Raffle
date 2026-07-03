@@ -1,0 +1,4 @@
+*.wasm binary
+*.exe binary
+*.msi binary
+kaspa_bg.wasm binary
