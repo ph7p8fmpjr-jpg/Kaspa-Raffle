@@ -18,6 +18,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android /opt/hostedtoolcache/CodeQL || true
+          df -h /
+
+      - name: Install build deps (rusty-kaspa needs protoc/clang/cmake)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler clang libclang-dev cmake build-essential pkg-config libssl-dev
+
       - name: Install Rust 1.85
         run: rustup toolchain install 1.85 --profile minimal && rustup default 1.85
 
