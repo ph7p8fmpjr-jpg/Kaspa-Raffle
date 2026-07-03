@@ -18,6 +18,12 @@
 </head>
 <body class="bg-zinc-950 text-zinc-200">
 
+    <!-- Testnet banner -->
+    <div class="bg-purple-600/90 text-white text-center text-sm font-semibold py-2 px-4">
+        <i class="fa-solid fa-flask mr-1"></i>
+        PUBLIC TESTNET PREVIEW — this runs on Kaspa Testnet-10 with valueless test coins. Not live yet; no real KAS is at stake.
+    </div>
+
     <!-- Navbar -->
     <nav class="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-lg sticky top-0 z-50">
         <div class="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -232,7 +238,21 @@
                     document.getElementById('footer-network').textContent = '';
                 }
                 renderDraws(s.recentDraws || []);
-            } catch (e) { /* keep placeholders */ }
+                document.getElementById('backend-state')?.remove();
+            } catch (e) {
+                // Backend not reachable (e.g. static-only preview host): show a
+                // clear notice instead of dead placeholders.
+                if (!document.getElementById('backend-state')) {
+                    const el = document.getElementById('enter');
+                    if (el) {
+                        const note = document.createElement('div');
+                        note.id = 'backend-state';
+                        note.className = 'max-w-2xl mx-auto mb-6 text-center text-xs text-amber-400 bg-amber-500/10 border border-amber-500/30 rounded-2xl py-3 px-4';
+                        note.innerHTML = 'Live pot data and entry are paused while the testnet draw service is being deployed. The contract and design below are final — check back shortly.';
+                        el.parentNode.insertBefore(note, el);
+                    }
+                }
+            }
         }
 
         function renderDraws(draws) {
