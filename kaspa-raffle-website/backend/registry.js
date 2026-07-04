@@ -25,6 +25,24 @@ function loadDay(closeTimeMs) {
     return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
 
+// Get a day, pinning the dev/ops keys the first time it is touched. Once pinned,
+// a later change to the configured keys does not affect this day — so switching
+// the dev fund always takes effect cleanly at the next unopened day, never
+// mid-raffle. `currentKeys` is { devPubkey, opsPubkey } from live config.
+function getDayWithPinnedKeys(closeTimeMs, currentKeys) {
+    const day = loadDay(closeTimeMs);
+    if (!day.devPubkey || !day.opsPubkey) {
+        day.devPubkey = currentKeys.devPubkey;
+        day.opsPubkey = currentKeys.opsPubkey;
+        saveDay(day);
+    }
+    return day;
+}
+
+function dayKeys(day) {
+    return { devPubkey: day.devPubkey, opsPubkey: day.opsPubkey };
+}
+
 function saveDay(day) {
     const tmp = dayFile(day.closeTimeMs) + '.tmp';
     fs.writeFileSync(tmp, JSON.stringify(day, null, 2));
@@ -58,4 +76,13 @@ function recentSettlements(limit = 30) {
         .slice(0, limit);
 }
 
-module.exports = { closeTimeForNow, loadDay, saveDay, addEntrant, listUnsettledDays, recentSettlements };
+module.exports = {
+    closeTimeForNow,
+    loadDay,
+    saveDay,
+    addEntrant,
+    listUnsettledDays,
+    recentSettlements,
+    getDayWithPinnedKeys,
+    dayKeys,
+};

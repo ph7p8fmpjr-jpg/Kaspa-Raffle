@@ -89,6 +89,13 @@
             <div class="text-center text-[11px] text-zinc-500 mt-3">
                 This split is not a promise — it's a consensus rule. A transaction paying anything else is invalid.
             </div>
+            <div id="devfund-row" class="hidden mt-4 pt-4 border-t border-zinc-800 text-center">
+                <div class="text-xs text-zinc-400 mb-1">Today's 40% dev-fund goes to:</div>
+                <a id="devfund-link" href="#" target="_blank" rel="noopener noreferrer"
+                   class="mono text-xs text-amber-300 hover:text-amber-200 break-all inline-flex items-center gap-x-1.5">
+                    <span id="devfund-address">—</span> <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                </a>
+            </div>
         </div>
 
         <!-- Entry flow -->
@@ -233,6 +240,11 @@
                 document.getElementById('winner-share').textContent = fmtKas(BigInt(s.jackpotSompi) / 2n);
                 document.getElementById('entry-count').textContent = s.entries;
                 window.__closeTimeMs = s.closeTimeMs;
+                if (s.devFundAddress) {
+                    document.getElementById('devfund-address').textContent = s.devFundAddress;
+                    document.getElementById('devfund-link').href = `${EXPLORER}/addresses/${s.devFundAddress}`;
+                    document.getElementById('devfund-row').classList.remove('hidden');
+                }
                 if (s.network && !s.network.startsWith('testnet')) {
                     document.getElementById('network-badge').textContent = 'MAINNET';
                     document.getElementById('footer-network').textContent = '';

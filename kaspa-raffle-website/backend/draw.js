@@ -60,10 +60,12 @@ function buildDrawTx(entries, winnerIdx, sigscripts, day, computeBudget) {
             sigOpCount: 0,
             computeBudget,
         })),
+        // Dev/ops keys come from the day's pinned values (fall back to config
+        // for legacy days recorded before pinning existed).
         outputs: [
             { value: winnerAmt, scriptPublicKey: { version: 0, script: p2pkScriptHex(entries[winnerIdx].pubkey) } },
-            { value: devAmt, scriptPublicKey: { version: 0, script: p2pkScriptHex(config.devPubkey) } },
-            { value: opsAmt, scriptPublicKey: { version: 0, script: p2pkScriptHex(config.opsPubkey) } },
+            { value: devAmt, scriptPublicKey: { version: 0, script: p2pkScriptHex(day.devPubkey || config.devPubkey) } },
+            { value: opsAmt, scriptPublicKey: { version: 0, script: p2pkScriptHex(day.opsPubkey || config.opsPubkey) } },
         ],
         lockTime: BigInt(day.closeTimeMs),
         subnetworkId: '0000000000000000000000000000000000000000',
@@ -87,6 +89,7 @@ async function settleDay(day, log = console) {
         day.closeTimeMs,
         blockHash,
         entries.map((e) => e.pubkey),
+        registry.dayKeys(day),
     );
 
     // Candidate order: winner prediction needs the block's sequencing

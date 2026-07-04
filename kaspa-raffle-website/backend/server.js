@@ -32,7 +32,9 @@ app.post('/api/enter', async (req, res) => {
             });
         }
         const closeTimeMs = registry.closeTimeForNow();
-        const info = await cli.entryAddress(closeTimeMs, pubkey);
+        // Pin this day's dev/ops keys so a later switch can't fragment it.
+        const day = registry.getDayWithPinnedKeys(closeTimeMs, { devPubkey: config.devPubkey, opsPubkey: config.opsPubkey });
+        const info = await cli.entryAddress(closeTimeMs, pubkey, registry.dayKeys(day));
         const entrant = registry.addEntrant(closeTimeMs, {
             pubkey,
             address: info.address,
@@ -70,6 +72,8 @@ app.get('/api/status', async (req, res) => {
                 // node unreachable — show registry data only
             }
         }
+        const devPubkey = day.devPubkey || config.devPubkey;
+        const opsPubkey = day.opsPubkey || config.opsPubkey;
         res.json({
             network: config.network,
             closeTimeMs,
@@ -77,6 +81,8 @@ app.get('/api/status', async (req, res) => {
             entries,
             jackpotSompi: jackpot.toString(),
             split: { winner: 50, devFund: 40, ops: 10 },
+            devFundAddress: rpc.pubkeyHexToAddress(devPubkey, config.network),
+            opsAddress: rpc.pubkeyHexToAddress(opsPubkey, config.network),
             recentDraws: registry.recentSettlements(10),
         });
     } catch (err) {
@@ -84,12 +90,24 @@ app.get('/api/status', async (req, res) => {
     }
 });
 
-// Covenant transparency: per-day template so anyone can verify addresses.
+// Covenant transparency: per-day template + the exact payout addresses so
+// anyone can verify who the 40% dev fund and 10% ops go to.
 app.get('/api/covenant', async (req, res) => {
     try {
         const closeTimeMs = Number(req.query.close || registry.closeTimeForNow());
-        const template = await cli.template(closeTimeMs);
-        res.json({ closeTimeMs, devPubkey: config.devPubkey, opsPubkey: config.opsPubkey, ...template });
+        const day = registry.loadDay(closeTimeMs);
+        // Use the day's pinned keys if it has any; else the current config.
+        const devPubkey = day.devPubkey || config.devPubkey;
+        const opsPubkey = day.opsPubkey || config.opsPubkey;
+        const template = await cli.template(closeTimeMs, { devPubkey, opsPubkey });
+        res.json({
+            closeTimeMs,
+            devPubkey,
+            opsPubkey,
+            devFundAddress: rpc.pubkeyHexToAddress(devPubkey, config.network),
+            opsAddress: rpc.pubkeyHexToAddress(opsPubkey, config.network),
+            ...template,
+        });
     } catch (err) {
         res.status(500).json({ error: String(err.message || err) });
     }

@@ -66,4 +66,22 @@ function addressToXOnlyPubkeyHex(addressStr) {
     return bytes.subarray(1, 33).toString('hex');
 }
 
-module.exports = { connect, getEntryUtxos, getRecentChainBlock, submitTransaction, getDagInfo, addressToXOnlyPubkeyHex, kaspa };
+// Inverse: 32-byte x-only pubkey hex -> Kaspa address string for `network`.
+function pubkeyHexToAddress(pubkeyHex, network) {
+    try {
+        return new kaspa.PublicKey(pubkeyHex).toAddress(network).toString();
+    } catch {
+        return null; // placeholder/malformed key (e.g. testnet stand-in)
+    }
+}
+
+module.exports = {
+    connect,
+    getEntryUtxos,
+    getRecentChainBlock,
+    submitTransaction,
+    getDagInfo,
+    addressToXOnlyPubkeyHex,
+    pubkeyHexToAddress,
+    kaspa,
+};
