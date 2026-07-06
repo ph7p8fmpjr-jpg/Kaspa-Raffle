@@ -43,8 +43,11 @@ module.exports = {
     maxEntriesPerDraw: 16,
     reclaimDelayMs: Number(process.env.RECLAIM_DELAY_MS || 86_400_000),
 
-    // Fee for the draw tx, taken from the winner share. Covenant cap: 0.1 KAS.
+    // Starting fee for the draw tx, taken from the winner share. The service
+    // raises it to the node-reported transient-mass requirement, up to the
+    // covenant's MAX_FEE (maxFeeSompi). Both MUST mirror raffle_entry.sil.
     drawFeeSompi: BigInt(process.env.DRAW_FEE_SOMPI || 1_000_000),
+    maxFeeSompi: BigInt(process.env.MAX_FEE_SOMPI || 40_000_000),
 
     // Grace period after midnight close before the draw fires. Must exceed the
     // DAG's past-median-time lag (~1-3 min) so the finalization check passes;

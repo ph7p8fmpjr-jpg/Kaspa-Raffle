@@ -78,8 +78,13 @@ fn template_parts() -> (Vec<u8>, Vec<u8>) {
     (a.script[..first].to_vec(), a.script[first + 32..].to_vec())
 }
 
+static TEMPLATE_CACHE: std::sync::OnceLock<(Vec<u8>, Vec<u8>)> = std::sync::OnceLock::new();
+fn template_parts_cached() -> (Vec<u8>, Vec<u8>) {
+    TEMPLATE_CACHE.get_or_init(template_parts).clone()
+}
+
 fn draw_sigscript(compiled: &CompiledContract, entrants: &[[u8; 32]], block_hash: &[u8; 32]) -> Vec<u8> {
-    let (prefix, suffix) = template_parts();
+    let (prefix, suffix) = template_parts_cached();
     let entrant_exprs: Vec<Expr> = entrants.iter().map(pk_expr).collect();
     let entrants_arr = Expr::new(ExprKind::Array(entrant_exprs), Span::default());
     let inner = compiled
@@ -443,4 +448,240 @@ fn offchain_winner_prediction_matches_engine() {
         }
         assert_eq!(accepted, vec![predicted], "seed {seed}: engine accepted {accepted:?} but prediction was {predicted}");
     }
+}
+
+// ---------- v2 (leader/delegate) adversarial tests ----------
+
+use kaspa_consensus_core::hashing::sighash::calc_schnorr_signature_hash;
+use kaspa_consensus_core::hashing::sighash_type::SIG_HASH_ALL;
+
+fn execute_one_input(tx: &Transaction, entries: &[UtxoEntry], idx: usize, accessor: &dyn SeqCommitAccessor) -> Result<(), String> {
+    let reused_values = SigHashReusedValuesUnsync::new();
+    let sig_cache = Cache::new(10_000);
+    let populated = PopulatedTransaction::new(tx, entries.to_vec());
+    let utxo = populated.utxo(idx).expect("utxo");
+    let ctx = EngineCtx::new(&sig_cache).with_reused(&reused_values).with_seq_commit_accessor(accessor);
+    let mut vm = TxScriptEngine::from_transaction_input(&populated, &tx.inputs[idx], idx, utxo, ctx, engine_flags());
+    vm.execute().map_err(|e| format!("input {idx}: {e}"))
+}
+
+// Real-signature reclaim: succeeds single-input after timeout; the SAME valid
+// signature is rejected in a multi-input tx (guard that forces multi-input
+// spends of entries through the draw path).
+#[test]
+fn reclaim_real_signature_single_vs_multi_input() {
+    let keypair = secp256k1::Keypair::from_seckey_slice(secp256k1::SECP256K1, &[42u8; 32]).unwrap();
+    let entrant: [u8; 32] = keypair.x_only_public_key().0.serialize();
+    let compiled = compile_entry(&entrant);
+    let spk_bytes = pay_to_script_hash_script(&compiled.script);
+    let spk = ScriptPublicKey::new(0, spk_bytes.script().to_vec().into());
+    let after_reclaim = (CLOSE_TIME + RECLAIM_DELAY) as u64 + 1;
+
+    let build = |extra_input: bool| -> (Transaction, Vec<UtxoEntry>) {
+        let mut inputs = vec![TransactionInput {
+            previous_outpoint: TransactionOutpoint { transaction_id: TransactionId::from_bytes([77u8; 32]), index: 0 },
+            signature_script: vec![],
+            sequence: 0,
+            compute_commit: SigopCount(1).into(),
+        }];
+        let mut entries = vec![UtxoEntry::new(MIN_ENTRY, spk.clone(), 0, false, None)];
+        if extra_input {
+            let other = compile_entry(&entrant_pk(3));
+            let ospk = pay_to_script_hash_script(&other.script);
+            inputs.push(TransactionInput {
+                previous_outpoint: TransactionOutpoint { transaction_id: TransactionId::from_bytes([78u8; 32]), index: 0 },
+                signature_script: vec![],
+                sequence: 0,
+                compute_commit: SigopCount(1).into(),
+            });
+            entries.push(UtxoEntry::new(MIN_ENTRY, ScriptPublicKey::new(0, ospk.script().to_vec().into()), 0, false, None));
+        }
+        let outputs =
+            vec![TransactionOutput { value: MIN_ENTRY - DRAW_FEE, script_public_key: p2pk_script(&entrant), covenant: None }];
+        (Transaction::new(1, inputs, outputs, after_reclaim, Default::default(), 0, vec![]), entries)
+    };
+
+    let sign_input0 = |tx: &mut Transaction, entries: &[UtxoEntry]| {
+        let reused = SigHashReusedValuesUnsync::new();
+        let populated = PopulatedTransaction::new(tx, entries.to_vec());
+        let sighash = calc_schnorr_signature_hash(&populated, 0, SIG_HASH_ALL, &reused);
+        let msg = secp256k1::Message::from_digest(sighash.as_bytes());
+        let mut sig65 = keypair.sign_schnorr(msg).as_ref().to_vec();
+        sig65.push(1u8);
+        let inner = compiled.build_sig_script("reclaim", vec![sig65.into()]).expect("reclaim sigscript");
+        tx.inputs[0].signature_script =
+            pay_to_script_hash_signature_script_with_flags(compiled.script.clone(), inner, engine_flags()).unwrap();
+    };
+
+    let accessor = mock_chain(&BLOCK_HASH);
+
+    let (mut tx1, entries1) = build(false);
+    sign_input0(&mut tx1, &entries1);
+    let r1 = execute_one_input(&tx1, &entries1, 0, &accessor);
+    assert!(r1.is_ok(), "single-input reclaim after timeout must succeed: {r1:?}");
+
+    let (mut tx2, entries2) = build(true);
+    sign_input0(&mut tx2, &entries2);
+    let r2 = execute_one_input(&tx2, &entries2, 0, &accessor);
+    assert!(r2.is_err(), "multi-input reclaim must be rejected");
+}
+
+// A delegate must reject a tx whose input 0 is not a genuine same-day entry:
+// both with the true template (fake leader script) and with a forged template.
+#[test]
+fn delegate_rejects_fake_leader_and_forged_template() {
+    let victim = entrant_pk(1);
+    let claimed_leader = entrant_pk(9);
+    let values = [MIN_ENTRY, MIN_ENTRY];
+    let accessor = mock_chain(&BLOCK_HASH);
+
+    let attacker_redeem = vec![0x51u8];
+    let attacker_spk = pay_to_script_hash_script(&attacker_redeem);
+
+    let victim_compiled = compile_entry(&victim);
+    let victim_spk = pay_to_script_hash_script(&victim_compiled.script);
+    let (true_prefix, true_suffix) = template_parts_cached();
+
+    let build_tx = |delegate_sigscript: Vec<u8>, leader_spk: ScriptPublicKey, leader_ss: Vec<u8>| -> (Transaction, Vec<UtxoEntry>) {
+        let inputs = vec![
+            TransactionInput {
+                previous_outpoint: TransactionOutpoint { transaction_id: TransactionId::from_bytes([50u8; 32]), index: 0 },
+                signature_script: leader_ss,
+                sequence: 0,
+                compute_commit: SigopCount(0).into(),
+            },
+            TransactionInput {
+                previous_outpoint: TransactionOutpoint { transaction_id: TransactionId::from_bytes([51u8; 32]), index: 0 },
+                signature_script: delegate_sigscript,
+                sequence: 0,
+                compute_commit: SigopCount(0).into(),
+            },
+        ];
+        let entries = vec![
+            UtxoEntry::new(values[0], leader_spk, 0, false, None),
+            UtxoEntry::new(values[1], ScriptPublicKey::new(0, victim_spk.script().to_vec().into()), 0, false, None),
+        ];
+        let outputs = vec![TransactionOutput {
+            value: values[0] + values[1] - DRAW_FEE,
+            script_public_key: p2pk_script(&claimed_leader),
+            covenant: None,
+        }];
+        (Transaction::new(1, inputs, outputs, CLOSE_TIME as u64 + 1, Default::default(), 0, vec![]), entries)
+    };
+
+    let delegate_sigscript = |prefix: &[u8], suffix: &[u8]| -> Vec<u8> {
+        let entrant_exprs: Vec<Expr> = vec![claimed_leader.to_vec().into(), victim.to_vec().into()];
+        let entrants_arr = Expr::new(ExprKind::Array(entrant_exprs), Span::default());
+        let inner = victim_compiled
+            .build_sig_script(
+                "draw",
+                vec![entrants_arr, BLOCK_HASH.to_vec().into(), prefix.to_vec().into(), suffix.to_vec().into()],
+            )
+            .expect("delegate sigscript");
+        pay_to_script_hash_signature_script_with_flags(victim_compiled.script.clone(), inner, engine_flags()).unwrap()
+    };
+
+    let attacker_leader_ss = pay_to_script_hash_signature_script_with_flags(attacker_redeem.clone(), vec![], engine_flags()).unwrap();
+
+    // Case 1: TRUE template, fake leader (attacker OpTrue script at input 0).
+    let (tx1, entries1) = build_tx(
+        delegate_sigscript(&true_prefix, &true_suffix),
+        ScriptPublicKey::new(0, attacker_spk.script().to_vec().into()),
+        attacker_leader_ss.clone(),
+    );
+    let r1 = execute_one_input(&tx1, &entries1, 1, &accessor);
+    assert!(r1.is_err(), "delegate accepted a non-entry leader with the true template");
+
+    // Case 2: FORGED template around an attacker-controlled script; only the
+    // delegate's own-P2SH anchor stands, and must fail.
+    let mut forged_redeem = vec![0x51u8; 20];
+    forged_redeem.extend_from_slice(&claimed_leader);
+    forged_redeem.extend_from_slice(&[0x51u8; 10]);
+    let forged_prefix = forged_redeem[..20].to_vec();
+    let forged_suffix = forged_redeem[forged_redeem.len() - 10..].to_vec();
+    let forged_spk = pay_to_script_hash_script(&forged_redeem);
+    let forged_leader_ss = pay_to_script_hash_signature_script_with_flags(forged_redeem.clone(), vec![], engine_flags()).unwrap();
+
+    let (tx2, entries2) = build_tx(
+        delegate_sigscript(&forged_prefix, &forged_suffix),
+        ScriptPublicKey::new(0, forged_spk.script().to_vec().into()),
+        forged_leader_ss,
+    );
+    let r2 = execute_one_input(&tx2, &entries2, 1, &accessor);
+    assert!(r2.is_err(), "delegate accepted a forged template");
+}
+
+// Entries from different days (different closeTime => different template)
+// cannot be drawn together.
+#[test]
+fn draw_rejects_mixed_day_entries() {
+    let day2_close = CLOSE_TIME + 86_400_000;
+    let source = raffle_source().leak() as &'static str;
+    let day2_args: Vec<Expr> =
+        vec![pk_expr(&dev_pk()), pk_expr(&ops_pk()), day2_close.into(), RECLAIM_DELAY.into(), pk_expr(&entrant_pk(1))];
+    let day2_compiled = compile_contract(source, &day2_args, CompileOptions::default()).expect("day2 entry compiles");
+    let day2_spk = pay_to_script_hash_script(&day2_compiled.script);
+
+    let keys = [entrant_pk(0), entrant_pk(1)];
+    let values = [MIN_ENTRY, MIN_ENTRY];
+    let accessor = mock_chain(&BLOCK_HASH);
+
+    for guess in 0..keys.len() {
+        let mut draw = build_draw_tx(&keys, &values, guess, &BLOCK_HASH, CLOSE_TIME as u64 + 1);
+        draw.entries[1] = UtxoEntry::new(values[1], ScriptPublicKey::new(0, day2_spk.script().to_vec().into()), 0, false, None);
+        let r0 = execute_one_input(&draw.tx, &draw.entries, 0, &accessor);
+        assert!(r0.is_err(), "leader accepted a mixed-day sibling (guess {guess})");
+    }
+}
+
+// Capacity: a full 16-entry draw settles with exactly one valid winner.
+#[test]
+fn capacity_sixteen_entries() {
+    let keys: Vec<[u8; 32]> = (0..16).map(|i| entrant_pk(i as u8)).collect();
+    let values: Vec<u64> = (0..16).map(|i| MIN_ENTRY * (1 + (i % 4) as u64)).collect();
+    let accessor = mock_chain(&BLOCK_HASH);
+
+    let mut winner: Option<usize> = None;
+    for guess in 0..keys.len() {
+        let draw = build_draw_tx(&keys, &values, guess, &BLOCK_HASH, CLOSE_TIME as u64 + 1);
+        if execute_all_inputs(&draw, &accessor).is_ok() {
+            winner = Some(guess);
+            break;
+        }
+    }
+    let w = winner.expect("some winner must be accepted at n=16");
+    let wrong = (w + 1) % keys.len();
+    let bad = build_draw_tx(&keys, &values, wrong, &BLOCK_HASH, CLOSE_TIME as u64 + 1);
+    assert!(execute_all_inputs(&bad, &accessor).is_err(), "wrong winner accepted at n=16");
+}
+
+#[test]
+fn reconstruct_live_five_entrant_draw() {
+    // Exact entrant pubkeys from the failing live drill (day 1783353103288).
+    let hexkeys = [
+        "40c51fd56b1cdb5a54c0add1a1ba48e7de1867cf1c2be4dcd34e57441acc5982",
+        "65dc1b5bb856ed8b6140c4fd8b3d46e0e2d53256b406af0749df6a619ba5acc3",
+        "52d9c6fc99c1a8e1122c76cd80dafce488e8c1d52c71928bc655b9561d59fbf9",
+        "3c5497e06f29af5485d7ed12d87e14e6ec0b1f174bba207940fce5afc9b9e107",
+        "cd4f6cd9fee8b460ac1996fa5ab8e6b53593c3e18a31d0c979bae9752f55aed9",
+    ];
+    let keys: Vec<[u8; 32]> = hexkeys.iter().map(|h| {
+        let v = (0..32).map(|i| u8::from_str_radix(&h[i * 2..i * 2 + 2], 16).unwrap()).collect::<Vec<_>>();
+        let mut a = [0u8; 32];
+        a.copy_from_slice(&v);
+        a
+    }).collect();
+    let values = [MIN_ENTRY, MIN_ENTRY, MIN_ENTRY, MIN_ENTRY, MIN_ENTRY];
+    let accessor = mock_chain(&BLOCK_HASH);
+
+    let mut accepted = Vec::new();
+    for guess in 0..keys.len() {
+        let draw = build_draw_tx(&keys, &values, guess, &BLOCK_HASH, CLOSE_TIME as u64 + 1);
+        match execute_all_inputs(&draw, &accessor) {
+            Ok(()) => accepted.push(guess),
+            Err(e) => println!("guess {guess}: {e}"),
+        }
+    }
+    println!("ACCEPTED candidates: {accepted:?}");
+    assert_eq!(accepted.len(), 1, "expected exactly one winner in-engine, got {accepted:?}");
 }

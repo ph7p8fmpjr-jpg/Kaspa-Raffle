@@ -9,12 +9,23 @@
     156,
     99,
     117,
-    4,
+    6,
     0,
-    200,
-    101,
-    104,
+    64,
+    149,
+    205,
+    151,
+    1,
     176,
+    118,
+    130,
+    124,
+    117,
+    81,
+    150,
+    90,
+    156,
+    105,
     179,
     84,
     121,
@@ -27,22 +38,88 @@
     120,
     156,
     105,
+    185,
     118,
-    81,
-    162,
-    105,
-    120,
-    130,
+    0,
+    158,
+    99,
+    185,
+    191,
+    84,
+    121,
+    87,
+    121,
+    83,
+    121,
+    1,
+    32,
+    149,
+    118,
+    1,
+    32,
+    147,
+    127,
+    126,
+    84,
+    121,
+    126,
+    170,
+    2,
+    0,
+    0,
+    1,
+    170,
+    126,
+    1,
+    32,
+    126,
     124,
-    117,
-    81,
-    150,
-    90,
-    156,
+    126,
+    1,
+    135,
+    126,
+    135,
     105,
     0,
+    191,
+    84,
+    121,
+    87,
+    121,
     0,
-    82,
+    1,
+    32,
+    149,
+    118,
+    1,
+    32,
+    147,
+    127,
+    126,
+    84,
+    121,
+    126,
+    170,
+    2,
+    0,
+    0,
+    1,
+    170,
+    126,
+    1,
+    32,
+    126,
+    124,
+    126,
+    1,
+    135,
+    126,
+    135,
+    105,
+    103,
+    0,
+    0,
+    83,
     121,
     0,
     148,
@@ -50,14 +127,14 @@
     161,
     105,
     118,
-    83,
+    84,
     121,
     159,
     99,
     118,
-    85,
+    86,
     121,
-    88,
+    89,
     121,
     82,
     121,
@@ -70,7 +147,7 @@
     147,
     127,
     126,
-    85,
+    86,
     121,
     126,
     118,
@@ -130,14 +207,14 @@
     117,
     104,
     118,
-    83,
+    84,
     121,
     159,
     99,
     118,
-    85,
+    86,
     121,
-    88,
+    89,
     121,
     82,
     121,
@@ -150,7 +227,7 @@
     147,
     127,
     126,
-    85,
+    86,
     121,
     126,
     118,
@@ -210,14 +287,14 @@
     117,
     104,
     118,
-    83,
+    84,
     121,
     159,
     99,
     118,
-    85,
+    86,
     121,
-    88,
+    89,
     121,
     82,
     121,
@@ -230,7 +307,7 @@
     147,
     127,
     126,
-    85,
+    86,
     121,
     126,
     118,
@@ -290,14 +367,14 @@
     117,
     104,
     118,
-    83,
+    84,
     121,
     159,
     99,
     118,
-    85,
+    86,
     121,
-    88,
+    89,
     121,
     82,
     121,
@@ -310,7 +387,7 @@
     147,
     127,
     126,
-    85,
+    86,
     121,
     126,
     118,
@@ -370,14 +447,14 @@
     117,
     104,
     118,
-    83,
+    84,
     121,
     159,
     99,
     118,
-    85,
+    86,
     121,
-    88,
+    89,
     121,
     82,
     121,
@@ -390,7 +467,7 @@
     147,
     127,
     126,
-    85,
+    86,
     121,
     126,
     118,
@@ -450,14 +527,14 @@
     117,
     104,
     118,
-    83,
+    84,
     121,
     159,
     99,
     118,
-    85,
+    86,
     121,
-    88,
+    89,
     121,
     82,
     121,
@@ -470,7 +547,7 @@
     147,
     127,
     126,
-    85,
+    86,
     121,
     126,
     118,
@@ -530,14 +607,14 @@
     117,
     104,
     118,
-    83,
+    84,
     121,
     159,
     99,
     118,
-    85,
+    86,
     121,
-    88,
+    89,
     121,
     82,
     121,
@@ -550,7 +627,7 @@
     147,
     127,
     126,
-    85,
+    86,
     121,
     126,
     118,
@@ -610,14 +687,14 @@
     117,
     104,
     118,
-    83,
+    84,
     121,
     159,
     99,
     118,
-    85,
+    86,
     121,
-    88,
+    89,
     121,
     82,
     121,
@@ -630,7 +707,7 @@
     147,
     127,
     126,
-    85,
+    86,
     121,
     126,
     118,
@@ -690,14 +767,14 @@
     117,
     104,
     118,
-    83,
+    84,
     121,
     159,
     99,
     118,
-    85,
+    86,
     121,
-    88,
+    89,
     121,
     82,
     121,
@@ -710,7 +787,7 @@
     147,
     127,
     126,
-    85,
+    86,
     121,
     126,
     118,
@@ -770,14 +847,14 @@
     117,
     104,
     118,
-    83,
+    84,
     121,
     159,
     99,
     118,
-    85,
+    86,
     121,
-    88,
+    89,
     121,
     82,
     121,
@@ -790,7 +867,7 @@
     147,
     127,
     126,
-    85,
+    86,
     121,
     126,
     118,
@@ -850,14 +927,14 @@
     117,
     104,
     118,
-    83,
+    84,
     121,
     159,
     99,
     118,
-    85,
+    86,
     121,
-    88,
+    89,
     121,
     82,
     121,
@@ -870,7 +947,7 @@
     147,
     127,
     126,
-    85,
+    86,
     121,
     126,
     118,
@@ -930,14 +1007,14 @@
     117,
     104,
     118,
-    83,
+    84,
     121,
     159,
     99,
     118,
-    85,
+    86,
     121,
-    88,
+    89,
     121,
     82,
     121,
@@ -950,7 +1027,7 @@
     147,
     127,
     126,
-    85,
+    86,
     121,
     126,
     118,
@@ -1010,14 +1087,14 @@
     117,
     104,
     118,
-    83,
+    84,
     121,
     159,
     99,
     118,
-    85,
+    86,
     121,
-    88,
+    89,
     121,
     82,
     121,
@@ -1030,7 +1107,7 @@
     147,
     127,
     126,
-    85,
+    86,
     121,
     126,
     118,
@@ -1090,14 +1167,14 @@
     117,
     104,
     118,
-    83,
+    84,
     121,
     159,
     99,
     118,
-    85,
+    86,
     121,
-    88,
+    89,
     121,
     82,
     121,
@@ -1110,7 +1187,7 @@
     147,
     127,
     126,
-    85,
+    86,
     121,
     126,
     118,
@@ -1170,14 +1247,14 @@
     117,
     104,
     118,
-    83,
+    84,
     121,
     159,
     99,
     118,
-    85,
+    86,
     121,
-    88,
+    89,
     121,
     82,
     121,
@@ -1190,7 +1267,7 @@
     147,
     127,
     126,
-    85,
+    86,
     121,
     126,
     118,
@@ -1250,14 +1327,14 @@
     117,
     104,
     118,
-    83,
+    84,
     121,
     159,
     99,
     118,
-    85,
+    86,
     121,
-    88,
+    89,
     121,
     82,
     121,
@@ -1270,7 +1347,7 @@
     147,
     127,
     126,
-    85,
+    86,
     121,
     126,
     118,
@@ -1329,7 +1406,7 @@
     123,
     117,
     104,
-    85,
+    86,
     121,
     212,
     170,
@@ -1346,7 +1423,7 @@
     81,
     143,
     0,
-    86,
+    87,
     121,
     0,
     148,
@@ -1354,7 +1431,7 @@
     161,
     105,
     118,
-    87,
+    88,
     121,
     159,
     99,
@@ -1405,7 +1482,7 @@
     124,
     104,
     118,
-    87,
+    88,
     121,
     159,
     99,
@@ -1456,7 +1533,7 @@
     124,
     104,
     118,
-    87,
+    88,
     121,
     159,
     99,
@@ -1507,7 +1584,7 @@
     124,
     104,
     118,
-    87,
+    88,
     121,
     159,
     99,
@@ -1558,7 +1635,7 @@
     124,
     104,
     118,
-    87,
+    88,
     121,
     159,
     99,
@@ -1609,7 +1686,7 @@
     124,
     104,
     118,
-    87,
+    88,
     121,
     159,
     99,
@@ -1660,7 +1737,7 @@
     124,
     104,
     118,
-    87,
+    88,
     121,
     159,
     99,
@@ -1711,7 +1788,7 @@
     124,
     104,
     118,
-    87,
+    88,
     121,
     159,
     99,
@@ -1762,7 +1839,7 @@
     124,
     104,
     118,
-    87,
+    88,
     121,
     159,
     99,
@@ -1813,7 +1890,7 @@
     124,
     104,
     118,
-    87,
+    88,
     121,
     159,
     99,
@@ -1864,7 +1941,7 @@
     124,
     104,
     118,
-    87,
+    88,
     121,
     159,
     99,
@@ -1915,7 +1992,7 @@
     124,
     104,
     118,
-    87,
+    88,
     121,
     159,
     99,
@@ -1966,7 +2043,7 @@
     124,
     104,
     118,
-    87,
+    88,
     121,
     159,
     99,
@@ -2017,7 +2094,7 @@
     124,
     104,
     118,
-    87,
+    88,
     121,
     159,
     99,
@@ -2068,7 +2145,7 @@
     124,
     104,
     118,
-    87,
+    88,
     121,
     159,
     99,
@@ -2119,7 +2196,7 @@
     124,
     104,
     118,
-    87,
+    88,
     121,
     159,
     99,
@@ -2192,7 +2269,7 @@
     83,
     156,
     105,
-    92,
+    93,
     121,
     84,
     121,
@@ -2229,10 +2306,10 @@
     121,
     148,
     4,
-    128,
-    150,
-    152,
     0,
+    90,
+    98,
+    2,
     148,
     162,
     105,
@@ -2340,30 +2417,16 @@
     121,
     156,
     105,
-    0,
-    122,
     117,
-    0,
-    122,
     117,
-    0,
-    122,
     117,
-    0,
-    122,
     117,
-    0,
-    122,
     117,
-    0,
-    122,
     117,
-    0,
-    122,
     117,
-    0,
-    122,
     117,
+    117,
+    104,
     0,
     122,
     117,
@@ -2381,15 +2444,22 @@
     156,
     99,
     117,
+    179,
+    81,
+    156,
+    105,
+    6,
+    0,
+    64,
+    149,
+    205,
+    151,
+    1,
     4,
     0,
-    200,
-    101,
-    104,
-    3,
-    128,
-    81,
-    1,
+    92,
+    38,
+    5,
     147,
     176,
     118,
@@ -2529,10 +2599,10 @@
         "name": "MAX_FEE",
         "expr": {
           "kind": "int",
-          "data": 10000000,
-          "span": "10_000_000"
+          "data": 40000000,
+          "span": "40_000_000"
         },
-        "span": "int constant MAX_FEE = 10_000_000;",
+        "span": "int constant MAX_FEE = 40_000_000;",
         "type_span": "int ",
         "name_span": "MAX_FEE"
       },
@@ -2633,6 +2703,39 @@
             }
           },
           {
+            "kind": "require",
+            "data": {
+              "expr": {
+                "kind": "binary",
+                "data": {
+                  "op": "eq",
+                  "left": {
+                    "kind": "unary_suffix",
+                    "data": {
+                      "source": {
+                        "kind": "identifier",
+                        "data": "suffix",
+                        "span": "suffix"
+                      },
+                      "kind": "length",
+                      "span": ".length"
+                    },
+                    "span": "suffix.length"
+                  },
+                  "right": {
+                    "kind": "identifier",
+                    "data": "SUFFIX_LEN",
+                    "span": "SUFFIX_LEN"
+                  }
+                },
+                "span": "suffix.length == SUFFIX_LEN"
+              },
+              "message": null,
+              "span": "require(suffix.length == SUFFIX_LEN);",
+              "message_span": null
+            }
+          },
+          {
             "kind": "variable_definition",
             "data": {
               "type_ref": {
@@ -2685,102 +2788,45 @@
             }
           },
           {
-            "kind": "require",
-            "data": {
-              "expr": {
-                "kind": "binary",
-                "data": {
-                  "op": "ge",
-                  "left": {
-                    "kind": "identifier",
-                    "data": "n",
-                    "span": "n"
-                  },
-                  "right": {
-                    "kind": "int",
-                    "data": 1,
-                    "span": "1"
-                  }
-                },
-                "span": "n >= 1"
-              },
-              "message": null,
-              "span": "require(n >= 1);",
-              "message_span": null
-            }
-          },
-          {
-            "kind": "require",
-            "data": {
-              "expr": {
-                "kind": "binary",
-                "data": {
-                  "op": "eq",
-                  "left": {
-                    "kind": "unary_suffix",
-                    "data": {
-                      "source": {
-                        "kind": "identifier",
-                        "data": "suffix",
-                        "span": "suffix"
-                      },
-                      "kind": "length",
-                      "span": ".length"
-                    },
-                    "span": "suffix.length"
-                  },
-                  "right": {
-                    "kind": "identifier",
-                    "data": "SUFFIX_LEN",
-                    "span": "SUFFIX_LEN"
-                  }
-                },
-                "span": "suffix.length == SUFFIX_LEN"
-              },
-              "message": null,
-              "span": "require(suffix.length == SUFFIX_LEN);",
-              "message_span": null
-            }
-          },
-          {
             "kind": "variable_definition",
             "data": {
               "type_ref": {
                 "base": "int"
               },
               "modifiers": [],
-              "name": "total",
+              "name": "me",
               "expr": {
-                "kind": "int",
-                "data": 0,
-                "span": "0"
+                "kind": "nullary",
+                "data": "active_input_index",
+                "span": "this.activeInputIndex"
               },
-              "span": "int total = 0;",
+              "span": "int me = this.activeInputIndex;",
               "type_span": "int ",
               "modifier_spans": [],
-              "name_span": "total"
+              "name_span": "me"
             }
           },
           {
-            "kind": "for",
+            "kind": "if",
             "data": {
-              "ident": "j",
-              "start": {
-                "kind": "int",
-                "data": 0,
-                "span": "0"
+              "condition": {
+                "kind": "binary",
+                "data": {
+                  "op": "ne",
+                  "left": {
+                    "kind": "identifier",
+                    "data": "me",
+                    "span": "me"
+                  },
+                  "right": {
+                    "kind": "int",
+                    "data": 0,
+                    "span": "0"
+                  }
+                },
+                "span": "me != 0"
               },
-              "end": {
-                "kind": "identifier",
-                "data": "n",
-                "span": "n"
-              },
-              "max_iterations": {
-                "kind": "identifier",
-                "data": "MAX_ENTRIES",
-                "span": "MAX_ENTRIES"
-              },
-              "body": [
+              "then_branch": [
                 {
                   "kind": "variable_definition",
                   "data": {
@@ -2793,7 +2839,7 @@
                       ]
                     },
                     "modifiers": [],
-                    "name": "siblingRedeem",
+                    "name": "myRedeem",
                     "expr": {
                       "kind": "binary",
                       "data": {
@@ -2822,19 +2868,19 @@
                                       },
                                       "index": {
                                         "kind": "identifier",
-                                        "data": "j",
-                                        "span": "j"
+                                        "data": "me",
+                                        "span": "me"
                                       }
                                     },
-                                    "span": "entrants[j]"
+                                    "span": "entrants[me]"
                                   }
                                 ],
                                 "name_span": "byte[]"
                               },
-                              "span": "byte[](entrants[j])"
+                              "span": "byte[](entrants[me])"
                             }
                           },
-                          "span": "prefix + byte[](entrants[j])"
+                          "span": "prefix + byte[](entrants[me])"
                         },
                         "right": {
                           "kind": "identifier",
@@ -2842,12 +2888,12 @@
                           "span": "suffix"
                         }
                       },
-                      "span": "prefix + byte[](entrants[j]) + suffix"
+                      "span": "prefix + byte[](entrants[me]) + suffix"
                     },
-                    "span": "byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;",
+                    "span": "byte[] myRedeem = prefix + byte[](entrants[me]) + suffix;",
                     "type_span": "byte[]",
                     "modifier_spans": [],
-                    "name_span": "siblingRedeem"
+                    "name_span": "myRedeem"
                   }
                 },
                 {
@@ -2863,7 +2909,7 @@
                       ]
                     },
                     "modifiers": [],
-                    "name": "siblingLock",
+                    "name": "myLock",
                     "expr": {
                       "kind": "new",
                       "data": {
@@ -2876,23 +2922,172 @@
                               "args": [
                                 {
                                   "kind": "identifier",
-                                  "data": "siblingRedeem",
-                                  "span": "siblingRedeem"
+                                  "data": "myRedeem",
+                                  "span": "myRedeem"
                                 }
                               ],
                               "name_span": "blake2b"
                             },
-                            "span": "blake2b(siblingRedeem)"
+                            "span": "blake2b(myRedeem)"
                           }
                         ],
                         "name_span": "ScriptPubKeyP2SH"
                       },
-                      "span": "new ScriptPubKeyP2SH(blake2b(siblingRedeem))"
+                      "span": "new ScriptPubKeyP2SH(blake2b(myRedeem))"
                     },
-                    "span": "byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));",
+                    "span": "byte[35] myLock = new ScriptPubKeyP2SH(blake2b(myRedeem));",
                     "type_span": "byte[35]",
                     "modifier_spans": [],
-                    "name_span": "siblingLock"
+                    "name_span": "myLock"
+                  }
+                },
+                {
+                  "kind": "require",
+                  "data": {
+                    "expr": {
+                      "kind": "binary",
+                      "data": {
+                        "op": "eq",
+                        "left": {
+                          "kind": "nullary",
+                          "data": "active_script_pub_key",
+                          "span": "this.activeScriptPubKey"
+                        },
+                        "right": {
+                          "kind": "call",
+                          "data": {
+                            "name": "byte[]",
+                            "args": [
+                              {
+                                "kind": "identifier",
+                                "data": "myLock",
+                                "span": "myLock"
+                              }
+                            ],
+                            "name_span": "byte[]"
+                          },
+                          "span": "byte[](myLock)"
+                        }
+                      },
+                      "span": "this.activeScriptPubKey == byte[](myLock)"
+                    },
+                    "message": null,
+                    "span": "require(this.activeScriptPubKey == byte[](myLock));",
+                    "message_span": null
+                  }
+                },
+                {
+                  "kind": "variable_definition",
+                  "data": {
+                    "type_ref": {
+                      "base": "byte",
+                      "array_dims": [
+                        {
+                          "kind": "dynamic"
+                        }
+                      ]
+                    },
+                    "modifiers": [],
+                    "name": "leaderRedeem",
+                    "expr": {
+                      "kind": "binary",
+                      "data": {
+                        "op": "add",
+                        "left": {
+                          "kind": "binary",
+                          "data": {
+                            "op": "add",
+                            "left": {
+                              "kind": "identifier",
+                              "data": "prefix",
+                              "span": "prefix"
+                            },
+                            "right": {
+                              "kind": "call",
+                              "data": {
+                                "name": "byte[]",
+                                "args": [
+                                  {
+                                    "kind": "array_index",
+                                    "data": {
+                                      "source": {
+                                        "kind": "identifier",
+                                        "data": "entrants",
+                                        "span": "entrants"
+                                      },
+                                      "index": {
+                                        "kind": "int",
+                                        "data": 0,
+                                        "span": "0"
+                                      }
+                                    },
+                                    "span": "entrants[0]"
+                                  }
+                                ],
+                                "name_span": "byte[]"
+                              },
+                              "span": "byte[](entrants[0])"
+                            }
+                          },
+                          "span": "prefix + byte[](entrants[0])"
+                        },
+                        "right": {
+                          "kind": "identifier",
+                          "data": "suffix",
+                          "span": "suffix"
+                        }
+                      },
+                      "span": "prefix + byte[](entrants[0]) + suffix"
+                    },
+                    "span": "byte[] leaderRedeem = prefix + byte[](entrants[0]) + suffix;",
+                    "type_span": "byte[]",
+                    "modifier_spans": [],
+                    "name_span": "leaderRedeem"
+                  }
+                },
+                {
+                  "kind": "variable_definition",
+                  "data": {
+                    "type_ref": {
+                      "base": "byte",
+                      "array_dims": [
+                        {
+                          "kind": "fixed",
+                          "value": 35
+                        }
+                      ]
+                    },
+                    "modifiers": [],
+                    "name": "leaderLock",
+                    "expr": {
+                      "kind": "new",
+                      "data": {
+                        "name": "ScriptPubKeyP2SH",
+                        "args": [
+                          {
+                            "kind": "call",
+                            "data": {
+                              "name": "blake2b",
+                              "args": [
+                                {
+                                  "kind": "identifier",
+                                  "data": "leaderRedeem",
+                                  "span": "leaderRedeem"
+                                }
+                              ],
+                              "name_span": "blake2b"
+                            },
+                            "span": "blake2b(leaderRedeem)"
+                          }
+                        ],
+                        "name_span": "ScriptPubKeyP2SH"
+                      },
+                      "span": "new ScriptPubKeyP2SH(blake2b(leaderRedeem))"
+                    },
+                    "span": "byte[35] leaderLock = new ScriptPubKeyP2SH(blake2b(leaderRedeem));",
+                    "type_span": "byte[35]",
+                    "modifier_spans": [],
+                    "name_span": "leaderLock"
                   }
                 },
                 {
@@ -2907,13 +3102,13 @@
                           "data": {
                             "kind": "input_script_pub_key",
                             "index": {
-                              "kind": "identifier",
-                              "data": "j",
-                              "span": "j"
+                              "kind": "int",
+                              "data": 0,
+                              "span": "0"
                             },
                             "field_span": ".scriptPubKey"
                           },
-                          "span": "tx.inputs[j].scriptPubKey"
+                          "span": "tx.inputs[0].scriptPubKey"
                         },
                         "right": {
                           "kind": "call",
@@ -2922,19 +3117,846 @@
                             "args": [
                               {
                                 "kind": "identifier",
-                                "data": "siblingLock",
-                                "span": "siblingLock"
+                                "data": "leaderLock",
+                                "span": "leaderLock"
                               }
                             ],
                             "name_span": "byte[]"
                           },
-                          "span": "byte[](siblingLock)"
+                          "span": "byte[](leaderLock)"
                         }
                       },
-                      "span": "tx.inputs[j].scriptPubKey == byte[](siblingLock)"
+                      "span": "tx.inputs[0].scriptPubKey == byte[](leaderLock)"
                     },
                     "message": null,
-                    "span": "require(tx.inputs[j].scriptPubKey == byte[](siblingLock));",
+                    "span": "require(tx.inputs[0].scriptPubKey == byte[](leaderLock));",
+                    "message_span": null
+                  }
+                }
+              ],
+              "else_branch": [
+                {
+                  "kind": "variable_definition",
+                  "data": {
+                    "type_ref": {
+                      "base": "int"
+                    },
+                    "modifiers": [],
+                    "name": "total",
+                    "expr": {
+                      "kind": "int",
+                      "data": 0,
+                      "span": "0"
+                    },
+                    "span": "int total = 0;",
+                    "type_span": "int ",
+                    "modifier_spans": [],
+                    "name_span": "total"
+                  }
+                },
+                {
+                  "kind": "for",
+                  "data": {
+                    "ident": "j",
+                    "start": {
+                      "kind": "int",
+                      "data": 0,
+                      "span": "0"
+                    },
+                    "end": {
+                      "kind": "identifier",
+                      "data": "n",
+                      "span": "n"
+                    },
+                    "max_iterations": {
+                      "kind": "identifier",
+                      "data": "MAX_ENTRIES",
+                      "span": "MAX_ENTRIES"
+                    },
+                    "body": [
+                      {
+                        "kind": "variable_definition",
+                        "data": {
+                          "type_ref": {
+                            "base": "byte",
+                            "array_dims": [
+                              {
+                                "kind": "dynamic"
+                              }
+                            ]
+                          },
+                          "modifiers": [],
+                          "name": "siblingRedeem",
+                          "expr": {
+                            "kind": "binary",
+                            "data": {
+                              "op": "add",
+                              "left": {
+                                "kind": "binary",
+                                "data": {
+                                  "op": "add",
+                                  "left": {
+                                    "kind": "identifier",
+                                    "data": "prefix",
+                                    "span": "prefix"
+                                  },
+                                  "right": {
+                                    "kind": "call",
+                                    "data": {
+                                      "name": "byte[]",
+                                      "args": [
+                                        {
+                                          "kind": "array_index",
+                                          "data": {
+                                            "source": {
+                                              "kind": "identifier",
+                                              "data": "entrants",
+                                              "span": "entrants"
+                                            },
+                                            "index": {
+                                              "kind": "identifier",
+                                              "data": "j",
+                                              "span": "j"
+                                            }
+                                          },
+                                          "span": "entrants[j]"
+                                        }
+                                      ],
+                                      "name_span": "byte[]"
+                                    },
+                                    "span": "byte[](entrants[j])"
+                                  }
+                                },
+                                "span": "prefix + byte[](entrants[j])"
+                              },
+                              "right": {
+                                "kind": "identifier",
+                                "data": "suffix",
+                                "span": "suffix"
+                              }
+                            },
+                            "span": "prefix + byte[](entrants[j]) + suffix"
+                          },
+                          "span": "byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;",
+                          "type_span": "byte[]",
+                          "modifier_spans": [],
+                          "name_span": "siblingRedeem"
+                        }
+                      },
+                      {
+                        "kind": "variable_definition",
+                        "data": {
+                          "type_ref": {
+                            "base": "byte",
+                            "array_dims": [
+                              {
+                                "kind": "fixed",
+                                "value": 35
+                              }
+                            ]
+                          },
+                          "modifiers": [],
+                          "name": "siblingLock",
+                          "expr": {
+                            "kind": "new",
+                            "data": {
+                              "name": "ScriptPubKeyP2SH",
+                              "args": [
+                                {
+                                  "kind": "call",
+                                  "data": {
+                                    "name": "blake2b",
+                                    "args": [
+                                      {
+                                        "kind": "identifier",
+                                        "data": "siblingRedeem",
+                                        "span": "siblingRedeem"
+                                      }
+                                    ],
+                                    "name_span": "blake2b"
+                                  },
+                                  "span": "blake2b(siblingRedeem)"
+                                }
+                              ],
+                              "name_span": "ScriptPubKeyP2SH"
+                            },
+                            "span": "new ScriptPubKeyP2SH(blake2b(siblingRedeem))"
+                          },
+                          "span": "byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));",
+                          "type_span": "byte[35]",
+                          "modifier_spans": [],
+                          "name_span": "siblingLock"
+                        }
+                      },
+                      {
+                        "kind": "require",
+                        "data": {
+                          "expr": {
+                            "kind": "binary",
+                            "data": {
+                              "op": "eq",
+                              "left": {
+                                "kind": "introspection",
+                                "data": {
+                                  "kind": "input_script_pub_key",
+                                  "index": {
+                                    "kind": "identifier",
+                                    "data": "j",
+                                    "span": "j"
+                                  },
+                                  "field_span": ".scriptPubKey"
+                                },
+                                "span": "tx.inputs[j].scriptPubKey"
+                              },
+                              "right": {
+                                "kind": "call",
+                                "data": {
+                                  "name": "byte[]",
+                                  "args": [
+                                    {
+                                      "kind": "identifier",
+                                      "data": "siblingLock",
+                                      "span": "siblingLock"
+                                    }
+                                  ],
+                                  "name_span": "byte[]"
+                                },
+                                "span": "byte[](siblingLock)"
+                              }
+                            },
+                            "span": "tx.inputs[j].scriptPubKey == byte[](siblingLock)"
+                          },
+                          "message": null,
+                          "span": "require(tx.inputs[j].scriptPubKey == byte[](siblingLock));",
+                          "message_span": null
+                        }
+                      },
+                      {
+                        "kind": "require",
+                        "data": {
+                          "expr": {
+                            "kind": "binary",
+                            "data": {
+                              "op": "ge",
+                              "left": {
+                                "kind": "introspection",
+                                "data": {
+                                  "kind": "input_value",
+                                  "index": {
+                                    "kind": "identifier",
+                                    "data": "j",
+                                    "span": "j"
+                                  },
+                                  "field_span": ".value"
+                                },
+                                "span": "tx.inputs[j].value"
+                              },
+                              "right": {
+                                "kind": "identifier",
+                                "data": "MIN_ENTRY",
+                                "span": "MIN_ENTRY"
+                              }
+                            },
+                            "span": "tx.inputs[j].value >= MIN_ENTRY"
+                          },
+                          "message": null,
+                          "span": "require(tx.inputs[j].value >= MIN_ENTRY);",
+                          "message_span": null
+                        }
+                      },
+                      {
+                        "kind": "assign",
+                        "data": {
+                          "name": "total",
+                          "expr": {
+                            "kind": "binary",
+                            "data": {
+                              "op": "add",
+                              "left": {
+                                "kind": "identifier",
+                                "data": "total",
+                                "span": "total"
+                              },
+                              "right": {
+                                "kind": "introspection",
+                                "data": {
+                                  "kind": "input_value",
+                                  "index": {
+                                    "kind": "identifier",
+                                    "data": "j",
+                                    "span": "j"
+                                  },
+                                  "field_span": ".value"
+                                },
+                                "span": "tx.inputs[j].value"
+                              }
+                            },
+                            "span": "total + tx.inputs[j].value"
+                          },
+                          "span": "total = total + tx.inputs[j].value;",
+                          "name_span": "total"
+                        }
+                      }
+                    ],
+                    "span": "for (j, 0, n, MAX_ENTRIES) {\n                byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;\n                byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));\n                require(tx.inputs[j].scriptPubKey == byte[](siblingLock));\n                require(tx.inputs[j].value >= MIN_ENTRY);\n                total = total + tx.inputs[j].value;\n            }",
+                    "ident_span": "j",
+                    "body_span": "byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;\n                byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));\n                require(tx.inputs[j].scriptPubKey == byte[](siblingLock));\n                require(tx.inputs[j].value >= MIN_ENTRY);\n                total = total + tx.inputs[j].value;"
+                  }
+                },
+                {
+                  "kind": "variable_definition",
+                  "data": {
+                    "type_ref": {
+                      "base": "byte",
+                      "array_dims": [
+                        {
+                          "kind": "fixed",
+                          "value": 32
+                        }
+                      ]
+                    },
+                    "modifiers": [],
+                    "name": "commit",
+                    "expr": {
+                      "kind": "call",
+                      "data": {
+                        "name": "OpChainblockSeqCommit",
+                        "args": [
+                          {
+                            "kind": "identifier",
+                            "data": "blockHash",
+                            "span": "blockHash"
+                          }
+                        ],
+                        "name_span": "OpChainblockSeqCommit"
+                      },
+                      "span": "OpChainblockSeqCommit(blockHash)"
+                    },
+                    "span": "byte[32] commit = OpChainblockSeqCommit(blockHash);",
+                    "type_span": "byte[32]",
+                    "modifier_spans": [],
+                    "name_span": "commit"
+                  }
+                },
+                {
+                  "kind": "variable_definition",
+                  "data": {
+                    "type_ref": {
+                      "base": "byte",
+                      "array_dims": [
+                        {
+                          "kind": "fixed",
+                          "value": 32
+                        }
+                      ]
+                    },
+                    "modifiers": [],
+                    "name": "rand",
+                    "expr": {
+                      "kind": "call",
+                      "data": {
+                        "name": "blake2b",
+                        "args": [
+                          {
+                            "kind": "call",
+                            "data": {
+                              "name": "byte[]",
+                              "args": [
+                                {
+                                  "kind": "identifier",
+                                  "data": "commit",
+                                  "span": "commit"
+                                }
+                              ],
+                              "name_span": "byte[]"
+                            },
+                            "span": "byte[](commit)"
+                          }
+                        ],
+                        "name_span": "blake2b"
+                      },
+                      "span": "blake2b(byte[](commit))"
+                    },
+                    "span": "byte[32] rand = blake2b(byte[](commit));",
+                    "type_span": "byte[32]",
+                    "modifier_spans": [],
+                    "name_span": "rand"
+                  }
+                },
+                {
+                  "kind": "variable_definition",
+                  "data": {
+                    "type_ref": {
+                      "base": "int"
+                    },
+                    "modifiers": [],
+                    "name": "r",
+                    "expr": {
+                      "kind": "binary",
+                      "data": {
+                        "op": "mod",
+                        "left": {
+                          "kind": "call",
+                          "data": {
+                            "name": "int",
+                            "args": [
+                              {
+                                "kind": "binary",
+                                "data": {
+                                  "op": "add",
+                                  "left": {
+                                    "kind": "slice",
+                                    "data": {
+                                      "source": {
+                                        "kind": "identifier",
+                                        "data": "rand",
+                                        "span": "rand"
+                                      },
+                                      "start": {
+                                        "kind": "int",
+                                        "data": 0,
+                                        "span": "0"
+                                      },
+                                      "end": {
+                                        "kind": "int",
+                                        "data": 6,
+                                        "span": "6"
+                                      },
+                                      "span": ".slice(0, 6)"
+                                    },
+                                    "span": "rand.slice(0, 6)"
+                                  },
+                                  "right": {
+                                    "kind": "array",
+                                    "data": [
+                                      {
+                                        "kind": "byte",
+                                        "data": 0,
+                                        "span": "0x00"
+                                      }
+                                    ],
+                                    "span": "0x00"
+                                  }
+                                },
+                                "span": "rand.slice(0, 6) + 0x00"
+                              }
+                            ],
+                            "name_span": "int"
+                          },
+                          "span": "int(rand.slice(0, 6) + 0x00)"
+                        },
+                        "right": {
+                          "kind": "identifier",
+                          "data": "total",
+                          "span": "total"
+                        }
+                      },
+                      "span": "int(rand.slice(0, 6) + 0x00) % total"
+                    },
+                    "span": "int r = int(rand.slice(0, 6) + 0x00) % total;",
+                    "type_span": "int ",
+                    "modifier_spans": [],
+                    "name_span": "r"
+                  }
+                },
+                {
+                  "kind": "variable_definition",
+                  "data": {
+                    "type_ref": {
+                      "base": "int"
+                    },
+                    "modifiers": [],
+                    "name": "acc",
+                    "expr": {
+                      "kind": "int",
+                      "data": 0,
+                      "span": "0"
+                    },
+                    "span": "int acc = 0;",
+                    "type_span": "int ",
+                    "modifier_spans": [],
+                    "name_span": "acc"
+                  }
+                },
+                {
+                  "kind": "variable_definition",
+                  "data": {
+                    "type_ref": {
+                      "base": "int"
+                    },
+                    "modifiers": [],
+                    "name": "winnerIdx",
+                    "expr": {
+                      "kind": "unary",
+                      "data": {
+                        "op": "neg",
+                        "expr": {
+                          "kind": "int",
+                          "data": 1,
+                          "span": "1"
+                        }
+                      },
+                      "span": "-1"
+                    },
+                    "span": "int winnerIdx = -1;",
+                    "type_span": "int ",
+                    "modifier_spans": [],
+                    "name_span": "winnerIdx"
+                  }
+                },
+                {
+                  "kind": "for",
+                  "data": {
+                    "ident": "j",
+                    "start": {
+                      "kind": "int",
+                      "data": 0,
+                      "span": "0"
+                    },
+                    "end": {
+                      "kind": "identifier",
+                      "data": "n",
+                      "span": "n"
+                    },
+                    "max_iterations": {
+                      "kind": "identifier",
+                      "data": "MAX_ENTRIES",
+                      "span": "MAX_ENTRIES"
+                    },
+                    "body": [
+                      {
+                        "kind": "assign",
+                        "data": {
+                          "name": "acc",
+                          "expr": {
+                            "kind": "binary",
+                            "data": {
+                              "op": "add",
+                              "left": {
+                                "kind": "identifier",
+                                "data": "acc",
+                                "span": "acc"
+                              },
+                              "right": {
+                                "kind": "introspection",
+                                "data": {
+                                  "kind": "input_value",
+                                  "index": {
+                                    "kind": "identifier",
+                                    "data": "j",
+                                    "span": "j"
+                                  },
+                                  "field_span": ".value"
+                                },
+                                "span": "tx.inputs[j].value"
+                              }
+                            },
+                            "span": "acc + tx.inputs[j].value"
+                          },
+                          "span": "acc = acc + tx.inputs[j].value;",
+                          "name_span": "acc"
+                        }
+                      },
+                      {
+                        "kind": "if",
+                        "data": {
+                          "condition": {
+                            "kind": "binary",
+                            "data": {
+                              "op": "and",
+                              "left": {
+                                "kind": "binary",
+                                "data": {
+                                  "op": "eq",
+                                  "left": {
+                                    "kind": "identifier",
+                                    "data": "winnerIdx",
+                                    "span": "winnerIdx"
+                                  },
+                                  "right": {
+                                    "kind": "unary",
+                                    "data": {
+                                      "op": "neg",
+                                      "expr": {
+                                        "kind": "int",
+                                        "data": 1,
+                                        "span": "1 "
+                                      }
+                                    },
+                                    "span": "-1 "
+                                  }
+                                },
+                                "span": "winnerIdx == -1 "
+                              },
+                              "right": {
+                                "kind": "binary",
+                                "data": {
+                                  "op": "lt",
+                                  "left": {
+                                    "kind": "identifier",
+                                    "data": "r",
+                                    "span": "r"
+                                  },
+                                  "right": {
+                                    "kind": "identifier",
+                                    "data": "acc",
+                                    "span": "acc"
+                                  }
+                                },
+                                "span": "r < acc"
+                              }
+                            },
+                            "span": "winnerIdx == -1 && r < acc"
+                          },
+                          "then_branch": [
+                            {
+                              "kind": "assign",
+                              "data": {
+                                "name": "winnerIdx",
+                                "expr": {
+                                  "kind": "identifier",
+                                  "data": "j",
+                                  "span": "j"
+                                },
+                                "span": "winnerIdx = j;",
+                                "name_span": "winnerIdx"
+                              }
+                            }
+                          ],
+                          "else_branch": null,
+                          "span": "if (winnerIdx == -1 && r < acc) {\n                    winnerIdx = j;\n                }\n            ",
+                          "then_span": "winnerIdx = j;",
+                          "else_span": null
+                        }
+                      }
+                    ],
+                    "span": "for (j, 0, n, MAX_ENTRIES) {\n                acc = acc + tx.inputs[j].value;\n                if (winnerIdx == -1 && r < acc) {\n                    winnerIdx = j;\n                }\n            }",
+                    "ident_span": "j",
+                    "body_span": "acc = acc + tx.inputs[j].value;\n                if (winnerIdx == -1 && r < acc) {\n                    winnerIdx = j;\n                }\n            "
+                  }
+                },
+                {
+                  "kind": "require",
+                  "data": {
+                    "expr": {
+                      "kind": "binary",
+                      "data": {
+                        "op": "ge",
+                        "left": {
+                          "kind": "identifier",
+                          "data": "winnerIdx",
+                          "span": "winnerIdx"
+                        },
+                        "right": {
+                          "kind": "int",
+                          "data": 0,
+                          "span": "0"
+                        }
+                      },
+                      "span": "winnerIdx >= 0"
+                    },
+                    "message": null,
+                    "span": "require(winnerIdx >= 0);",
+                    "message_span": null
+                  }
+                },
+                {
+                  "kind": "variable_definition",
+                  "data": {
+                    "type_ref": {
+                      "base": "int"
+                    },
+                    "modifiers": [],
+                    "name": "devAmt",
+                    "expr": {
+                      "kind": "binary",
+                      "data": {
+                        "op": "div",
+                        "left": {
+                          "kind": "binary",
+                          "data": {
+                            "op": "mul",
+                            "left": {
+                              "kind": "identifier",
+                              "data": "total",
+                              "span": "total"
+                            },
+                            "right": {
+                              "kind": "int",
+                              "data": 40,
+                              "span": "40 "
+                            }
+                          },
+                          "span": "total * 40 "
+                        },
+                        "right": {
+                          "kind": "int",
+                          "data": 100,
+                          "span": "100"
+                        }
+                      },
+                      "span": "total * 40 / 100"
+                    },
+                    "span": "int devAmt = total * 40 / 100;",
+                    "type_span": "int ",
+                    "modifier_spans": [],
+                    "name_span": "devAmt"
+                  }
+                },
+                {
+                  "kind": "variable_definition",
+                  "data": {
+                    "type_ref": {
+                      "base": "int"
+                    },
+                    "modifiers": [],
+                    "name": "opsAmt",
+                    "expr": {
+                      "kind": "binary",
+                      "data": {
+                        "op": "div",
+                        "left": {
+                          "kind": "binary",
+                          "data": {
+                            "op": "mul",
+                            "left": {
+                              "kind": "identifier",
+                              "data": "total",
+                              "span": "total"
+                            },
+                            "right": {
+                              "kind": "int",
+                              "data": 10,
+                              "span": "10 "
+                            }
+                          },
+                          "span": "total * 10 "
+                        },
+                        "right": {
+                          "kind": "int",
+                          "data": 100,
+                          "span": "100"
+                        }
+                      },
+                      "span": "total * 10 / 100"
+                    },
+                    "span": "int opsAmt = total * 10 / 100;",
+                    "type_span": "int ",
+                    "modifier_spans": [],
+                    "name_span": "opsAmt"
+                  }
+                },
+                {
+                  "kind": "require",
+                  "data": {
+                    "expr": {
+                      "kind": "binary",
+                      "data": {
+                        "op": "eq",
+                        "left": {
+                          "kind": "nullary",
+                          "data": "tx_outputs_length",
+                          "span": "tx.outputs.length"
+                        },
+                        "right": {
+                          "kind": "int",
+                          "data": 3,
+                          "span": "3"
+                        }
+                      },
+                      "span": "tx.outputs.length == 3"
+                    },
+                    "message": null,
+                    "span": "require(tx.outputs.length == 3);",
+                    "message_span": null
+                  }
+                },
+                {
+                  "kind": "variable_definition",
+                  "data": {
+                    "type_ref": {
+                      "base": "byte",
+                      "array_dims": [
+                        {
+                          "kind": "fixed",
+                          "value": 34
+                        }
+                      ]
+                    },
+                    "modifiers": [],
+                    "name": "winnerLock",
+                    "expr": {
+                      "kind": "new",
+                      "data": {
+                        "name": "ScriptPubKeyP2PK",
+                        "args": [
+                          {
+                            "kind": "array_index",
+                            "data": {
+                              "source": {
+                                "kind": "identifier",
+                                "data": "entrants",
+                                "span": "entrants"
+                              },
+                              "index": {
+                                "kind": "identifier",
+                                "data": "winnerIdx",
+                                "span": "winnerIdx"
+                              }
+                            },
+                            "span": "entrants[winnerIdx]"
+                          }
+                        ],
+                        "name_span": "ScriptPubKeyP2PK"
+                      },
+                      "span": "new ScriptPubKeyP2PK(entrants[winnerIdx])"
+                    },
+                    "span": "byte[34] winnerLock = new ScriptPubKeyP2PK(entrants[winnerIdx]);",
+                    "type_span": "byte[34]",
+                    "modifier_spans": [],
+                    "name_span": "winnerLock"
+                  }
+                },
+                {
+                  "kind": "require",
+                  "data": {
+                    "expr": {
+                      "kind": "binary",
+                      "data": {
+                        "op": "eq",
+                        "left": {
+                          "kind": "introspection",
+                          "data": {
+                            "kind": "output_script_pub_key",
+                            "index": {
+                              "kind": "int",
+                              "data": 0,
+                              "span": "0"
+                            },
+                            "field_span": ".scriptPubKey"
+                          },
+                          "span": "tx.outputs[0].scriptPubKey"
+                        },
+                        "right": {
+                          "kind": "call",
+                          "data": {
+                            "name": "byte[]",
+                            "args": [
+                              {
+                                "kind": "identifier",
+                                "data": "winnerLock",
+                                "span": "winnerLock"
+                              }
+                            ],
+                            "name_span": "byte[]"
+                          },
+                          "span": "byte[](winnerLock)"
+                        }
+                      },
+                      "span": "tx.outputs[0].scriptPubKey == byte[](winnerLock)"
+                    },
+                    "message": null,
+                    "span": "require(tx.outputs[0].scriptPubKey == byte[](winnerLock));",
                     "message_span": null
                   }
                 },
@@ -2948,921 +3970,298 @@
                         "left": {
                           "kind": "introspection",
                           "data": {
-                            "kind": "input_value",
+                            "kind": "output_value",
                             "index": {
-                              "kind": "identifier",
-                              "data": "j",
-                              "span": "j"
+                              "kind": "int",
+                              "data": 0,
+                              "span": "0"
                             },
                             "field_span": ".value"
                           },
-                          "span": "tx.inputs[j].value"
+                          "span": "tx.outputs[0].value"
                         },
                         "right": {
-                          "kind": "identifier",
-                          "data": "MIN_ENTRY",
-                          "span": "MIN_ENTRY"
+                          "kind": "binary",
+                          "data": {
+                            "op": "sub",
+                            "left": {
+                              "kind": "binary",
+                              "data": {
+                                "op": "sub",
+                                "left": {
+                                  "kind": "binary",
+                                  "data": {
+                                    "op": "sub",
+                                    "left": {
+                                      "kind": "identifier",
+                                      "data": "total",
+                                      "span": "total"
+                                    },
+                                    "right": {
+                                      "kind": "identifier",
+                                      "data": "devAmt",
+                                      "span": "devAmt"
+                                    }
+                                  },
+                                  "span": "total - devAmt"
+                                },
+                                "right": {
+                                  "kind": "identifier",
+                                  "data": "opsAmt",
+                                  "span": "opsAmt"
+                                }
+                              },
+                              "span": "total - devAmt - opsAmt"
+                            },
+                            "right": {
+                              "kind": "identifier",
+                              "data": "MAX_FEE",
+                              "span": "MAX_FEE"
+                            }
+                          },
+                          "span": "total - devAmt - opsAmt - MAX_FEE"
                         }
                       },
-                      "span": "tx.inputs[j].value >= MIN_ENTRY"
+                      "span": "tx.outputs[0].value >= total - devAmt - opsAmt - MAX_FEE"
                     },
                     "message": null,
-                    "span": "require(tx.inputs[j].value >= MIN_ENTRY);",
+                    "span": "require(tx.outputs[0].value >= total - devAmt - opsAmt - MAX_FEE);",
                     "message_span": null
                   }
                 },
                 {
-                  "kind": "assign",
+                  "kind": "variable_definition",
                   "data": {
-                    "name": "total",
-                    "expr": {
-                      "kind": "binary",
-                      "data": {
-                        "op": "add",
-                        "left": {
-                          "kind": "identifier",
-                          "data": "total",
-                          "span": "total"
-                        },
-                        "right": {
-                          "kind": "introspection",
-                          "data": {
-                            "kind": "input_value",
-                            "index": {
-                              "kind": "identifier",
-                              "data": "j",
-                              "span": "j"
-                            },
-                            "field_span": ".value"
-                          },
-                          "span": "tx.inputs[j].value"
+                    "type_ref": {
+                      "base": "byte",
+                      "array_dims": [
+                        {
+                          "kind": "fixed",
+                          "value": 34
                         }
-                      },
-                      "span": "total + tx.inputs[j].value"
+                      ]
                     },
-                    "span": "total = total + tx.inputs[j].value;",
-                    "name_span": "total"
-                  }
-                }
-              ],
-              "span": "for (j, 0, n, MAX_ENTRIES) {\n            byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;\n            byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));\n            require(tx.inputs[j].scriptPubKey == byte[](siblingLock));\n            require(tx.inputs[j].value >= MIN_ENTRY);\n            total = total + tx.inputs[j].value;\n        }",
-              "ident_span": "j",
-              "body_span": "byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;\n            byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));\n            require(tx.inputs[j].scriptPubKey == byte[](siblingLock));\n            require(tx.inputs[j].value >= MIN_ENTRY);\n            total = total + tx.inputs[j].value;"
-            }
-          },
-          {
-            "kind": "variable_definition",
-            "data": {
-              "type_ref": {
-                "base": "byte",
-                "array_dims": [
-                  {
-                    "kind": "fixed",
-                    "value": 32
-                  }
-                ]
-              },
-              "modifiers": [],
-              "name": "commit",
-              "expr": {
-                "kind": "call",
-                "data": {
-                  "name": "OpChainblockSeqCommit",
-                  "args": [
-                    {
-                      "kind": "identifier",
-                      "data": "blockHash",
-                      "span": "blockHash"
-                    }
-                  ],
-                  "name_span": "OpChainblockSeqCommit"
-                },
-                "span": "OpChainblockSeqCommit(blockHash)"
-              },
-              "span": "byte[32] commit = OpChainblockSeqCommit(blockHash);",
-              "type_span": "byte[32]",
-              "modifier_spans": [],
-              "name_span": "commit"
-            }
-          },
-          {
-            "kind": "variable_definition",
-            "data": {
-              "type_ref": {
-                "base": "byte",
-                "array_dims": [
-                  {
-                    "kind": "fixed",
-                    "value": 32
-                  }
-                ]
-              },
-              "modifiers": [],
-              "name": "rand",
-              "expr": {
-                "kind": "call",
-                "data": {
-                  "name": "blake2b",
-                  "args": [
-                    {
-                      "kind": "call",
+                    "modifiers": [],
+                    "name": "devLock",
+                    "expr": {
+                      "kind": "new",
                       "data": {
-                        "name": "byte[]",
+                        "name": "ScriptPubKeyP2PK",
                         "args": [
                           {
                             "kind": "identifier",
-                            "data": "commit",
-                            "span": "commit"
+                            "data": "devFund",
+                            "span": "devFund"
                           }
                         ],
-                        "name_span": "byte[]"
+                        "name_span": "ScriptPubKeyP2PK"
                       },
-                      "span": "byte[](commit)"
-                    }
-                  ],
-                  "name_span": "blake2b"
-                },
-                "span": "blake2b(byte[](commit))"
-              },
-              "span": "byte[32] rand = blake2b(byte[](commit));",
-              "type_span": "byte[32]",
-              "modifier_spans": [],
-              "name_span": "rand"
-            }
-          },
-          {
-            "kind": "variable_definition",
-            "data": {
-              "type_ref": {
-                "base": "int"
-              },
-              "modifiers": [],
-              "name": "r",
-              "expr": {
-                "kind": "binary",
-                "data": {
-                  "op": "mod",
-                  "left": {
-                    "kind": "call",
-                    "data": {
-                      "name": "int",
-                      "args": [
-                        {
-                          "kind": "binary",
-                          "data": {
-                            "op": "add",
-                            "left": {
-                              "kind": "slice",
-                              "data": {
-                                "source": {
-                                  "kind": "identifier",
-                                  "data": "rand",
-                                  "span": "rand"
-                                },
-                                "start": {
-                                  "kind": "int",
-                                  "data": 0,
-                                  "span": "0"
-                                },
-                                "end": {
-                                  "kind": "int",
-                                  "data": 6,
-                                  "span": "6"
-                                },
-                                "span": ".slice(0, 6)"
-                              },
-                              "span": "rand.slice(0, 6)"
-                            },
-                            "right": {
-                              "kind": "array",
-                              "data": [
-                                {
-                                  "kind": "byte",
-                                  "data": 0,
-                                  "span": "0x00"
-                                }
-                              ],
-                              "span": "0x00"
-                            }
-                          },
-                          "span": "rand.slice(0, 6) + 0x00"
-                        }
-                      ],
-                      "name_span": "int"
+                      "span": "new ScriptPubKeyP2PK(devFund)"
                     },
-                    "span": "int(rand.slice(0, 6) + 0x00)"
-                  },
-                  "right": {
-                    "kind": "identifier",
-                    "data": "total",
-                    "span": "total"
+                    "span": "byte[34] devLock = new ScriptPubKeyP2PK(devFund);",
+                    "type_span": "byte[34]",
+                    "modifier_spans": [],
+                    "name_span": "devLock"
                   }
                 },
-                "span": "int(rand.slice(0, 6) + 0x00) % total"
-              },
-              "span": "int r = int(rand.slice(0, 6) + 0x00) % total;",
-              "type_span": "int ",
-              "modifier_spans": [],
-              "name_span": "r"
-            }
-          },
-          {
-            "kind": "variable_definition",
-            "data": {
-              "type_ref": {
-                "base": "int"
-              },
-              "modifiers": [],
-              "name": "acc",
-              "expr": {
-                "kind": "int",
-                "data": 0,
-                "span": "0"
-              },
-              "span": "int acc = 0;",
-              "type_span": "int ",
-              "modifier_spans": [],
-              "name_span": "acc"
-            }
-          },
-          {
-            "kind": "variable_definition",
-            "data": {
-              "type_ref": {
-                "base": "int"
-              },
-              "modifiers": [],
-              "name": "winnerIdx",
-              "expr": {
-                "kind": "unary",
-                "data": {
-                  "op": "neg",
-                  "expr": {
-                    "kind": "int",
-                    "data": 1,
-                    "span": "1"
-                  }
-                },
-                "span": "-1"
-              },
-              "span": "int winnerIdx = -1;",
-              "type_span": "int ",
-              "modifier_spans": [],
-              "name_span": "winnerIdx"
-            }
-          },
-          {
-            "kind": "for",
-            "data": {
-              "ident": "j",
-              "start": {
-                "kind": "int",
-                "data": 0,
-                "span": "0"
-              },
-              "end": {
-                "kind": "identifier",
-                "data": "n",
-                "span": "n"
-              },
-              "max_iterations": {
-                "kind": "identifier",
-                "data": "MAX_ENTRIES",
-                "span": "MAX_ENTRIES"
-              },
-              "body": [
                 {
-                  "kind": "assign",
+                  "kind": "require",
                   "data": {
-                    "name": "acc",
                     "expr": {
                       "kind": "binary",
                       "data": {
-                        "op": "add",
+                        "op": "eq",
                         "left": {
-                          "kind": "identifier",
-                          "data": "acc",
-                          "span": "acc"
-                        },
-                        "right": {
                           "kind": "introspection",
                           "data": {
-                            "kind": "input_value",
+                            "kind": "output_script_pub_key",
                             "index": {
-                              "kind": "identifier",
-                              "data": "j",
-                              "span": "j"
+                              "kind": "int",
+                              "data": 1,
+                              "span": "1"
                             },
-                            "field_span": ".value"
+                            "field_span": ".scriptPubKey"
                           },
-                          "span": "tx.inputs[j].value"
+                          "span": "tx.outputs[1].scriptPubKey"
+                        },
+                        "right": {
+                          "kind": "call",
+                          "data": {
+                            "name": "byte[]",
+                            "args": [
+                              {
+                                "kind": "identifier",
+                                "data": "devLock",
+                                "span": "devLock"
+                              }
+                            ],
+                            "name_span": "byte[]"
+                          },
+                          "span": "byte[](devLock)"
                         }
                       },
-                      "span": "acc + tx.inputs[j].value"
+                      "span": "tx.outputs[1].scriptPubKey == byte[](devLock)"
                     },
-                    "span": "acc = acc + tx.inputs[j].value;",
-                    "name_span": "acc"
+                    "message": null,
+                    "span": "require(tx.outputs[1].scriptPubKey == byte[](devLock));",
+                    "message_span": null
                   }
                 },
                 {
-                  "kind": "if",
+                  "kind": "require",
                   "data": {
-                    "condition": {
+                    "expr": {
                       "kind": "binary",
                       "data": {
-                        "op": "and",
+                        "op": "eq",
                         "left": {
-                          "kind": "binary",
+                          "kind": "introspection",
                           "data": {
-                            "op": "eq",
-                            "left": {
-                              "kind": "identifier",
-                              "data": "winnerIdx",
-                              "span": "winnerIdx"
+                            "kind": "output_value",
+                            "index": {
+                              "kind": "int",
+                              "data": 1,
+                              "span": "1"
                             },
-                            "right": {
-                              "kind": "unary",
-                              "data": {
-                                "op": "neg",
-                                "expr": {
-                                  "kind": "int",
-                                  "data": 1,
-                                  "span": "1 "
-                                }
-                              },
-                              "span": "-1 "
-                            }
+                            "field_span": ".value"
                           },
-                          "span": "winnerIdx == -1 "
+                          "span": "tx.outputs[1].value"
                         },
                         "right": {
-                          "kind": "binary",
-                          "data": {
-                            "op": "lt",
-                            "left": {
-                              "kind": "identifier",
-                              "data": "r",
-                              "span": "r"
-                            },
-                            "right": {
-                              "kind": "identifier",
-                              "data": "acc",
-                              "span": "acc"
-                            }
-                          },
-                          "span": "r < acc"
+                          "kind": "identifier",
+                          "data": "devAmt",
+                          "span": "devAmt"
                         }
                       },
-                      "span": "winnerIdx == -1 && r < acc"
+                      "span": "tx.outputs[1].value == devAmt"
                     },
-                    "then_branch": [
-                      {
-                        "kind": "assign",
-                        "data": {
-                          "name": "winnerIdx",
-                          "expr": {
-                            "kind": "identifier",
-                            "data": "j",
-                            "span": "j"
-                          },
-                          "span": "winnerIdx = j;",
-                          "name_span": "winnerIdx"
+                    "message": null,
+                    "span": "require(tx.outputs[1].value == devAmt);",
+                    "message_span": null
+                  }
+                },
+                {
+                  "kind": "variable_definition",
+                  "data": {
+                    "type_ref": {
+                      "base": "byte",
+                      "array_dims": [
+                        {
+                          "kind": "fixed",
+                          "value": 34
                         }
-                      }
-                    ],
-                    "else_branch": null,
-                    "span": "if (winnerIdx == -1 && r < acc) {\n                winnerIdx = j;\n            }\n        ",
-                    "then_span": "winnerIdx = j;",
-                    "else_span": null
+                      ]
+                    },
+                    "modifiers": [],
+                    "name": "opsLock",
+                    "expr": {
+                      "kind": "new",
+                      "data": {
+                        "name": "ScriptPubKeyP2PK",
+                        "args": [
+                          {
+                            "kind": "identifier",
+                            "data": "ops",
+                            "span": "ops"
+                          }
+                        ],
+                        "name_span": "ScriptPubKeyP2PK"
+                      },
+                      "span": "new ScriptPubKeyP2PK(ops)"
+                    },
+                    "span": "byte[34] opsLock = new ScriptPubKeyP2PK(ops);",
+                    "type_span": "byte[34]",
+                    "modifier_spans": [],
+                    "name_span": "opsLock"
+                  }
+                },
+                {
+                  "kind": "require",
+                  "data": {
+                    "expr": {
+                      "kind": "binary",
+                      "data": {
+                        "op": "eq",
+                        "left": {
+                          "kind": "introspection",
+                          "data": {
+                            "kind": "output_script_pub_key",
+                            "index": {
+                              "kind": "int",
+                              "data": 2,
+                              "span": "2"
+                            },
+                            "field_span": ".scriptPubKey"
+                          },
+                          "span": "tx.outputs[2].scriptPubKey"
+                        },
+                        "right": {
+                          "kind": "call",
+                          "data": {
+                            "name": "byte[]",
+                            "args": [
+                              {
+                                "kind": "identifier",
+                                "data": "opsLock",
+                                "span": "opsLock"
+                              }
+                            ],
+                            "name_span": "byte[]"
+                          },
+                          "span": "byte[](opsLock)"
+                        }
+                      },
+                      "span": "tx.outputs[2].scriptPubKey == byte[](opsLock)"
+                    },
+                    "message": null,
+                    "span": "require(tx.outputs[2].scriptPubKey == byte[](opsLock));",
+                    "message_span": null
+                  }
+                },
+                {
+                  "kind": "require",
+                  "data": {
+                    "expr": {
+                      "kind": "binary",
+                      "data": {
+                        "op": "eq",
+                        "left": {
+                          "kind": "introspection",
+                          "data": {
+                            "kind": "output_value",
+                            "index": {
+                              "kind": "int",
+                              "data": 2,
+                              "span": "2"
+                            },
+                            "field_span": ".value"
+                          },
+                          "span": "tx.outputs[2].value"
+                        },
+                        "right": {
+                          "kind": "identifier",
+                          "data": "opsAmt",
+                          "span": "opsAmt"
+                        }
+                      },
+                      "span": "tx.outputs[2].value == opsAmt"
+                    },
+                    "message": null,
+                    "span": "require(tx.outputs[2].value == opsAmt);",
+                    "message_span": null
                   }
                 }
               ],
-              "span": "for (j, 0, n, MAX_ENTRIES) {\n            acc = acc + tx.inputs[j].value;\n            if (winnerIdx == -1 && r < acc) {\n                winnerIdx = j;\n            }\n        }",
-              "ident_span": "j",
-              "body_span": "acc = acc + tx.inputs[j].value;\n            if (winnerIdx == -1 && r < acc) {\n                winnerIdx = j;\n            }\n        "
-            }
-          },
-          {
-            "kind": "require",
-            "data": {
-              "expr": {
-                "kind": "binary",
-                "data": {
-                  "op": "ge",
-                  "left": {
-                    "kind": "identifier",
-                    "data": "winnerIdx",
-                    "span": "winnerIdx"
-                  },
-                  "right": {
-                    "kind": "int",
-                    "data": 0,
-                    "span": "0"
-                  }
-                },
-                "span": "winnerIdx >= 0"
-              },
-              "message": null,
-              "span": "require(winnerIdx >= 0);",
-              "message_span": null
-            }
-          },
-          {
-            "kind": "variable_definition",
-            "data": {
-              "type_ref": {
-                "base": "int"
-              },
-              "modifiers": [],
-              "name": "devAmt",
-              "expr": {
-                "kind": "binary",
-                "data": {
-                  "op": "div",
-                  "left": {
-                    "kind": "binary",
-                    "data": {
-                      "op": "mul",
-                      "left": {
-                        "kind": "identifier",
-                        "data": "total",
-                        "span": "total"
-                      },
-                      "right": {
-                        "kind": "int",
-                        "data": 40,
-                        "span": "40 "
-                      }
-                    },
-                    "span": "total * 40 "
-                  },
-                  "right": {
-                    "kind": "int",
-                    "data": 100,
-                    "span": "100"
-                  }
-                },
-                "span": "total * 40 / 100"
-              },
-              "span": "int devAmt = total * 40 / 100;",
-              "type_span": "int ",
-              "modifier_spans": [],
-              "name_span": "devAmt"
-            }
-          },
-          {
-            "kind": "variable_definition",
-            "data": {
-              "type_ref": {
-                "base": "int"
-              },
-              "modifiers": [],
-              "name": "opsAmt",
-              "expr": {
-                "kind": "binary",
-                "data": {
-                  "op": "div",
-                  "left": {
-                    "kind": "binary",
-                    "data": {
-                      "op": "mul",
-                      "left": {
-                        "kind": "identifier",
-                        "data": "total",
-                        "span": "total"
-                      },
-                      "right": {
-                        "kind": "int",
-                        "data": 10,
-                        "span": "10 "
-                      }
-                    },
-                    "span": "total * 10 "
-                  },
-                  "right": {
-                    "kind": "int",
-                    "data": 100,
-                    "span": "100"
-                  }
-                },
-                "span": "total * 10 / 100"
-              },
-              "span": "int opsAmt = total * 10 / 100;",
-              "type_span": "int ",
-              "modifier_spans": [],
-              "name_span": "opsAmt"
-            }
-          },
-          {
-            "kind": "require",
-            "data": {
-              "expr": {
-                "kind": "binary",
-                "data": {
-                  "op": "eq",
-                  "left": {
-                    "kind": "nullary",
-                    "data": "tx_outputs_length",
-                    "span": "tx.outputs.length"
-                  },
-                  "right": {
-                    "kind": "int",
-                    "data": 3,
-                    "span": "3"
-                  }
-                },
-                "span": "tx.outputs.length == 3"
-              },
-              "message": null,
-              "span": "require(tx.outputs.length == 3);",
-              "message_span": null
-            }
-          },
-          {
-            "kind": "variable_definition",
-            "data": {
-              "type_ref": {
-                "base": "byte",
-                "array_dims": [
-                  {
-                    "kind": "fixed",
-                    "value": 34
-                  }
-                ]
-              },
-              "modifiers": [],
-              "name": "winnerLock",
-              "expr": {
-                "kind": "new",
-                "data": {
-                  "name": "ScriptPubKeyP2PK",
-                  "args": [
-                    {
-                      "kind": "array_index",
-                      "data": {
-                        "source": {
-                          "kind": "identifier",
-                          "data": "entrants",
-                          "span": "entrants"
-                        },
-                        "index": {
-                          "kind": "identifier",
-                          "data": "winnerIdx",
-                          "span": "winnerIdx"
-                        }
-                      },
-                      "span": "entrants[winnerIdx]"
-                    }
-                  ],
-                  "name_span": "ScriptPubKeyP2PK"
-                },
-                "span": "new ScriptPubKeyP2PK(entrants[winnerIdx])"
-              },
-              "span": "byte[34] winnerLock = new ScriptPubKeyP2PK(entrants[winnerIdx]);",
-              "type_span": "byte[34]",
-              "modifier_spans": [],
-              "name_span": "winnerLock"
-            }
-          },
-          {
-            "kind": "require",
-            "data": {
-              "expr": {
-                "kind": "binary",
-                "data": {
-                  "op": "eq",
-                  "left": {
-                    "kind": "introspection",
-                    "data": {
-                      "kind": "output_script_pub_key",
-                      "index": {
-                        "kind": "int",
-                        "data": 0,
-                        "span": "0"
-                      },
-                      "field_span": ".scriptPubKey"
-                    },
-                    "span": "tx.outputs[0].scriptPubKey"
-                  },
-                  "right": {
-                    "kind": "call",
-                    "data": {
-                      "name": "byte[]",
-                      "args": [
-                        {
-                          "kind": "identifier",
-                          "data": "winnerLock",
-                          "span": "winnerLock"
-                        }
-                      ],
-                      "name_span": "byte[]"
-                    },
-                    "span": "byte[](winnerLock)"
-                  }
-                },
-                "span": "tx.outputs[0].scriptPubKey == byte[](winnerLock)"
-              },
-              "message": null,
-              "span": "require(tx.outputs[0].scriptPubKey == byte[](winnerLock));",
-              "message_span": null
-            }
-          },
-          {
-            "kind": "require",
-            "data": {
-              "expr": {
-                "kind": "binary",
-                "data": {
-                  "op": "ge",
-                  "left": {
-                    "kind": "introspection",
-                    "data": {
-                      "kind": "output_value",
-                      "index": {
-                        "kind": "int",
-                        "data": 0,
-                        "span": "0"
-                      },
-                      "field_span": ".value"
-                    },
-                    "span": "tx.outputs[0].value"
-                  },
-                  "right": {
-                    "kind": "binary",
-                    "data": {
-                      "op": "sub",
-                      "left": {
-                        "kind": "binary",
-                        "data": {
-                          "op": "sub",
-                          "left": {
-                            "kind": "binary",
-                            "data": {
-                              "op": "sub",
-                              "left": {
-                                "kind": "identifier",
-                                "data": "total",
-                                "span": "total"
-                              },
-                              "right": {
-                                "kind": "identifier",
-                                "data": "devAmt",
-                                "span": "devAmt"
-                              }
-                            },
-                            "span": "total - devAmt"
-                          },
-                          "right": {
-                            "kind": "identifier",
-                            "data": "opsAmt",
-                            "span": "opsAmt"
-                          }
-                        },
-                        "span": "total - devAmt - opsAmt"
-                      },
-                      "right": {
-                        "kind": "identifier",
-                        "data": "MAX_FEE",
-                        "span": "MAX_FEE"
-                      }
-                    },
-                    "span": "total - devAmt - opsAmt - MAX_FEE"
-                  }
-                },
-                "span": "tx.outputs[0].value >= total - devAmt - opsAmt - MAX_FEE"
-              },
-              "message": null,
-              "span": "require(tx.outputs[0].value >= total - devAmt - opsAmt - MAX_FEE);",
-              "message_span": null
-            }
-          },
-          {
-            "kind": "variable_definition",
-            "data": {
-              "type_ref": {
-                "base": "byte",
-                "array_dims": [
-                  {
-                    "kind": "fixed",
-                    "value": 34
-                  }
-                ]
-              },
-              "modifiers": [],
-              "name": "devLock",
-              "expr": {
-                "kind": "new",
-                "data": {
-                  "name": "ScriptPubKeyP2PK",
-                  "args": [
-                    {
-                      "kind": "identifier",
-                      "data": "devFund",
-                      "span": "devFund"
-                    }
-                  ],
-                  "name_span": "ScriptPubKeyP2PK"
-                },
-                "span": "new ScriptPubKeyP2PK(devFund)"
-              },
-              "span": "byte[34] devLock = new ScriptPubKeyP2PK(devFund);",
-              "type_span": "byte[34]",
-              "modifier_spans": [],
-              "name_span": "devLock"
-            }
-          },
-          {
-            "kind": "require",
-            "data": {
-              "expr": {
-                "kind": "binary",
-                "data": {
-                  "op": "eq",
-                  "left": {
-                    "kind": "introspection",
-                    "data": {
-                      "kind": "output_script_pub_key",
-                      "index": {
-                        "kind": "int",
-                        "data": 1,
-                        "span": "1"
-                      },
-                      "field_span": ".scriptPubKey"
-                    },
-                    "span": "tx.outputs[1].scriptPubKey"
-                  },
-                  "right": {
-                    "kind": "call",
-                    "data": {
-                      "name": "byte[]",
-                      "args": [
-                        {
-                          "kind": "identifier",
-                          "data": "devLock",
-                          "span": "devLock"
-                        }
-                      ],
-                      "name_span": "byte[]"
-                    },
-                    "span": "byte[](devLock)"
-                  }
-                },
-                "span": "tx.outputs[1].scriptPubKey == byte[](devLock)"
-              },
-              "message": null,
-              "span": "require(tx.outputs[1].scriptPubKey == byte[](devLock));",
-              "message_span": null
-            }
-          },
-          {
-            "kind": "require",
-            "data": {
-              "expr": {
-                "kind": "binary",
-                "data": {
-                  "op": "eq",
-                  "left": {
-                    "kind": "introspection",
-                    "data": {
-                      "kind": "output_value",
-                      "index": {
-                        "kind": "int",
-                        "data": 1,
-                        "span": "1"
-                      },
-                      "field_span": ".value"
-                    },
-                    "span": "tx.outputs[1].value"
-                  },
-                  "right": {
-                    "kind": "identifier",
-                    "data": "devAmt",
-                    "span": "devAmt"
-                  }
-                },
-                "span": "tx.outputs[1].value == devAmt"
-              },
-              "message": null,
-              "span": "require(tx.outputs[1].value == devAmt);",
-              "message_span": null
-            }
-          },
-          {
-            "kind": "variable_definition",
-            "data": {
-              "type_ref": {
-                "base": "byte",
-                "array_dims": [
-                  {
-                    "kind": "fixed",
-                    "value": 34
-                  }
-                ]
-              },
-              "modifiers": [],
-              "name": "opsLock",
-              "expr": {
-                "kind": "new",
-                "data": {
-                  "name": "ScriptPubKeyP2PK",
-                  "args": [
-                    {
-                      "kind": "identifier",
-                      "data": "ops",
-                      "span": "ops"
-                    }
-                  ],
-                  "name_span": "ScriptPubKeyP2PK"
-                },
-                "span": "new ScriptPubKeyP2PK(ops)"
-              },
-              "span": "byte[34] opsLock = new ScriptPubKeyP2PK(ops);",
-              "type_span": "byte[34]",
-              "modifier_spans": [],
-              "name_span": "opsLock"
-            }
-          },
-          {
-            "kind": "require",
-            "data": {
-              "expr": {
-                "kind": "binary",
-                "data": {
-                  "op": "eq",
-                  "left": {
-                    "kind": "introspection",
-                    "data": {
-                      "kind": "output_script_pub_key",
-                      "index": {
-                        "kind": "int",
-                        "data": 2,
-                        "span": "2"
-                      },
-                      "field_span": ".scriptPubKey"
-                    },
-                    "span": "tx.outputs[2].scriptPubKey"
-                  },
-                  "right": {
-                    "kind": "call",
-                    "data": {
-                      "name": "byte[]",
-                      "args": [
-                        {
-                          "kind": "identifier",
-                          "data": "opsLock",
-                          "span": "opsLock"
-                        }
-                      ],
-                      "name_span": "byte[]"
-                    },
-                    "span": "byte[](opsLock)"
-                  }
-                },
-                "span": "tx.outputs[2].scriptPubKey == byte[](opsLock)"
-              },
-              "message": null,
-              "span": "require(tx.outputs[2].scriptPubKey == byte[](opsLock));",
-              "message_span": null
-            }
-          },
-          {
-            "kind": "require",
-            "data": {
-              "expr": {
-                "kind": "binary",
-                "data": {
-                  "op": "eq",
-                  "left": {
-                    "kind": "introspection",
-                    "data": {
-                      "kind": "output_value",
-                      "index": {
-                        "kind": "int",
-                        "data": 2,
-                        "span": "2"
-                      },
-                      "field_span": ".value"
-                    },
-                    "span": "tx.outputs[2].value"
-                  },
-                  "right": {
-                    "kind": "identifier",
-                    "data": "opsAmt",
-                    "span": "opsAmt"
-                  }
-                },
-                "span": "tx.outputs[2].value == opsAmt"
-              },
-              "message": null,
-              "span": "require(tx.outputs[2].value == opsAmt);",
-              "message_span": null
+              "span": "if (me != 0) {\n            // DELEGATE: two hashes, constant cost.\n            byte[] myRedeem = prefix + byte[](entrants[me]) + suffix;\n            byte[35] myLock = new ScriptPubKeyP2SH(blake2b(myRedeem));\n            require(this.activeScriptPubKey == byte[](myLock));\n\n            byte[] leaderRedeem = prefix + byte[](entrants[0]) + suffix;\n            byte[35] leaderLock = new ScriptPubKeyP2SH(blake2b(leaderRedeem));\n            require(tx.inputs[0].scriptPubKey == byte[](leaderLock));\n        } else {\n            // LEADER: full verification for the whole transaction.\n            int total = 0;\n            for (j, 0, n, MAX_ENTRIES) {\n                byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;\n                byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));\n                require(tx.inputs[j].scriptPubKey == byte[](siblingLock));\n                require(tx.inputs[j].value >= MIN_ENTRY);\n                total = total + tx.inputs[j].value;\n            }\n\n            // Entropy: proves blockHash is a real recent chain block. 6 bytes\n            // + 0x00 pad keeps the derived integer positive.\n            byte[32] commit = OpChainblockSeqCommit(blockHash);\n            byte[32] rand = blake2b(byte[](commit));\n            int r = int(rand.slice(0, 6) + 0x00) % total;\n\n            // Value-weighted winner selection.\n            int acc = 0;\n            int winnerIdx = -1;\n            for (j, 0, n, MAX_ENTRIES) {\n                acc = acc + tx.inputs[j].value;\n                if (winnerIdx == -1 && r < acc) {\n                    winnerIdx = j;\n                }\n            }\n            require(winnerIdx >= 0);\n\n            // Exact 50/40/10 split; capped fee comes from the winner share.\n            int devAmt = total * 40 / 100;\n            int opsAmt = total * 10 / 100;\n\n            require(tx.outputs.length == 3);\n\n            byte[34] winnerLock = new ScriptPubKeyP2PK(entrants[winnerIdx]);\n            require(tx.outputs[0].scriptPubKey == byte[](winnerLock));\n            require(tx.outputs[0].value >= total - devAmt - opsAmt - MAX_FEE);\n\n            byte[34] devLock = new ScriptPubKeyP2PK(devFund);\n            require(tx.outputs[1].scriptPubKey == byte[](devLock));\n            require(tx.outputs[1].value == devAmt);\n\n            byte[34] opsLock = new ScriptPubKeyP2PK(ops);\n            require(tx.outputs[2].scriptPubKey == byte[](opsLock));\n            require(tx.outputs[2].value == opsAmt);\n        }",
+              "then_span": "byte[] myRedeem = prefix + byte[](entrants[me]) + suffix;\n            byte[35] myLock = new ScriptPubKeyP2SH(blake2b(myRedeem));\n            require(this.activeScriptPubKey == byte[](myLock));\n\n            byte[] leaderRedeem = prefix + byte[](entrants[0]) + suffix;\n            byte[35] leaderLock = new ScriptPubKeyP2SH(blake2b(leaderRedeem));\n            require(tx.inputs[0].scriptPubKey == byte[](leaderLock));",
+              "else_span": "int total = 0;\n            for (j, 0, n, MAX_ENTRIES) {\n                byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;\n                byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));\n                require(tx.inputs[j].scriptPubKey == byte[](siblingLock));\n                require(tx.inputs[j].value >= MIN_ENTRY);\n                total = total + tx.inputs[j].value;\n            }\n\n            // Entropy: proves blockHash is a real recent chain block. 6 bytes\n            // + 0x00 pad keeps the derived integer positive.\n            byte[32] commit = OpChainblockSeqCommit(blockHash);\n            byte[32] rand = blake2b(byte[](commit));\n            int r = int(rand.slice(0, 6) + 0x00) % total;\n\n            // Value-weighted winner selection.\n            int acc = 0;\n            int winnerIdx = -1;\n            for (j, 0, n, MAX_ENTRIES) {\n                acc = acc + tx.inputs[j].value;\n                if (winnerIdx == -1 && r < acc) {\n                    winnerIdx = j;\n                }\n            }\n            require(winnerIdx >= 0);\n\n            // Exact 50/40/10 split; capped fee comes from the winner share.\n            int devAmt = total * 40 / 100;\n            int opsAmt = total * 10 / 100;\n\n            require(tx.outputs.length == 3);\n\n            byte[34] winnerLock = new ScriptPubKeyP2PK(entrants[winnerIdx]);\n            require(tx.outputs[0].scriptPubKey == byte[](winnerLock));\n            require(tx.outputs[0].value >= total - devAmt - opsAmt - MAX_FEE);\n\n            byte[34] devLock = new ScriptPubKeyP2PK(devFund);\n            require(tx.outputs[1].scriptPubKey == byte[](devLock));\n            require(tx.outputs[1].value == devAmt);\n\n            byte[34] opsLock = new ScriptPubKeyP2PK(ops);\n            require(tx.outputs[2].scriptPubKey == byte[](opsLock));\n            require(tx.outputs[2].value == opsAmt);"
             }
           }
         ],
         "return_type_spans": [],
-        "span": "entrypoint function draw(pubkey[] entrants, byte[32] blockHash, byte[] prefix, byte[] suffix) {\n        require(tx.time >= closeTime);\n\n        int n = tx.inputs.length;\n        require(entrants.length == n);\n        require(n >= 1);\n\n        // Pin the splice position so the boundary cannot be shifted. The\n        // sibling check below at this input's own index anchors the template\n        // itself: prefix + entrants[me] + suffix must hash to MY P2SH\n        // commitment, and with the boundary pinned that forces entrants[me]\n        // to be my true inlined entrant key.\n        require(suffix.length == SUFFIX_LEN);\n\n        int total = 0;\n        for (j, 0, n, MAX_ENTRIES) {\n            byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;\n            byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));\n            require(tx.inputs[j].scriptPubKey == byte[](siblingLock));\n            require(tx.inputs[j].value >= MIN_ENTRY);\n            total = total + tx.inputs[j].value;\n        }\n\n        // Entropy: proves blockHash is a real recent chain block and derives\n        // its sequencing commitment. 6 bytes + 0x00 pad keeps the int positive.\n        byte[32] commit = OpChainblockSeqCommit(blockHash);\n        byte[32] rand = blake2b(byte[](commit));\n        int r = int(rand.slice(0, 6) + 0x00) % total;\n\n        // Value-weighted winner selection: walk cumulative weights.\n        int acc = 0;\n        int winnerIdx = -1;\n        for (j, 0, n, MAX_ENTRIES) {\n            acc = acc + tx.inputs[j].value;\n            if (winnerIdx == -1 && r < acc) {\n                winnerIdx = j;\n            }\n        }\n        require(winnerIdx >= 0);\n\n        // Enforce the exact 50/40/10 split. The fee comes out of the winner's\n        // share and is capped, so a settler cannot burn the pot as fees.\n        int devAmt = total * 40 / 100;\n        int opsAmt = total * 10 / 100;\n\n        require(tx.outputs.length == 3);\n\n        byte[34] winnerLock = new ScriptPubKeyP2PK(entrants[winnerIdx]);\n        require(tx.outputs[0].scriptPubKey == byte[](winnerLock));\n        require(tx.outputs[0].value >= total - devAmt - opsAmt - MAX_FEE);\n\n        byte[34] devLock = new ScriptPubKeyP2PK(devFund);\n        require(tx.outputs[1].scriptPubKey == byte[](devLock));\n        require(tx.outputs[1].value == devAmt);\n\n        byte[34] opsLock = new ScriptPubKeyP2PK(ops);\n        require(tx.outputs[2].scriptPubKey == byte[](opsLock));\n        require(tx.outputs[2].value == opsAmt);\n    }",
+        "span": "entrypoint function draw(pubkey[] entrants, byte[32] blockHash, byte[] prefix, byte[] suffix) {\n        require(tx.time >= closeTime);\n        require(suffix.length == SUFFIX_LEN);\n\n        int n = tx.inputs.length;\n        require(entrants.length == n);\n        int me = this.activeInputIndex;\n\n        if (me != 0) {\n            // DELEGATE: two hashes, constant cost.\n            byte[] myRedeem = prefix + byte[](entrants[me]) + suffix;\n            byte[35] myLock = new ScriptPubKeyP2SH(blake2b(myRedeem));\n            require(this.activeScriptPubKey == byte[](myLock));\n\n            byte[] leaderRedeem = prefix + byte[](entrants[0]) + suffix;\n            byte[35] leaderLock = new ScriptPubKeyP2SH(blake2b(leaderRedeem));\n            require(tx.inputs[0].scriptPubKey == byte[](leaderLock));\n        } else {\n            // LEADER: full verification for the whole transaction.\n            int total = 0;\n            for (j, 0, n, MAX_ENTRIES) {\n                byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;\n                byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));\n                require(tx.inputs[j].scriptPubKey == byte[](siblingLock));\n                require(tx.inputs[j].value >= MIN_ENTRY);\n                total = total + tx.inputs[j].value;\n            }\n\n            // Entropy: proves blockHash is a real recent chain block. 6 bytes\n            // + 0x00 pad keeps the derived integer positive.\n            byte[32] commit = OpChainblockSeqCommit(blockHash);\n            byte[32] rand = blake2b(byte[](commit));\n            int r = int(rand.slice(0, 6) + 0x00) % total;\n\n            // Value-weighted winner selection.\n            int acc = 0;\n            int winnerIdx = -1;\n            for (j, 0, n, MAX_ENTRIES) {\n                acc = acc + tx.inputs[j].value;\n                if (winnerIdx == -1 && r < acc) {\n                    winnerIdx = j;\n                }\n            }\n            require(winnerIdx >= 0);\n\n            // Exact 50/40/10 split; capped fee comes from the winner share.\n            int devAmt = total * 40 / 100;\n            int opsAmt = total * 10 / 100;\n\n            require(tx.outputs.length == 3);\n\n            byte[34] winnerLock = new ScriptPubKeyP2PK(entrants[winnerIdx]);\n            require(tx.outputs[0].scriptPubKey == byte[](winnerLock));\n            require(tx.outputs[0].value >= total - devAmt - opsAmt - MAX_FEE);\n\n            byte[34] devLock = new ScriptPubKeyP2PK(devFund);\n            require(tx.outputs[1].scriptPubKey == byte[](devLock));\n            require(tx.outputs[1].value == devAmt);\n\n            byte[34] opsLock = new ScriptPubKeyP2PK(ops);\n            require(tx.outputs[2].scriptPubKey == byte[](opsLock));\n            require(tx.outputs[2].value == opsAmt);\n        }\n    }",
         "name_span": "draw",
-        "body_span": "require(tx.time >= closeTime);\n\n        int n = tx.inputs.length;\n        require(entrants.length == n);\n        require(n >= 1);\n\n        // Pin the splice position so the boundary cannot be shifted. The\n        // sibling check below at this input's own index anchors the template\n        // itself: prefix + entrants[me] + suffix must hash to MY P2SH\n        // commitment, and with the boundary pinned that forces entrants[me]\n        // to be my true inlined entrant key.\n        require(suffix.length == SUFFIX_LEN);\n\n        int total = 0;\n        for (j, 0, n, MAX_ENTRIES) {\n            byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;\n            byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));\n            require(tx.inputs[j].scriptPubKey == byte[](siblingLock));\n            require(tx.inputs[j].value >= MIN_ENTRY);\n            total = total + tx.inputs[j].value;\n        }\n\n        // Entropy: proves blockHash is a real recent chain block and derives\n        // its sequencing commitment. 6 bytes + 0x00 pad keeps the int positive.\n        byte[32] commit = OpChainblockSeqCommit(blockHash);\n        byte[32] rand = blake2b(byte[](commit));\n        int r = int(rand.slice(0, 6) + 0x00) % total;\n\n        // Value-weighted winner selection: walk cumulative weights.\n        int acc = 0;\n        int winnerIdx = -1;\n        for (j, 0, n, MAX_ENTRIES) {\n            acc = acc + tx.inputs[j].value;\n            if (winnerIdx == -1 && r < acc) {\n                winnerIdx = j;\n            }\n        }\n        require(winnerIdx >= 0);\n\n        // Enforce the exact 50/40/10 split. The fee comes out of the winner's\n        // share and is capped, so a settler cannot burn the pot as fees.\n        int devAmt = total * 40 / 100;\n        int opsAmt = total * 10 / 100;\n\n        require(tx.outputs.length == 3);\n\n        byte[34] winnerLock = new ScriptPubKeyP2PK(entrants[winnerIdx]);\n        require(tx.outputs[0].scriptPubKey == byte[](winnerLock));\n        require(tx.outputs[0].value >= total - devAmt - opsAmt - MAX_FEE);\n\n        byte[34] devLock = new ScriptPubKeyP2PK(devFund);\n        require(tx.outputs[1].scriptPubKey == byte[](devLock));\n        require(tx.outputs[1].value == devAmt);\n\n        byte[34] opsLock = new ScriptPubKeyP2PK(ops);\n        require(tx.outputs[2].scriptPubKey == byte[](opsLock));\n        require(tx.outputs[2].value == opsAmt);"
+        "body_span": "require(tx.time >= closeTime);\n        require(suffix.length == SUFFIX_LEN);\n\n        int n = tx.inputs.length;\n        require(entrants.length == n);\n        int me = this.activeInputIndex;\n\n        if (me != 0) {\n            // DELEGATE: two hashes, constant cost.\n            byte[] myRedeem = prefix + byte[](entrants[me]) + suffix;\n            byte[35] myLock = new ScriptPubKeyP2SH(blake2b(myRedeem));\n            require(this.activeScriptPubKey == byte[](myLock));\n\n            byte[] leaderRedeem = prefix + byte[](entrants[0]) + suffix;\n            byte[35] leaderLock = new ScriptPubKeyP2SH(blake2b(leaderRedeem));\n            require(tx.inputs[0].scriptPubKey == byte[](leaderLock));\n        } else {\n            // LEADER: full verification for the whole transaction.\n            int total = 0;\n            for (j, 0, n, MAX_ENTRIES) {\n                byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;\n                byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));\n                require(tx.inputs[j].scriptPubKey == byte[](siblingLock));\n                require(tx.inputs[j].value >= MIN_ENTRY);\n                total = total + tx.inputs[j].value;\n            }\n\n            // Entropy: proves blockHash is a real recent chain block. 6 bytes\n            // + 0x00 pad keeps the derived integer positive.\n            byte[32] commit = OpChainblockSeqCommit(blockHash);\n            byte[32] rand = blake2b(byte[](commit));\n            int r = int(rand.slice(0, 6) + 0x00) % total;\n\n            // Value-weighted winner selection.\n            int acc = 0;\n            int winnerIdx = -1;\n            for (j, 0, n, MAX_ENTRIES) {\n                acc = acc + tx.inputs[j].value;\n                if (winnerIdx == -1 && r < acc) {\n                    winnerIdx = j;\n                }\n            }\n            require(winnerIdx >= 0);\n\n            // Exact 50/40/10 split; capped fee comes from the winner share.\n            int devAmt = total * 40 / 100;\n            int opsAmt = total * 10 / 100;\n\n            require(tx.outputs.length == 3);\n\n            byte[34] winnerLock = new ScriptPubKeyP2PK(entrants[winnerIdx]);\n            require(tx.outputs[0].scriptPubKey == byte[](winnerLock));\n            require(tx.outputs[0].value >= total - devAmt - opsAmt - MAX_FEE);\n\n            byte[34] devLock = new ScriptPubKeyP2PK(devFund);\n            require(tx.outputs[1].scriptPubKey == byte[](devLock));\n            require(tx.outputs[1].value == devAmt);\n\n            byte[34] opsLock = new ScriptPubKeyP2PK(ops);\n            require(tx.outputs[2].scriptPubKey == byte[](opsLock));\n            require(tx.outputs[2].value == opsAmt);\n        }"
       },
       {
         "name": "reclaim",
@@ -3881,6 +4280,31 @@
         "return_types": [],
         "returns_tuple": false,
         "body": [
+          {
+            "kind": "require",
+            "data": {
+              "expr": {
+                "kind": "binary",
+                "data": {
+                  "op": "eq",
+                  "left": {
+                    "kind": "nullary",
+                    "data": "tx_inputs_length",
+                    "span": "tx.inputs.length"
+                  },
+                  "right": {
+                    "kind": "int",
+                    "data": 1,
+                    "span": "1"
+                  }
+                },
+                "span": "tx.inputs.length == 1"
+              },
+              "message": null,
+              "span": "require(tx.inputs.length == 1);",
+              "message_span": null
+            }
+          },
           {
             "kind": "time_op",
             "data": {
@@ -3938,12 +4362,12 @@
           }
         ],
         "return_type_spans": [],
-        "span": "entrypoint function reclaim(sig s) {\n        require(tx.time >= closeTime + reclaimDelay);\n        require(checkSig(s, entrant));\n    }",
+        "span": "entrypoint function reclaim(sig s) {\n        require(tx.inputs.length == 1);\n        require(tx.time >= closeTime + reclaimDelay);\n        require(checkSig(s, entrant));\n    }",
         "name_span": "reclaim",
-        "body_span": "require(tx.time >= closeTime + reclaimDelay);\n        require(checkSig(s, entrant));"
+        "body_span": "require(tx.inputs.length == 1);\n        require(tx.time >= closeTime + reclaimDelay);\n        require(checkSig(s, entrant));"
       }
     ],
-    "span": "contract RaffleEntry(\n    pubkey devFund,      // 40% — Kaspa dev fund payout key\n    pubkey ops,          // 10% — operator payout key\n    int closeTime,       // unix time when this day's entries close\n    int reclaimDelay,    // seconds after closeTime until reclaim unlocks\n    pubkey entrant       // this entry's payout key — KEEP LAST (see note above)\n) {\n    // Each P2SH input repeats the full redeem script, so tx mass — not script\n    // ceilings — bounds the batch size. 16 inputs × ~2.5KB stays well inside\n    // Kaspa's 100k-gram transaction budget.\n    int constant MAX_ENTRIES = 16;\n    int constant MIN_ENTRY = 10_000_000_000;  // 100 KAS in sompi\n    int constant MAX_FEE = 10_000_000;        // draw tx fee cap: 0.1 KAS\n    // Byte length of the compiled script after the inlined entrant key.\n    // MUST match the compiled layout — deploy tooling and tests verify this\n    // by diffing two compiled entries. Pins the template splice position.\n    int constant SUFFIX_LEN = 10;\n\n    // Anyone can settle the raffle once entries are closed.\n    entrypoint function draw(pubkey[] entrants, byte[32] blockHash, byte[] prefix, byte[] suffix) {\n        require(tx.time >= closeTime);\n\n        int n = tx.inputs.length;\n        require(entrants.length == n);\n        require(n >= 1);\n\n        // Pin the splice position so the boundary cannot be shifted. The\n        // sibling check below at this input's own index anchors the template\n        // itself: prefix + entrants[me] + suffix must hash to MY P2SH\n        // commitment, and with the boundary pinned that forces entrants[me]\n        // to be my true inlined entrant key.\n        require(suffix.length == SUFFIX_LEN);\n\n        int total = 0;\n        for (j, 0, n, MAX_ENTRIES) {\n            byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;\n            byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));\n            require(tx.inputs[j].scriptPubKey == byte[](siblingLock));\n            require(tx.inputs[j].value >= MIN_ENTRY);\n            total = total + tx.inputs[j].value;\n        }\n\n        // Entropy: proves blockHash is a real recent chain block and derives\n        // its sequencing commitment. 6 bytes + 0x00 pad keeps the int positive.\n        byte[32] commit = OpChainblockSeqCommit(blockHash);\n        byte[32] rand = blake2b(byte[](commit));\n        int r = int(rand.slice(0, 6) + 0x00) % total;\n\n        // Value-weighted winner selection: walk cumulative weights.\n        int acc = 0;\n        int winnerIdx = -1;\n        for (j, 0, n, MAX_ENTRIES) {\n            acc = acc + tx.inputs[j].value;\n            if (winnerIdx == -1 && r < acc) {\n                winnerIdx = j;\n            }\n        }\n        require(winnerIdx >= 0);\n\n        // Enforce the exact 50/40/10 split. The fee comes out of the winner's\n        // share and is capped, so a settler cannot burn the pot as fees.\n        int devAmt = total * 40 / 100;\n        int opsAmt = total * 10 / 100;\n\n        require(tx.outputs.length == 3);\n\n        byte[34] winnerLock = new ScriptPubKeyP2PK(entrants[winnerIdx]);\n        require(tx.outputs[0].scriptPubKey == byte[](winnerLock));\n        require(tx.outputs[0].value >= total - devAmt - opsAmt - MAX_FEE);\n\n        byte[34] devLock = new ScriptPubKeyP2PK(devFund);\n        require(tx.outputs[1].scriptPubKey == byte[](devLock));\n        require(tx.outputs[1].value == devAmt);\n\n        byte[34] opsLock = new ScriptPubKeyP2PK(ops);\n        require(tx.outputs[2].scriptPubKey == byte[](opsLock));\n        require(tx.outputs[2].value == opsAmt);\n    }\n\n    // Safety valve: if no draw happens, the entrant reclaims their own entry.\n    entrypoint function reclaim(sig s) {\n        require(tx.time >= closeTime + reclaimDelay);\n        require(checkSig(s, entrant));\n    }\n}",
+    "span": "contract RaffleEntry(\n    pubkey devFund,      // 40% — dev fund payout key\n    pubkey ops,          // 10% — operator payout key\n    int closeTime,       // unix ms when this day's entries close\n    int reclaimDelay,    // ms after closeTime until reclaim unlocks\n    pubkey entrant       // this entry's payout key — single use, in reclaim\n) {\n    // Leader loop bound. Leader compute grows ~linearly with entries (one\n    // template hash per input); delegates stay O(1). Tuned to keep a full\n    // draw comfortably inside the 500k-gram transaction compute-mass cap.\n    int constant MAX_ENTRIES = 16;\n    int constant MIN_ENTRY = 10_000_000_000;  // 100 KAS in sompi\n    // Draw tx fee cap: 0.4 KAS. The draw tx is large (each input carries the\n    // full redeem script + template witness), so its min fee scales with entry\n    // count — ~0.19 KAS at 16 entries. The cap comes out of the winner share\n    // and is negligible against the pot; 0.4 KAS leaves headroom.\n    int constant MAX_FEE = 40_000_000;\n    // Byte length of the compiled script after the inlined entrant key.\n    // Pins the template splice boundary; verified against the compiled\n    // layout by tests and tooling.\n    int constant SUFFIX_LEN = 10;\n\n    // Anyone can settle the raffle once entries are closed.\n    entrypoint function draw(pubkey[] entrants, byte[32] blockHash, byte[] prefix, byte[] suffix) {\n        require(tx.time >= closeTime);\n        require(suffix.length == SUFFIX_LEN);\n\n        int n = tx.inputs.length;\n        require(entrants.length == n);\n        int me = this.activeInputIndex;\n\n        if (me != 0) {\n            // DELEGATE: two hashes, constant cost.\n            byte[] myRedeem = prefix + byte[](entrants[me]) + suffix;\n            byte[35] myLock = new ScriptPubKeyP2SH(blake2b(myRedeem));\n            require(this.activeScriptPubKey == byte[](myLock));\n\n            byte[] leaderRedeem = prefix + byte[](entrants[0]) + suffix;\n            byte[35] leaderLock = new ScriptPubKeyP2SH(blake2b(leaderRedeem));\n            require(tx.inputs[0].scriptPubKey == byte[](leaderLock));\n        } else {\n            // LEADER: full verification for the whole transaction.\n            int total = 0;\n            for (j, 0, n, MAX_ENTRIES) {\n                byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;\n                byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));\n                require(tx.inputs[j].scriptPubKey == byte[](siblingLock));\n                require(tx.inputs[j].value >= MIN_ENTRY);\n                total = total + tx.inputs[j].value;\n            }\n\n            // Entropy: proves blockHash is a real recent chain block. 6 bytes\n            // + 0x00 pad keeps the derived integer positive.\n            byte[32] commit = OpChainblockSeqCommit(blockHash);\n            byte[32] rand = blake2b(byte[](commit));\n            int r = int(rand.slice(0, 6) + 0x00) % total;\n\n            // Value-weighted winner selection.\n            int acc = 0;\n            int winnerIdx = -1;\n            for (j, 0, n, MAX_ENTRIES) {\n                acc = acc + tx.inputs[j].value;\n                if (winnerIdx == -1 && r < acc) {\n                    winnerIdx = j;\n                }\n            }\n            require(winnerIdx >= 0);\n\n            // Exact 50/40/10 split; capped fee comes from the winner share.\n            int devAmt = total * 40 / 100;\n            int opsAmt = total * 10 / 100;\n\n            require(tx.outputs.length == 3);\n\n            byte[34] winnerLock = new ScriptPubKeyP2PK(entrants[winnerIdx]);\n            require(tx.outputs[0].scriptPubKey == byte[](winnerLock));\n            require(tx.outputs[0].value >= total - devAmt - opsAmt - MAX_FEE);\n\n            byte[34] devLock = new ScriptPubKeyP2PK(devFund);\n            require(tx.outputs[1].scriptPubKey == byte[](devLock));\n            require(tx.outputs[1].value == devAmt);\n\n            byte[34] opsLock = new ScriptPubKeyP2PK(ops);\n            require(tx.outputs[2].scriptPubKey == byte[](opsLock));\n            require(tx.outputs[2].value == opsAmt);\n        }\n    }\n\n    // Safety valve: if no draw happens, the entrant reclaims their own entry.\n    // SINGLE-INPUT ONLY — this is what forces any multi-input spend of an\n    // entry through the draw path (see delegate reasoning above).\n    entrypoint function reclaim(sig s) {\n        require(tx.inputs.length == 1);\n        require(tx.time >= closeTime + reclaimDelay);\n        require(checkSig(s, entrant));\n    }\n}",
     "name_span": "RaffleEntry"
   },
   "abi": [

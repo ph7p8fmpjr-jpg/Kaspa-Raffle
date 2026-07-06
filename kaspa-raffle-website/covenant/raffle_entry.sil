@@ -1,128 +1,136 @@
 pragma silverscript ^0.1.0;
 
 /*
- * KaspaRaffle — trustless daily raffle entry covenant (v1, Testnet-12)
+ * KaspaRaffle — trustless daily raffle entry covenant (v2, leader/delegate)
  *
- * Each entry is its own instance of this contract: the entrant's payout key is
- * baked into the P2SH address, so one raffle day = one shared template with a
- * per-entrant 33-byte prefix (0x20 push + x-only pubkey). The draw transaction
- * spends all entry UTXOs of the day and every input independently verifies:
+ * Each entry is its own instance of this contract: the entrant's payout key
+ * is inlined at exactly ONE site (reclaim's checkSig, near the end of the
+ * script), so all entries of a day share one template:
+ *   prefix ++ entrant(32B) ++ suffix(SUFFIX_LEN bytes)
  *
- *   1. entries are closed (tx.time >= closeTime)
- *   2. every sibling input is a same-day entry of this exact template,
- *      matching the entrant list supplied as witness data
- *   3. the winner is chosen by chain-block entropy (OpChainblockSeqCommit
- *      proves the supplied hash is a real recent chain block), weighted by
- *      entry value
- *   4. the payout is exactly: winner >= 50% - fee cap, dev fund == 40%,
- *      ops == 10%
+ * v2 architecture — one heavy verifier per draw instead of one per input:
+ *   - The DRAW transaction spends all entry UTXOs. Input 0 is the LEADER and
+ *     runs the full verification: every input matches the claimed entrant
+ *     list, the winner is selected from chain-block entropy weighted by
+ *     entry value, and the outputs are exactly 50% winner / 40% dev fund /
+ *     10% ops (fee capped, from the winner share).
+ *   - All other inputs are DELEGATES and run a cheap two-hash check:
+ *       (1) anchor: prefix + entrants[myIndex] + suffix must hash to MY OWN
+ *           P2SH commitment. With the splice boundary pinned by SUFFIX_LEN,
+ *           only the true per-day template can satisfy this.
+ *       (2) leadership: input 0's scriptPubKey must be a same-day entry
+ *           (prefix + entrants[0] + suffix). Because reclaim() refuses to
+ *           run in a multi-input transaction, a same-day entry at input 0
+ *           necessarily executes the leader path — which enforces the whole
+ *           payout. A forged template fails (1); a non-entry leader fails (2).
  *
- * No operator key exists. Anyone can trigger the draw after close. If nobody
- * draws within reclaimDelay, each entrant can take their own entry back, so
- * funds can never be stranded.
+ * Security requirements this depends on (do not weaken):
+ *   - reclaim() MUST require a single-input transaction. Otherwise an
+ *     entrant could co-spend other entries past sleeping delegates.
+ *   - `entrant` MUST stay single-occurrence (used only in reclaim) so the
+ *     template has one 32-byte splice point, and SUFFIX_LEN MUST match the
+ *     compiled layout (tests and deploy tooling verify by diffing two
+ *     compiled entries).
  *
- * Known v1 limitations (documented, to fix in v2 state-accumulator design):
- *   - a draw batch is capped at MAX_ENTRIES inputs; a malicious settler could
- *     settle a subset (excluded entries keep full reclaim rights)
- *   - the settler picks which recent chain block supplies entropy (bounded
- *     menu; mitigated by permissionless first-draw-wins)
- *
- * Template anchoring: the compiler inlines constructor args at their usage
- * sites, so entries of the same day share one script template that differs
- * only in the 32 entrant-key bytes. `entrant` is deliberately used in
- * exactly ONE place (reclaim's checkSig, near the end of the script), so the
- * template is prefix + entrant + suffix with a small fixed-length suffix.
- * draw() takes prefix/suffix as witness args and requires
- * suffix.length == SUFFIX_LEN, which pins the splice position — a settler
- * cannot shift the boundary to make the sibling checks read garbage as an
- * entrant key. The sibling check at this input's own index then anchors the
- * whole template: only the true template reproduces this entry's P2SH
- * commitment with the claimed entrant key spliced in.
+ * Known caveats (documented, tracked for v2.1):
+ *   - a settler chooses which recent chain block seeds entropy (bounded
+ *     menu; permissionless first-draw-wins limits the window)
+ *   - a settler could settle a subset batch; excluded entries keep full
+ *     reclaim rights and honest bots include everything
  */
 contract RaffleEntry(
-    pubkey devFund,      // 40% — Kaspa dev fund payout key
+    pubkey devFund,      // 40% — dev fund payout key
     pubkey ops,          // 10% — operator payout key
-    int closeTime,       // unix time when this day's entries close
-    int reclaimDelay,    // seconds after closeTime until reclaim unlocks
-    pubkey entrant       // this entry's payout key — KEEP LAST (see note above)
+    int closeTime,       // unix ms when this day's entries close
+    int reclaimDelay,    // ms after closeTime until reclaim unlocks
+    pubkey entrant       // this entry's payout key — single use, in reclaim
 ) {
-    // Compute mass bounds the batch, hard: Toccata charges ~100 grams per
-    // script unit and caps transactions at 500k grams. Every unrolled
-    // iteration blake2b-hashes a full sibling redeem script, so this constant
-    // drives both script size and execution cost. v1 stays small; real
-    // capacity comes with the v2 leader/delegate design where the heavy
-    // verification runs once per draw instead of once per input.
-    int constant MAX_ENTRIES = 4;
+    // Leader loop bound. Leader compute grows ~linearly with entries (one
+    // template hash per input); delegates stay O(1). Tuned to keep a full
+    // draw comfortably inside the 500k-gram transaction compute-mass cap.
+    int constant MAX_ENTRIES = 16;
     int constant MIN_ENTRY = 10_000_000_000;  // 100 KAS in sompi
-    int constant MAX_FEE = 10_000_000;        // draw tx fee cap: 0.1 KAS
+    // Draw tx fee cap: 0.4 KAS. The draw tx is large (each input carries the
+    // full redeem script + template witness), so its min fee scales with entry
+    // count — ~0.19 KAS at 16 entries. The cap comes out of the winner share
+    // and is negligible against the pot; 0.4 KAS leaves headroom.
+    int constant MAX_FEE = 40_000_000;
     // Byte length of the compiled script after the inlined entrant key.
-    // MUST match the compiled layout — deploy tooling and tests verify this
-    // by diffing two compiled entries. Pins the template splice position.
+    // Pins the template splice boundary; verified against the compiled
+    // layout by tests and tooling.
     int constant SUFFIX_LEN = 10;
 
     // Anyone can settle the raffle once entries are closed.
     entrypoint function draw(pubkey[] entrants, byte[32] blockHash, byte[] prefix, byte[] suffix) {
         require(tx.time >= closeTime);
+        require(suffix.length == SUFFIX_LEN);
 
         int n = tx.inputs.length;
         require(entrants.length == n);
-        require(n >= 1);
+        int me = this.activeInputIndex;
 
-        // Pin the splice position so the boundary cannot be shifted. The
-        // sibling check below at this input's own index anchors the template
-        // itself: prefix + entrants[me] + suffix must hash to MY P2SH
-        // commitment, and with the boundary pinned that forces entrants[me]
-        // to be my true inlined entrant key.
-        require(suffix.length == SUFFIX_LEN);
+        if (me != 0) {
+            // DELEGATE: two hashes, constant cost.
+            byte[] myRedeem = prefix + byte[](entrants[me]) + suffix;
+            byte[35] myLock = new ScriptPubKeyP2SH(blake2b(myRedeem));
+            require(this.activeScriptPubKey == byte[](myLock));
 
-        int total = 0;
-        for (j, 0, n, MAX_ENTRIES) {
-            byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;
-            byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));
-            require(tx.inputs[j].scriptPubKey == byte[](siblingLock));
-            require(tx.inputs[j].value >= MIN_ENTRY);
-            total = total + tx.inputs[j].value;
-        }
-
-        // Entropy: proves blockHash is a real recent chain block and derives
-        // its sequencing commitment. 6 bytes + 0x00 pad keeps the int positive.
-        byte[32] commit = OpChainblockSeqCommit(blockHash);
-        byte[32] rand = blake2b(byte[](commit));
-        int r = int(rand.slice(0, 6) + 0x00) % total;
-
-        // Value-weighted winner selection: walk cumulative weights.
-        int acc = 0;
-        int winnerIdx = -1;
-        for (j, 0, n, MAX_ENTRIES) {
-            acc = acc + tx.inputs[j].value;
-            if (winnerIdx == -1 && r < acc) {
-                winnerIdx = j;
+            byte[] leaderRedeem = prefix + byte[](entrants[0]) + suffix;
+            byte[35] leaderLock = new ScriptPubKeyP2SH(blake2b(leaderRedeem));
+            require(tx.inputs[0].scriptPubKey == byte[](leaderLock));
+        } else {
+            // LEADER: full verification for the whole transaction.
+            int total = 0;
+            for (j, 0, n, MAX_ENTRIES) {
+                byte[] siblingRedeem = prefix + byte[](entrants[j]) + suffix;
+                byte[35] siblingLock = new ScriptPubKeyP2SH(blake2b(siblingRedeem));
+                require(tx.inputs[j].scriptPubKey == byte[](siblingLock));
+                require(tx.inputs[j].value >= MIN_ENTRY);
+                total = total + tx.inputs[j].value;
             }
+
+            // Entropy: proves blockHash is a real recent chain block. 6 bytes
+            // + 0x00 pad keeps the derived integer positive.
+            byte[32] commit = OpChainblockSeqCommit(blockHash);
+            byte[32] rand = blake2b(byte[](commit));
+            int r = int(rand.slice(0, 6) + 0x00) % total;
+
+            // Value-weighted winner selection.
+            int acc = 0;
+            int winnerIdx = -1;
+            for (j, 0, n, MAX_ENTRIES) {
+                acc = acc + tx.inputs[j].value;
+                if (winnerIdx == -1 && r < acc) {
+                    winnerIdx = j;
+                }
+            }
+            require(winnerIdx >= 0);
+
+            // Exact 50/40/10 split; capped fee comes from the winner share.
+            int devAmt = total * 40 / 100;
+            int opsAmt = total * 10 / 100;
+
+            require(tx.outputs.length == 3);
+
+            byte[34] winnerLock = new ScriptPubKeyP2PK(entrants[winnerIdx]);
+            require(tx.outputs[0].scriptPubKey == byte[](winnerLock));
+            require(tx.outputs[0].value >= total - devAmt - opsAmt - MAX_FEE);
+
+            byte[34] devLock = new ScriptPubKeyP2PK(devFund);
+            require(tx.outputs[1].scriptPubKey == byte[](devLock));
+            require(tx.outputs[1].value == devAmt);
+
+            byte[34] opsLock = new ScriptPubKeyP2PK(ops);
+            require(tx.outputs[2].scriptPubKey == byte[](opsLock));
+            require(tx.outputs[2].value == opsAmt);
         }
-        require(winnerIdx >= 0);
-
-        // Enforce the exact 50/40/10 split. The fee comes out of the winner's
-        // share and is capped, so a settler cannot burn the pot as fees.
-        int devAmt = total * 40 / 100;
-        int opsAmt = total * 10 / 100;
-
-        require(tx.outputs.length == 3);
-
-        byte[34] winnerLock = new ScriptPubKeyP2PK(entrants[winnerIdx]);
-        require(tx.outputs[0].scriptPubKey == byte[](winnerLock));
-        require(tx.outputs[0].value >= total - devAmt - opsAmt - MAX_FEE);
-
-        byte[34] devLock = new ScriptPubKeyP2PK(devFund);
-        require(tx.outputs[1].scriptPubKey == byte[](devLock));
-        require(tx.outputs[1].value == devAmt);
-
-        byte[34] opsLock = new ScriptPubKeyP2PK(ops);
-        require(tx.outputs[2].scriptPubKey == byte[](opsLock));
-        require(tx.outputs[2].value == opsAmt);
     }
 
     // Safety valve: if no draw happens, the entrant reclaims their own entry.
+    // SINGLE-INPUT ONLY — this is what forces any multi-input spend of an
+    // entry through the draw path (see delegate reasoning above).
     entrypoint function reclaim(sig s) {
+        require(tx.inputs.length == 1);
         require(tx.time >= closeTime + reclaimDelay);
         require(checkSig(s, entrant));
     }

@@ -35,12 +35,27 @@ async function getEntryUtxos(addresses) {
     return entries;
 }
 
-// A recent chain block to seed draw entropy. We take the sink (virtual
-// selected parent) — guaranteed to be a chain block from every node's POV.
+// A chain block to seed draw entropy for OpChainblockSeqCommit. The opcode
+// requires the block to be a chain ancestor of the validating virtual's
+// selected parent. On high-BPS testnet-10 (10 blocks/sec) the instantaneous
+// sink reorgs constantly, so by validation time a freshly-fetched sink is
+// often no longer on the selected chain → BlockNotSelected → the draw fails.
+// We therefore walk back the selected-parent chain to a block that is
+// comfortably past the reorg window (still far within finality depth, so its
+// sequencing commitment remains available).
+const ENTROPY_BLOCK_DEPTH = Number(process.env.ENTROPY_BLOCK_DEPTH || 60);
+
 async function getRecentChainBlock() {
     const rpc = await connect();
     const { sink } = await rpc.getSink({});
-    return sink;
+    let hash = sink;
+    for (let i = 0; i < ENTROPY_BLOCK_DEPTH; i++) {
+        const { block } = await rpc.getBlock({ hash, includeTransactions: false });
+        const parent = block?.verboseData?.selectedParentHash;
+        if (!parent || /^0+$/.test(parent)) break; // reached genesis-ish
+        hash = parent;
+    }
+    return hash;
 }
 
 async function submitTransaction(tx) {
