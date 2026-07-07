@@ -134,11 +134,15 @@ app.get('/healthz', async (req, res) => {
         configErrors: config.configErrors,
         cliPath: config.raffleCli,
         cliPresent: fs.existsSync(config.raffleCli),
+        // Deployment markers so we can see exactly what's running.
+        gitCommit: (process.env.RENDER_GIT_COMMIT || 'unknown').slice(0, 7),
     };
-    // Prove the CLI actually runs (catches missing-exec-bit / wrong-arch).
+    // Prove the CLI actually runs, and report the covenant size so we can tell
+    // v1 (867) from v2 (2504) at a glance.
     try {
-        await cli.template(registry.closeTimeForNow());
+        const tpl = await cli.template(registry.closeTimeForNow());
         health.cliRuns = true;
+        health.covenantScriptLen = tpl.scriptLen;
     } catch (e) {
         health.cliRuns = false;
         health.cliError = String(e.message || e).slice(0, 200);
