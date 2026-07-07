@@ -58,3 +58,17 @@ jobs:
           gh release create bin-latest --title "raffle-cli linux build" \
             --notes "Automated build from ${{ github.sha }}" 2>/dev/null || true
           gh release upload bin-latest silverscript/target/release/raffle-cli --clobber
+
+      # Trigger Render to redeploy ONLY after the new binary is published, so
+      # Render never races ahead and ships a stale binary. The hook URL lives in
+      # the RENDER_DEPLOY_HOOK repo secret (never in source).
+      - name: Trigger Render deploy
+        if: success()
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          if [ -n "$RENDER_DEPLOY_HOOK" ]; then
+            curl -fsS -X POST "$RENDER_DEPLOY_HOOK" && echo " → Render deploy triggered"
+          else
+            echo "RENDER_DEPLOY_HOOK secret not set; skipping auto-deploy"
+          fi
