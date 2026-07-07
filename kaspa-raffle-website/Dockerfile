@@ -11,8 +11,13 @@ RUN npm install --omit=dev
 COPY kaspa-raffle-website/backend/ backend/
 COPY kaspa-raffle-website/covenant/ covenant/
 COPY kaspa-raffle-website/index.html ./
-ADD https://github.com/ph7p8fmpjr-jpg/Kaspa-Raffle/releases/download/bin-latest/raffle-cli /app/bin/raffle-cli
-RUN chmod +x /app/bin/raffle-cli
+# Fetch the CI-built Linux binary fresh each commit. RENDER_GIT_COMMIT changes
+# per deploy, so this layer is never served stale from cache (the old `ADD`
+# form cached the binary and served v1 after a v2 push).
+ARG RENDER_GIT_COMMIT=dev
+RUN echo "fetching raffle-cli for ${RENDER_GIT_COMMIT}" \
+    && curl -fsSL -o /app/bin/raffle-cli https://github.com/ph7p8fmpjr-jpg/Kaspa-Raffle/releases/download/bin-latest/raffle-cli \
+    && chmod +x /app/bin/raffle-cli
 ENV RAFFLE_CLI=/app/bin/raffle-cli
 ENV DATA_DIR=/app/data
 CMD ["node", "backend/server.js"]
