@@ -16,7 +16,9 @@ COPY kaspa-raffle-website/index.html ./
 # form cached the binary and served v1 after a v2 push).
 ARG RENDER_GIT_COMMIT=dev
 RUN echo "fetching raffle-cli for ${RENDER_GIT_COMMIT}" \
+    && mkdir -p /app/bin \
     && curl -fsSL -o /app/bin/raffle-cli https://github.com/ph7p8fmpjr-jpg/Kaspa-Raffle/releases/download/bin-latest/raffle-cli \
+    && test -s /app/bin/raffle-cli \
     && chmod +x /app/bin/raffle-cli
 ENV RAFFLE_CLI=/app/bin/raffle-cli
 ENV DATA_DIR=/app/data
